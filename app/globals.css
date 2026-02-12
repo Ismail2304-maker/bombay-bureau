@@ -24,3 +24,57 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+html {
+  scroll-behavior: smooth;
+}
+/* ============================= */
+/* PREMIUM EDITORIAL MOTION SYS */
+/* ============================= */
+
+:root {
+  --motion-fast: 180ms;
+  --motion-mid: 280ms;
+  --motion-slow: 420ms;
+
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Card lift */
+.hover-lift {
+  transition:
+    transform var(--motion-mid) var(--ease-premium),
+    box-shadow var(--motion-mid) var(--ease-premium);
+}
+
+.hover-lift:hover {
+  transform: translateY(-6px);
+}
+
+/* Image zoom */
+.hover-zoom img {
+  transition: transform 700ms var(--ease-premium);
+}
+
+.hover-zoom:hover img {
+  transform: scale(1.06);
+}
+
+/* Fade text */
+.hover-fade {
+  transition: color var(--motion-mid) var(--ease-premium),
+              opacity var(--motion-mid) var(--ease-premium);
+}
+
+.hover-fade:hover {
+  opacity: 0.85;
+}
+
+/* Premium card container */
+.premium-card {
+  @apply cursor-pointer;
+  transition: transform var(--motion-mid) var(--ease-premium);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+}
