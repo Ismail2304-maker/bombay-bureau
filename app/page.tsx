@@ -8,7 +8,14 @@ import { cache } from "react";
 
 const builder = imageUrlBuilder(client);
 const urlFor = (source: any) => {
-  if (!source || !source.asset) return null;
+  if (
+    !source ||
+    !source.asset ||
+    !source.asset._ref
+  ) {
+    return null;
+  }
+
   return builder.image(source);
 };
 
