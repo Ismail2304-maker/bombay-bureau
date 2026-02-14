@@ -286,7 +286,7 @@ export default async function Home() {
             <div className="group cursor-pointer">
 
               
-  {main.mainImage && (
+  {main?.mainImage ? (
   <Image
     src={urlFor(main.mainImage).width(1600).url()}
     alt=""
@@ -294,6 +294,8 @@ export default async function Home() {
     height={900}
     className="rounded-lg mb-5"
   />
+) : (
+  <div className="w-full h-[400px] bg-gray-800 rounded-lg mb-5" />
 )}
 
 
