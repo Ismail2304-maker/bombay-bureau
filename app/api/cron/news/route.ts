@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { client } from "@/lib/sanity"
 import OpenAI from "openai"
-
+export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
 
 const openai = new OpenAI({
