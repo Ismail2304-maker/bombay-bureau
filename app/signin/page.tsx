@@ -125,11 +125,11 @@ export default function SignIn() {
         {/* TERMS */}
         <div className="flex items-start gap-2 mt-6 text-xs text-gray-400">
   <input
-    type="checkbox"
-    checked={accepted}
-    onChange={() => setAccepted(!accepted)}
-    className="accent-white mt-[2px]"
-  />
+  type="checkbox"
+  checked={accepted}
+  onChange={() => setAccepted(!accepted)}
+  className="w-4 h-4 accent-white border border-gray-500 mt-[2px]"
+/>
 
   <span className="leading-relaxed">
     I agree to the{" "}
