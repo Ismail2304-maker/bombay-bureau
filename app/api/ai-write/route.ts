@@ -24,17 +24,13 @@ export async function GET() {
 
     const article = completion.choices[0].message.content;
 
-    return Response.json({
-      success: true,
-      article,
+    return new Response(article, {
+      status: 200,
+      headers: { "Content-Type": "text/plain" },
     });
 
   } catch (error) {
     console.error(error);
-
-    return Response.json({
-      success: false,
-      error: "AI failed",
-    });
+    return new Response("Error generating article", { status: 500 });
   }
 }
