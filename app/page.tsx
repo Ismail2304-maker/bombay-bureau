@@ -114,22 +114,20 @@ export default async function Home() {
 
         {/* LEFT */}
         <div className="md:col-span-2">
-          {posts[0] && (
-            <>
-              <Link href={`/article/${posts[0].slug.current}`}>
-                <div className="group cursor-pointer">
-                  <div className="overflow-hidden rounded-lg">
-                    <Image
-                      src={urlFor(posts[0].mainImage).width(1600).url()}
-                      alt=""
-                      width={1600}
-                      height={900}
-                      priority
-                      placeholder="blur"
-                      blurDataURL={`${urlFor(posts[0].mainImage).width(20).blur(50).url()}`}
-                      className="transition-transform duration-700 group-hover:scale-[1.05]"
-                    />
-                  </div>
+          {posts[0] && posts[0].mainImage && (
+  <>
+    <Link href={`/article/${posts[0].slug.current}`}>
+      <div className="group cursor-pointer">
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src={urlFor(posts[0].mainImage).width(1600).url()}
+            alt=""
+            width={1600}
+            height={900}
+            priority
+            className="transition-transform duration-700 group-hover:scale-[1.05]"
+          />
+        </div>
 
                   <h2 className="text-5xl font-serif mt-6 group-hover:text-gray-300 transition-colors">
                     {posts[0].title}
@@ -287,13 +285,15 @@ export default async function Home() {
           <Link href={`/article/${main.slug.current}`}>
             <div className="group cursor-pointer">
 
-              <Image
-                src={urlFor(main.mainImage).width(1600).url()}
-                alt=""
-                width={1600}
-                height={900}
-                className="rounded-lg mb-5"
-              />
+              {main.mainImage && (
+  <Image
+    src={urlFor(main.mainImage).width(1600).url()}
+    alt=""
+    width={1600}
+    height={900}
+    className="rounded-lg mb-5"
+  />
+)}
 
               <h2 className="text-4xl font-serif group-hover:text-gray-300 transition">
                 {main.title}
@@ -319,14 +319,15 @@ export default async function Home() {
             <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
               <div className="flex gap-4 group cursor-pointer">
 
-                <Image
-                  src={urlFor(post.mainImage).width(300).url()}
-                  alt=""
-                  width={120}
-                  height={80}
-                  className="rounded-md"
-                />
-
+                {post.mainImage && (
+  <Image
+    src={urlFor(post.mainImage).width(300).url()}
+    alt=""
+    width={120}
+    height={80}
+    className="rounded-md"
+  />
+)}
                 <div>
                   <h3 className="font-serif group-hover:text-gray-300 transition">
                     {post.title}
