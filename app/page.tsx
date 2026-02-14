@@ -285,7 +285,8 @@ export default async function Home() {
           <Link href={`/article/${main.slug.current}`}>
             <div className="group cursor-pointer">
 
-              {main.mainImage && (
+              
+  {main.mainImage && (
   <Image
     src={urlFor(main.mainImage).width(1600).url()}
     alt=""
@@ -294,6 +295,7 @@ export default async function Home() {
     className="rounded-lg mb-5"
   />
 )}
+
 
               <h2 className="text-4xl font-serif group-hover:text-gray-300 transition">
                 {main.title}
@@ -319,7 +321,7 @@ export default async function Home() {
             <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
               <div className="flex gap-4 group cursor-pointer">
 
-                {post.mainImage && (
+    {post.mainImage && (
   <Image
     src={urlFor(post.mainImage).width(300).url()}
     alt=""
@@ -327,8 +329,7 @@ export default async function Home() {
     height={80}
     className="rounded-md"
   />
-)}
-                <div>
+)}           <div>
                   <h3 className="font-serif group-hover:text-gray-300 transition">
                     {post.title}
                   </h3>
