@@ -1,10 +1,20 @@
-import { createClient } from 'next-sanity'
+import "dotenv/config"
+import { createClient } from "next-sanity"
+import { apiVersion, dataset, projectId } from "../env.js"
 
-import { apiVersion, dataset, projectId } from '../env'
-
+/* READ CLIENT */
 export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  useCdn: true,
+})
+
+/* WRITE CLIENT (for automation) */
+export const writeClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  token: process.env.SANITY_API_TOKEN,
+  useCdn: false,
 })

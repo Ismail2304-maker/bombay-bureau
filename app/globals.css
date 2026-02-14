@@ -24,9 +24,8 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-html {
-  scroll-behavior: smooth;
-}
+
+
 /* ============================= */
 /* PREMIUM EDITORIAL MOTION SYS */
 /* ============================= */
@@ -77,4 +76,54 @@ html {
 
 .premium-card:hover {
   transform: translateY(-4px);
+}
+html {
+  scroll-behavior: smooth;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease;
+}
+/* ===== PREMIUM FADE IN ===== */
+.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== ARTICLE IMAGE FADE ===== */
+.image-fade {
+  animation: imageFade 0.9s ease forwards;
+}
+
+@keyframes imageFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== NAV HOVER ===== */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background: white;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
 }

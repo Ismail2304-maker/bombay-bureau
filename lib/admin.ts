@@ -1,5 +1,5 @@
 export const ADMIN_EMAILS = [
-  "your@email.com", // ← replace with your Google login email
+  "muhammedismailps232@gmail.com"
 ];
 
 export function isAdmin(email?: string | null) {

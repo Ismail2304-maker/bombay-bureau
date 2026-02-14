@@ -1,6 +1,7 @@
 {
   "name": "news-site",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,12 +14,17 @@
     "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^1.2.0",
     "@sanity/vision": "^4.22.0",
+    "axios": "^1.13.5",
+    "dotenv": "^17.3.1",
     "firebase": "^12.9.0",
+    "framer-motion": "^12.34.0",
     "next": "16.1.6",
     "next-auth": "^4.24.13",
     "next-sanity": "^11.6.12",
+    "node-fetch": "^3.3.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-icons": "^5.5.0",
     "sanity": "^4.22.0",
     "styled-components": "^6.3.9"
   },
@@ -30,6 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
