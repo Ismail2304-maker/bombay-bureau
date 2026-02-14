@@ -1,8 +1,11 @@
 // news-site/app/api/cron/news/route.ts
-console.log("NEW AUTOMATION VERSION 2 RUNNING")
+
 import { NextResponse } from "next/server"
 import OpenAI from "openai"
 import { createClient } from "@sanity/client"
+
+export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -16,8 +19,10 @@ const sanity = createClient({
   useCdn: false,
 })
 
+// 🔥 Your real Author ID
 const AUTHOR_ID = "0664ef92-6a72-48c3-b1bf-2e2b73ac67c9"
 
+// 🔥 Your category IDs
 const CATEGORY_MAP: Record<string, string> = {
   india: "18088637-4ede-4976-b169-d55b6a298d8e",
   world: "b4863bf0-a551-4f82-b18c-33b5f76d077e",
@@ -37,7 +42,7 @@ function detectCategory(title: string) {
   if (lower.includes("election") || lower.includes("policy"))
     return CATEGORY_MAP.politics
 
-  // Bias India & World
+  // Default bias India & World
   return Math.random() > 0.5
     ? CATEGORY_MAP.india
     : CATEGORY_MAP.world
@@ -45,7 +50,9 @@ function detectCategory(title: string) {
 
 export async function GET() {
   try {
-    // 1️⃣ Fetch real news from NewsAPI
+    console.log("🚀 AUTOMATION V2 RUNNING")
+
+    // 1️⃣ Fetch real news
     const newsRes = await fetch(
       `https://newsapi.org/v2/top-headlines?country=in&pageSize=5&apiKey=${process.env.NEWS_API_KEY}`
     )
@@ -64,9 +71,10 @@ export async function GET() {
     const originalTitle = randomArticle.title
     const originalDescription = randomArticle.description || ""
 
-    // 2️⃣ AI Rewrite & Humanize
+    // 2️⃣ Rewrite using AI (strict JSON)
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
+      temperature: 0.7,
       messages: [
         {
           role: "system",
@@ -74,10 +82,11 @@ export async function GET() {
 You are a senior journalist at Bombay Bureau.
 
 Rewrite the provided news professionally.
-Make it human, analytical, and original.
+Make it analytical and human.
 Do not copy sentences.
-Do not use markdown.
-Return ONLY JSON:
+No markdown.
+No formatting symbols.
+Return ONLY valid JSON:
 
 {
   "title": "Clean rewritten headline",
@@ -98,7 +107,6 @@ Rewrite into a full 800-word professional article dated today.
 `,
         },
       ],
-      temperature: 0.7,
     })
 
     const raw = completion.choices[0].message.content
@@ -119,15 +127,15 @@ Rewrite into a full 800-word professional article dated today.
           {
             _type: "span",
             _key: crypto.randomUUID(),
-            text: paragraph,
+            text: paragraph.trim(),
           },
         ],
       }))
 
-    // 4️⃣ Create in Sanity
+    // 4️⃣ Save to Sanity
     await sanity.create({
       _type: "post",
-      title: parsed.title,
+      title: parsed.title.trim(),
       slug: {
         _type: "slug",
         current: parsed.title
