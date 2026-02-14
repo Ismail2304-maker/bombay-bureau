@@ -1,6 +1,4 @@
 import OpenAI from "openai";
-import { NextResponse } from "next/server";
-import { client } from "@/lib/sanity";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -24,28 +22,19 @@ export async function GET() {
       ],
     });
 
-    const text = completion.choices[0].message.content || "";
+    const article = completion.choices[0].message.content;
 
-    // Split headline + body
-    const lines = text.split("\n");
-    const title = lines[0];
-    const body = lines.slice(1).join("\n");
-
-    // Save to Sanity
-    await client.create({
-      _type: "post",
-      title,
-      slug: {
-        _type: "slug",
-        current: title.toLowerCase().replace(/\s+/g, "-").slice(0, 90),
-      },
-      body,
-      publishedAt: new Date().toISOString(),
+    return Response.json({
+      success: true,
+      article,
     });
 
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "AI failed" });
+  } catch (error) {
+    console.error(error);
+
+    return Response.json({
+      success: false,
+      error: "AI failed",
+    });
   }
 }
