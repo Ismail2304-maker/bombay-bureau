@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
+    baseURL: process.env.OPENAI_BASE_URL,
 });
 
 export async function GET() {
@@ -14,7 +15,7 @@ export async function GET() {
     console.log("AUTO NEWS RUNNING");
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "mistralai/mistral-7b-instruct",
       messages: [
         {
           role: "user",
