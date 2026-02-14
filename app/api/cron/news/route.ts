@@ -55,8 +55,8 @@ export async function GET() {
 
     // 1️⃣ Fetch real news
     const newsRes = await fetch(
-      `https://newsapi.org/v2/top-headlines?country=in&pageSize=5&apiKey=${process.env.NEWS_API_KEY}`
-    )
+  `https://newsapi.org/v2/everything?q=India OR world OR politics OR business OR technology&language=en&sortBy=publishedAt&pageSize=10&apiKey=${process.env.NEWS_API_KEY}`
+)
 
     const newsData = await newsRes.json()
 
