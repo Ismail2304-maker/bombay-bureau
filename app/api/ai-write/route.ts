@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY!,
 });
 
 export async function GET() {
@@ -11,26 +11,22 @@ export async function GET() {
       messages: [
         {
           role: "system",
-          content:
-            "You are a global news journalist. Write a professional breaking news article.",
+          content: "You are a global news journalist.",
         },
         {
           role: "user",
           content:
-            "Write a 600 word global politics news article with headline and body.",
+            "Write a 500 word professional global politics breaking news article with headline.",
         },
       ],
     });
 
-    const article = completion.choices[0].message.content;
+    const text = completion.choices[0].message.content;
 
-    return new Response(article, {
+    return new Response(text || "No content", {
       status: 200,
-      headers: { "Content-Type": "text/plain" },
     });
-
   } catch (error) {
-    console.error(error);
-    return new Response("Error generating article", { status: 500 });
+    return new Response("AI ERROR", { status: 500 });
   }
 }
