@@ -1,18 +1,20 @@
-import { visionTool } from "@sanity/vision"
 import { defineConfig } from "sanity"
 import { structureTool } from "sanity/structure"
+import { visionTool } from "@sanity/vision"
 
-import { apiVersion, dataset, projectId } from "./sanity/env"
-import { schema } from "./sanity/schemaTypes"
-import { structure } from "./sanity/structure"
+import { projectId, dataset } from "./sanity/env"
+import { schemaTypes } from "./sanity/schemaTypes"
 
 export default defineConfig({
-  basePath: "/studio",
+  name: "default",
+  title: "Bombay Bureau",
+
   projectId,
   dataset,
-  schema,
-  plugins: [
-    structureTool({ structure }),
-    visionTool({ defaultApiVersion: apiVersion }),
-  ],
+
+  plugins: [structureTool(), visionTool()],
+
+  schema: {
+    types: schemaTypes,
+  },
 })

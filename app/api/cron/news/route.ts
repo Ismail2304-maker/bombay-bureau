@@ -34,19 +34,20 @@ export async function GET() {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .slice(0, 80);
+// Split the AI text into paragraphs
+const paragraphs = body.split('\n\n').filter(p => p.trim() !== "");
 
-    await client.create({
-      _type: "post",
-      title,
-      slug: { current: slug },
-      body: [
-        {
-          _type: "block",
-          children: [{ _type: "span", text: body }],
-        },
-      ],
-      publishedAt: new Date().toISOString(),
-    });
+await client.create({
+  _type: "post",
+  title,
+  slug: { _type: "slug", current: slug }, // Added _type: "slug" for strictness
+  body: paragraphs.map(p => ({
+    _type: "block",
+    style: "normal",
+    children: [{ _type: "span", text: p.trim() }],
+  })),
+  publishedAt: new Date().toISOString(),
+});
 
     return NextResponse.json({ success: true });
   } catch (err) {
