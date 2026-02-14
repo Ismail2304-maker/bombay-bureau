@@ -1,5 +1,4 @@
-// news-site/app/api/cron/news/route.ts
-console.log("AUTOMATION V3 WITH IMAGE RUNNING")
+console.log("AUTOMATION V4 FINAL STABLE")
 
 import { NextResponse } from "next/server"
 import OpenAI from "openai"
@@ -36,17 +35,16 @@ function detectCategory(title: string) {
   const lower = title.toLowerCase()
   if (lower.includes("india")) return CATEGORY_MAP.india
   if (lower.includes("tech")) return CATEGORY_MAP.technology
-  if (lower.includes("market")) return CATEGORY_MAP.business
-  if (lower.includes("election")) return CATEGORY_MAP.politics
-  return Math.random() > 0.5
-    ? CATEGORY_MAP.india
-    : CATEGORY_MAP.world
+  if (lower.includes("market") || lower.includes("economy")) return CATEGORY_MAP.business
+  if (lower.includes("election") || lower.includes("policy")) return CATEGORY_MAP.politics
+  return Math.random() > 0.5 ? CATEGORY_MAP.india : CATEGORY_MAP.world
 }
 
 export async function GET() {
   try {
+    // 🔹 Fetch real news
     const newsRes = await fetch(
-      `https://newsapi.org/v2/everything?q=india OR world OR politics OR business OR technology&pageSize=5&sortBy=publishedAt&apiKey=${process.env.NEWS_API_KEY}`
+      `https://newsapi.org/v2/everything?q=india OR world OR politics OR business OR technology&pageSize=5&sortBy=publishedAt&language=en&apiKey=${process.env.NEWS_API_KEY}`
     )
 
     const newsData = await newsRes.json()
@@ -58,10 +56,11 @@ export async function GET() {
     const randomArticle =
       newsData.articles[Math.floor(Math.random() * newsData.articles.length)]
 
-    const originalTitle = randomArticle.title
+    const originalTitle = randomArticle.title || "Global Developments"
     const originalDescription = randomArticle.description || ""
-    const imageUrl = randomArticle.urlToImage
+    const imageUrl = randomArticle.urlToImage || null
 
+    // 🔹 AI Rewrite
     const completion = await openai.chat.completions.create({
       model: "openai/gpt-4o-mini",
       messages: [
@@ -71,10 +70,11 @@ export async function GET() {
 You are a senior journalist at Bombay Bureau.
 Rewrite the article professionally.
 No markdown.
-Return ONLY JSON:
+Return ONLY valid JSON:
+
 {
   "title": "Clean headline",
-  "body": "800 word article"
+  "body": "800 word article in plain paragraphs"
 }
 `,
         },
@@ -97,8 +97,14 @@ Rewrite into a full professional article dated today.
     const raw = completion.choices[0].message.content
     if (!raw) throw new Error("No AI response")
 
-    const parsed = JSON.parse(raw)
+    let parsed
+    try {
+      parsed = JSON.parse(raw)
+    } catch {
+      throw new Error("AI returned invalid JSON")
+    }
 
+    // 🔹 Convert to Portable Text
     const portableBody = parsed.body
       .split("\n")
       .filter((p: string) => p.trim() !== "")
@@ -114,17 +120,27 @@ Rewrite into a full professional article dated today.
         ],
       }))
 
+    // 🔹 Upload Image (if exists)
     let imageAsset = null
 
     if (imageUrl) {
-      const imgRes = await fetch(imageUrl)
-      const imgBuffer = await imgRes.arrayBuffer()
+      try {
+        const imgRes = await fetch(imageUrl)
+        const imgBuffer = await imgRes.arrayBuffer()
 
-      imageAsset = await sanity.assets.upload("image", Buffer.from(imgBuffer), {
-        filename: "news.jpg",
-      })
+        imageAsset = await sanity.assets.upload(
+          "image",
+          Buffer.from(imgBuffer),
+          { filename: "news.jpg" }
+        )
+      } catch {
+        console.log("Image upload failed — continuing without image")
+      }
     }
 
+    const categoryId = detectCategory(parsed.title)
+
+    // 🔹 Create Post in Sanity
     await sanity.create({
       _type: "post",
       title: parsed.title,
@@ -138,23 +154,29 @@ Rewrite into a full professional article dated today.
       publishedAt: new Date().toISOString(),
       body: portableBody,
       views: 0,
+
       author: {
         _type: "reference",
         _ref: AUTHOR_ID,
       },
+
       categories: [
         {
           _type: "reference",
-          _ref: detectCategory(parsed.title),
+          _key: crypto.randomUUID(), // ✅ FIXED missing key
+          _ref: categoryId,
         },
       ],
+
       mainImage: imageAsset
         ? {
             _type: "image",
+            _key: crypto.randomUUID(), // ✅ key added
             asset: {
               _type: "reference",
               _ref: imageAsset._id,
             },
+            alt: parsed.title, // ✅ alt text auto-filled
           }
         : undefined,
     })
