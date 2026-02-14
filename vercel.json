@@ -1,3 +1,8 @@
 {
-  "buildCommand": "NEXT_DISABLE_TURBOPACK=1 next build"
+  "crons": [
+    {
+      "path": "/api/cron/news",
+      "schedule": "*/30 0-20 * * *"
+    }
+  ]
 }
