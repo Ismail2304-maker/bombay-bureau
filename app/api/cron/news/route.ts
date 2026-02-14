@@ -1,11 +1,12 @@
 // news-site/app/api/cron/news/route.ts
+console.log("AUTOMATION V3 WITH IMAGE RUNNING")
 
 import { NextResponse } from "next/server"
 import OpenAI from "openai"
 import { createClient } from "@sanity/client"
 
-export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -32,31 +33,35 @@ const CATEGORY_MAP: Record<string, string> = {
 }
 
 function detectCategory(title: string) {
-  const t = title.toLowerCase()
-  if (t.includes("india")) return CATEGORY_MAP.india
-  if (t.includes("tech")) return CATEGORY_MAP.technology
-  if (t.includes("market") || t.includes("economy")) return CATEGORY_MAP.business
-  if (t.includes("election") || t.includes("policy")) return CATEGORY_MAP.politics
-  return CATEGORY_MAP.world
+  const lower = title.toLowerCase()
+  if (lower.includes("india")) return CATEGORY_MAP.india
+  if (lower.includes("tech")) return CATEGORY_MAP.technology
+  if (lower.includes("market")) return CATEGORY_MAP.business
+  if (lower.includes("election")) return CATEGORY_MAP.politics
+  return Math.random() > 0.5
+    ? CATEGORY_MAP.india
+    : CATEGORY_MAP.world
 }
 
 export async function GET() {
   try {
-    // 1️⃣ Fetch Latest Global News
     const newsRes = await fetch(
-      `https://newsapi.org/v2/everything?q=(India OR World OR Politics OR Business OR Technology)&language=en&sortBy=publishedAt&pageSize=10&apiKey=${process.env.NEWS_API_KEY}`
+      `https://newsapi.org/v2/everything?q=india OR world OR politics OR business OR technology&pageSize=5&sortBy=publishedAt&apiKey=${process.env.NEWS_API_KEY}`
     )
 
     const newsData = await newsRes.json()
 
-    if (!newsData.articles || newsData.articles.length === 0) {
-      throw new Error("No news articles found")
+    if (!newsData.articles?.length) {
+      return NextResponse.json({ success: false, message: "No news articles found" })
     }
 
-    const article =
+    const randomArticle =
       newsData.articles[Math.floor(Math.random() * newsData.articles.length)]
 
-    // 2️⃣ AI Rewrite
+    const originalTitle = randomArticle.title
+    const originalDescription = randomArticle.description || ""
+    const imageUrl = randomArticle.urlToImage
+
     const completion = await openai.chat.completions.create({
       model: "openai/gpt-4o-mini",
       messages: [
@@ -64,44 +69,36 @@ export async function GET() {
           role: "system",
           content: `
 You are a senior journalist at Bombay Bureau.
-
-Rewrite professionally.
-Do NOT use markdown.
-Return ONLY valid JSON:
-
+Rewrite the article professionally.
+No markdown.
+Return ONLY JSON:
 {
- "title": "Clean headline",
- "body": "800 word professional article"
+  "title": "Clean headline",
+  "body": "800 word article"
 }
 `,
         },
         {
           role: "user",
           content: `
-Original Headline:
-${article.title}
+Headline:
+${originalTitle}
 
-Original Description:
-${article.description || ""}
+Summary:
+${originalDescription}
+
+Rewrite into a full professional article dated today.
 `,
         },
       ],
       temperature: 0.7,
     })
 
-    const parsed = JSON.parse(completion.choices[0].message.content!)
+    const raw = completion.choices[0].message.content
+    if (!raw) throw new Error("No AI response")
 
-    // 3️⃣ Upload Image to Sanity (if exists)
-    let imageAsset = null
+    const parsed = JSON.parse(raw)
 
-    if (article.urlToImage) {
-      const imageResponse = await fetch(article.urlToImage)
-      const imageBuffer = Buffer.from(await imageResponse.arrayBuffer())
-
-      imageAsset = await sanity.assets.upload("image", imageBuffer)
-    }
-
-    // 4️⃣ Convert Body to Portable Text
     const portableBody = parsed.body
       .split("\n")
       .filter((p: string) => p.trim() !== "")
@@ -117,7 +114,17 @@ ${article.description || ""}
         ],
       }))
 
-    // 5️⃣ Create Post
+    let imageAsset = null
+
+    if (imageUrl) {
+      const imgRes = await fetch(imageUrl)
+      const imgBuffer = await imgRes.arrayBuffer()
+
+      imageAsset = await sanity.assets.upload("image", Buffer.from(imgBuffer), {
+        filename: "news.jpg",
+      })
+    }
+
     await sanity.create({
       _type: "post",
       title: parsed.title,
@@ -154,7 +161,7 @@ ${article.description || ""}
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error(error)
+    console.error("AUTOMATION ERROR:", error)
     return NextResponse.json({ success: false })
   }
 }
