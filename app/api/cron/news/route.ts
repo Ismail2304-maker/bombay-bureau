@@ -9,6 +9,7 @@ export const runtime = "nodejs"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
+  baseURL: "https://openrouter.ai/api/v1",
 })
 
 const sanity = createClient({
@@ -159,8 +160,11 @@ Rewrite into a full 800-word professional article dated today.
     })
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error(error)
-    return NextResponse.json({ success: false })
-  }
+  } catch (error: any) {
+  console.error("AUTOMATION ERROR:", error)
+  return NextResponse.json({
+    success: false,
+    message: error?.message || "Unknown error"
+  })
+}
 }
