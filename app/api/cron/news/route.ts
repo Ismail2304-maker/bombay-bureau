@@ -2,18 +2,21 @@ import { NextResponse } from "next/server"
 import { client } from "@/lib/sanity"
 import OpenAI from "openai"
 
+export const runtime = "nodejs"
+
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY!,
 })
 
 export async function GET() {
   try {
 
     const prompt = `
-Write a breaking global news article in Reuters style.
-600-800 words.
+Write a professional global news article.
+Tone: international but India-aware.
+Length: 500-700 words.
 Include headline and body.
-Topic: Latest world geopolitics or India.
+Topic: latest geopolitics, India, world affairs or economy.
 `
 
     const completion = await openai.chat.completions.create({
@@ -24,7 +27,6 @@ Topic: Latest world geopolitics or India.
     const text = completion.choices[0].message.content || ""
 
     const title = text.split("\n")[0].replace("#", "").trim()
-    const body = text.replace(title, "")
 
     const slug = title
       .toLowerCase()
@@ -35,13 +37,24 @@ Topic: Latest world geopolitics or India.
       _type: "post",
       title,
       slug: { current: slug },
-      body,
+      body: [
+        {
+          _type: "block",
+          children: [
+            {
+              _type: "span",
+              text,
+            },
+          ],
+        },
+      ],
       publishedAt: new Date().toISOString(),
     })
 
     return NextResponse.json({ success: true })
 
-  } catch (err) {
+  } catch (e) {
+    console.log(e)
     return NextResponse.json({ error: "failed" })
   }
 }
