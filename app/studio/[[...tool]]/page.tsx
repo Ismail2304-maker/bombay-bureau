@@ -1,11 +1,12 @@
-import { NextStudio } from "next-sanity/studio";
-import config from "../../../sanity.config";
+'use client'
 
-// VERY IMPORTANT → must be dynamic on Vercel
-export const dynamic = "force-dynamic";
+import { NextStudio } from "next-sanity/studio"
+import config from "@/sanity.config"
 
-export { metadata, viewport } from "next-sanity/studio";
+export const dynamic = "force-dynamic"
+
+export { metadata, viewport } from "next-sanity/studio"
 
 export default function StudioPage() {
-  return <NextStudio config={config} />;
+  return <NextStudio config={config} />
 }
