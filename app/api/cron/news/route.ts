@@ -9,7 +9,7 @@ export const runtime = "nodejs"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
-  baseURL: "https://openrouter.ai/api/v1",
+  baseURL: process.env.OPENAI_BASE_URL,
 })
 
 const sanity = createClient({
@@ -20,10 +20,8 @@ const sanity = createClient({
   useCdn: false,
 })
 
-// 🔥 Your real Author ID
 const AUTHOR_ID = "0664ef92-6a72-48c3-b1bf-2e2b73ac67c9"
 
-// 🔥 Your category IDs
 const CATEGORY_MAP: Record<string, string> = {
   india: "18088637-4ede-4976-b169-d55b6a298d8e",
   world: "b4863bf0-a551-4f82-b18c-33b5f76d077e",
@@ -34,29 +32,20 @@ const CATEGORY_MAP: Record<string, string> = {
 }
 
 function detectCategory(title: string) {
-  const lower = title.toLowerCase()
-
-  if (lower.includes("india")) return CATEGORY_MAP.india
-  if (lower.includes("tech")) return CATEGORY_MAP.technology
-  if (lower.includes("market") || lower.includes("economy"))
-    return CATEGORY_MAP.business
-  if (lower.includes("election") || lower.includes("policy"))
-    return CATEGORY_MAP.politics
-
-  // Default bias India & World
-  return Math.random() > 0.5
-    ? CATEGORY_MAP.india
-    : CATEGORY_MAP.world
+  const t = title.toLowerCase()
+  if (t.includes("india")) return CATEGORY_MAP.india
+  if (t.includes("tech")) return CATEGORY_MAP.technology
+  if (t.includes("market") || t.includes("economy")) return CATEGORY_MAP.business
+  if (t.includes("election") || t.includes("policy")) return CATEGORY_MAP.politics
+  return CATEGORY_MAP.world
 }
 
 export async function GET() {
   try {
-    console.log("🚀 AUTOMATION V2 RUNNING")
-
-    // 1️⃣ Fetch real news
+    // 1️⃣ Fetch Latest Global News
     const newsRes = await fetch(
-  `https://newsapi.org/v2/everything?q=India OR world OR politics OR business OR technology&language=en&sortBy=publishedAt&pageSize=10&apiKey=${process.env.NEWS_API_KEY}`
-)
+      `https://newsapi.org/v2/everything?q=(India OR World OR Politics OR Business OR Technology)&language=en&sortBy=publishedAt&pageSize=10&apiKey=${process.env.NEWS_API_KEY}`
+    )
 
     const newsData = await newsRes.json()
 
@@ -64,34 +53,25 @@ export async function GET() {
       throw new Error("No news articles found")
     }
 
-    const randomArticle =
-      newsData.articles[
-        Math.floor(Math.random() * newsData.articles.length)
-      ]
+    const article =
+      newsData.articles[Math.floor(Math.random() * newsData.articles.length)]
 
-    const originalTitle = randomArticle.title
-    const originalDescription = randomArticle.description || ""
-
-    // 2️⃣ Rewrite using AI (strict JSON)
+    // 2️⃣ AI Rewrite
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.7,
+      model: "openai/gpt-4o-mini",
       messages: [
         {
           role: "system",
           content: `
 You are a senior journalist at Bombay Bureau.
 
-Rewrite the provided news professionally.
-Make it analytical and human.
-Do not copy sentences.
-No markdown.
-No formatting symbols.
+Rewrite professionally.
+Do NOT use markdown.
 Return ONLY valid JSON:
 
 {
-  "title": "Clean rewritten headline",
-  "body": "Full rewritten article in paragraph format"
+ "title": "Clean headline",
+ "body": "800 word professional article"
 }
 `,
         },
@@ -99,25 +79,29 @@ Return ONLY valid JSON:
           role: "user",
           content: `
 Original Headline:
-${originalTitle}
+${article.title}
 
-Original Summary:
-${originalDescription}
-
-Rewrite into a full 800-word professional article dated today.
+Original Description:
+${article.description || ""}
 `,
         },
       ],
+      temperature: 0.7,
     })
 
-    const raw = completion.choices[0].message.content
-    if (!raw) throw new Error("No AI response")
+    const parsed = JSON.parse(completion.choices[0].message.content!)
 
-    const parsed = JSON.parse(raw)
+    // 3️⃣ Upload Image to Sanity (if exists)
+    let imageAsset = null
 
-    const categoryId = detectCategory(parsed.title)
+    if (article.urlToImage) {
+      const imageResponse = await fetch(article.urlToImage)
+      const imageBuffer = Buffer.from(await imageResponse.arrayBuffer())
 
-    // 3️⃣ Convert to Portable Text
+      imageAsset = await sanity.assets.upload("image", imageBuffer)
+    }
+
+    // 4️⃣ Convert Body to Portable Text
     const portableBody = parsed.body
       .split("\n")
       .filter((p: string) => p.trim() !== "")
@@ -128,15 +112,15 @@ Rewrite into a full 800-word professional article dated today.
           {
             _type: "span",
             _key: crypto.randomUUID(),
-            text: paragraph.trim(),
+            text: paragraph,
           },
         ],
       }))
 
-    // 4️⃣ Save to Sanity
+    // 5️⃣ Create Post
     await sanity.create({
       _type: "post",
-      title: parsed.title.trim(),
+      title: parsed.title,
       slug: {
         _type: "slug",
         current: parsed.title
@@ -154,17 +138,23 @@ Rewrite into a full 800-word professional article dated today.
       categories: [
         {
           _type: "reference",
-          _ref: categoryId,
+          _ref: detectCategory(parsed.title),
         },
       ],
+      mainImage: imageAsset
+        ? {
+            _type: "image",
+            asset: {
+              _type: "reference",
+              _ref: imageAsset._id,
+            },
+          }
+        : undefined,
     })
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
-  console.error("AUTOMATION ERROR:", error)
-  return NextResponse.json({
-    success: false,
-    message: error?.message || "Unknown error"
-  })
-}
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json({ success: false })
+  }
 }
