@@ -51,14 +51,15 @@ export default async function CategoryPage(props: any) {
           <Link href={`/article/${lead.slug.current}`}>
             <div className="grid md:grid-cols-2 gap-8 mb-14 cursor-pointer group">
               
-              <Image
-                src={urlFor(lead.mainImage).width(1200).url()}
-                alt=""
-                width={1200}
-                height={700}
-                className="rounded-lg"
-              />
-
+              {lead?.mainImage && (
+  <Image
+    src={urlFor(lead.mainImage).width(1200).url()}
+    alt=""
+    width={1200}
+    height={700}
+    className="rounded-lg"
+  />
+)}
               <div>
                 <h2 className="text-3xl font-serif group-hover:text-gray-300 transition">
                   {lead.title}
@@ -84,13 +85,15 @@ export default async function CategoryPage(props: any) {
                 <div className="grid grid-cols-3 gap-6 border-b border-gray-800 pb-8 group cursor-pointer">
 
                   <div className="col-span-1">
-                    <Image
-                      src={urlFor(post.mainImage).width(400).url()}
-                      alt=""
-                      width={400}
-                      height={250}
-                      className="rounded-md"
-                    />
+                    {post?.mainImage && (
+  <Image
+    src={urlFor(post.mainImage).width(400).url()}
+    alt=""
+    width={400}
+    height={250}
+    className="rounded-md"
+  />
+)}
                   </div>
 
                   <div className="col-span-2">
