@@ -11,7 +11,12 @@ import { cache } from "react";
 
 const builder = imageUrlBuilder(client);
 function urlFor(source: any) {
-  return builder.image(source);
+  try {
+    if (!source?.asset?._ref) return null;
+    return builder.image(source);
+  } catch {
+    return null;
+  }
 }
 
 export const revalidate = 60;
@@ -156,28 +161,29 @@ const articleText =
   </div>
 
   {/* HERO IMAGE */}
-  {post.mainImage && (
+  {(() => {
+  const imageBuilder = urlFor(post.mainImage);
+  return imageBuilder ? (
     <figure className="mb-10">
       <Image
-        src={urlFor(post.mainImage).width(1800).url()}
-        alt={post.mainImage.alt || ""}
+        src={imageBuilder.width(1800).url()}
+        alt={post.mainImage?.alt || post.title || ""}
         width={1800}
         height={1000}
         priority
-        placeholder="blur"
-        blurDataURL={`${urlFor(post.mainImage).width(20).blur(50).url()}`}
         className="rounded-xl"
       />
 
-      {/* CAPTION */}
       {post.mainImage?.alt && (
         <figcaption className="text-xs text-gray-500 mt-3">
           {post.mainImage.alt}
         </figcaption>
       )}
     </figure>
-  )}
+  ) : null;
+})()}
 
+     
   {/* ARTICLE BODY */}
   <div className="prose prose-invert max-w-none prose-lg leading-relaxed">
 
@@ -229,15 +235,18 @@ const articleText =
             <Link key={m.slug.current} href={`/article/${m.slug.current}`}>
               <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">
 
-                {m.mainImage && (
-                  <Image
-                    src={urlFor(m.mainImage).width(400).url()}
-                    alt=""
-                    width={400}
-                    height={250}
-                    className="rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
-                  />
-                )}
+                {(() => {
+  const imageBuilder = urlFor(m.mainImage);
+  return imageBuilder ? (
+    <Image
+      src={imageBuilder.width(400).url()}
+      alt={m.title || ""}
+      width={400}
+      height={250}
+      className="rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
+    />
+  ) : null;
+})()}
 
                 <h3 className="font-serif leading-snug group-hover:text-gray-300 transition-colors">
                   {m.title}
