@@ -1,7 +1,7 @@
 import ForYou from "@/components/ForYou";
 import Header from "@/components/Header";
 import Link from "next/link";
-import Image from "next/image";
+
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import { cache } from "react";
@@ -119,16 +119,13 @@ export default async function Home() {
               <Link href={`/article/${posts[0].slug.current}`}>
                 <div className="group cursor-pointer">
                   <div className="overflow-hidden rounded-lg">
-                    <Image
-                      src={urlFor(posts[0].mainImage).width(1600).url()}
-                      alt=""
-                      width={1600}
-                      height={900}
-                      priority
-                      placeholder="blur"
-                      blurDataURL={`${urlFor(posts[0].mainImage).width(20).blur(50).url()}`}
-                      className="transition-transform duration-700 group-hover:scale-[1.05]"
-                    />
+                    {posts[0]?.mainImage && (
+  <img
+    src={urlFor(posts[0].mainImage).width(1600).url()}
+    alt=""
+    className="w-full rounded-lg transition-transform duration-700 group-hover:scale-[1.05]"
+  />
+)}
                   </div>
 
                   <h2 className="text-5xl font-serif mt-6 group-hover:text-gray-300 transition-colors">
@@ -148,16 +145,13 @@ export default async function Home() {
 
                       {post.mainImage && (
                         <div className="overflow-hidden rounded-lg mb-2">
-                          <Image
-                            src={urlFor(post.mainImage).width(600).url()}
-                            alt=""
-                            width={600}
-                            height={400}
-                            loading="lazy"
-                            placeholder="blur"
-                            blurDataURL={`${urlFor(post.mainImage).width(20).blur(50).url()}`}
-                            className="transition-transform duration-700 group-hover:scale-[1.06]"
-                          />
+                          {post?.mainImage && (
+  <img
+    src={urlFor(post.mainImage).width(600).url()}
+    alt=""
+    className="w-full rounded-lg transition-transform duration-700 group-hover:scale-[1.06]"
+  />
+)}
                         </div>
                       )}
 
@@ -186,15 +180,13 @@ export default async function Home() {
   <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
     <div className="flex gap-3 py-3 border-b border-gray-800 hover:translate-x-1 transition cursor-pointer">
 
-      {post.mainImage && (
-        <Image
-          src={urlFor(post.mainImage).width(80).url()}
-          alt=""
-          width={80}
-          height={60}
-          className="rounded-md object-cover"
-        />
-      )}
+      {post?.mainImage && (
+  <img
+    src={urlFor(post.mainImage).width(80).url()}
+    alt=""
+    className="w-[80px] h-[60px] object-cover rounded-md"
+  />
+)}
 
       <div>
         <p className="text-xs text-gray-500">{i + 1}</p>
@@ -287,13 +279,13 @@ export default async function Home() {
           <Link href={`/article/${main.slug.current}`}>
             <div className="group cursor-pointer">
 
-              <Image
-                src={urlFor(main.mainImage).width(1600).url()}
-                alt=""
-                width={1600}
-                height={900}
-                className="rounded-lg mb-5"
-              />
+              {main?.mainImage && (
+  <img
+    src={urlFor(main.mainImage).width(1600).url()}
+    alt=""
+    className="w-full rounded-lg mb-5"
+  />
+)}
 
               <h2 className="text-4xl font-serif group-hover:text-gray-300 transition">
                 {main.title}
@@ -319,13 +311,13 @@ export default async function Home() {
             <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
               <div className="flex gap-4 group cursor-pointer">
 
-                <Image
-                  src={urlFor(post.mainImage).width(300).url()}
-                  alt=""
-                  width={120}
-                  height={80}
-                  className="rounded-md"
-                />
+                {post?.mainImage && (
+  <img
+    src={urlFor(post.mainImage).width(300).url()}
+    alt=""
+    className="w-[120px] h-[80px] object-cover rounded-md"
+  />
+)}
 
                 <div>
                   <h3 className="font-serif group-hover:text-gray-300 transition">

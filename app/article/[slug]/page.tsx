@@ -6,7 +6,7 @@ import TrackView from "@/components/TrackView";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import Link from "next/link";
-import Image from "next/image";
+
 import { cache } from "react";
 
 const builder = imageUrlBuilder(client);
@@ -158,16 +158,11 @@ const articleText =
   {/* HERO IMAGE */}
   {post.mainImage && (
     <figure className="mb-10">
-      <Image
-        src={urlFor(post.mainImage).width(1800).url()}
-        alt={post.mainImage.alt || ""}
-        width={1800}
-        height={1000}
-        priority
-        placeholder="blur"
-        blurDataURL={`${urlFor(post.mainImage).width(20).blur(50).url()}`}
-        className="rounded-xl"
-      />
+      <img
+  src={urlFor(post.mainImage).width(1800).url()}
+  alt={post.mainImage?.alt || ""}
+  className="rounded-xl w-full"
+/>
 
       {/* CAPTION */}
       {post.mainImage?.alt && (
@@ -229,15 +224,13 @@ const articleText =
             <Link key={m.slug.current} href={`/article/${m.slug.current}`}>
               <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">
 
-                {m.mainImage && (
-                  <Image
-                    src={urlFor(m.mainImage).width(400).url()}
-                    alt=""
-                    width={400}
-                    height={250}
-                    className="rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
-                  />
-                )}
+                {m?.mainImage && (
+  <img
+    src={urlFor(m.mainImage).width(400).url()}
+    alt=""
+    className="w-full h-[250px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
+  />
+)}
 
                 <h3 className="font-serif leading-snug group-hover:text-gray-300 transition-colors">
                   {m.title}
