@@ -79,14 +79,12 @@ export default async function SearchPage({
             <div className="flex gap-6 border-b border-gray-900 pb-8 group">
 
               {post.mainImage && (
-                <Image
-                  src={urlFor(post.mainImage).url()}
-                  alt=""
-                  width={220}
-                  height={140}
-                  className="rounded-md"
-                />
-              )}
+  <img
+    src={urlFor(post.mainImage).width(400).url()}
+    alt=""
+    className="w-[220px] h-[140px] object-cover rounded-md"
+  />
+)}
 
               <div>
                 <p className="text-xs text-gray-400 uppercase mb-1">

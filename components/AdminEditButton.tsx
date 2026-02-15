@@ -22,9 +22,10 @@ export default function AdminEditButton({ postId }: { postId: string }) {
 
   if (!allowed) return null;
 
+
   return (
     <a
-      href={`https://www.sanity.io/manage/personal/project/b9he4bb9/production/desk/post;${postId}`}
+      href="https://bombay-bureau-admin.sanity.studio"
       target="_blank"
       className="fixed bottom-6 right-6 bg-white text-black px-5 py-3 rounded-full shadow-lg font-semibold z-50 hover:scale-105 transition"
     >
