@@ -17,7 +17,7 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
 
         {/* TOP BAR */}
-        <div className="w-full px-4 md:px-8 py-4 md:py-6 flex items-center relative">
+        <div className="w-full px-4 md:px-12 py-4 md:py-6 flex items-center relative">
 
           {/* LEFT ICON */}
           <div className="flex items-center gap-5 text-white">
@@ -45,17 +45,17 @@ export default function Header() {
 
           {/* LOGO */}
           <Link
-            href="/"
-            className="
-              text-center w-max mx-auto
-              md:absolute md:left-1/2 md:-translate-x-1/2
-            "
-          >
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif tracking-wide">
+  href="/"
+  className="
+    flex flex-col items-start md:items-center
+    md:absolute md:left-1/2 md:-translate-x-1/2
+  "
+>
+            <h1 className="text-2xl sm:text-4xl md:text-7xl font-serif tracking-wide">
               BOMBAY BUREAU
             </h1>
 
-            <p className="hidden sm:block text-sm md:text-lg text-gray-400 mt-1">
+            <p className="hidden md:block text-sm md:text-lg text-gray-400 mt-1">
               Global affairs, Indian perspective
             </p>
           </Link>
