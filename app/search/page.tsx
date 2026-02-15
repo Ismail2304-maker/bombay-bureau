@@ -45,7 +45,28 @@ export default async function SearchPage({
   );
 
   return (
-    <main className="bg-black text-white min-h-screen px-6 pt-40 max-w-5xl mx-auto">
+  <main className="relative bg-black text-white min-h-screen px-6 pt-40 max-w-5xl mx-auto">
+
+    {/* 🔙 BACK TO HOME */}
+    <Link
+      href="/"
+      className="absolute top-28 left-6 md:left-0 md:-left-16 text-white hover:opacity-70 transition-opacity"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={2.5}
+        stroke="currentColor"
+        className="w-8 h-8"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15 19l-7-7 7-7"
+        />
+      </svg>
+    </Link>
 
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4 md:mb-6">
         Search results for: <span className="text-gray-400">{q}</span>
