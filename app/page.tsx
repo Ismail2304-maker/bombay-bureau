@@ -109,7 +109,7 @@ export default async function Home() {
       <Header />
 
       {/* HERO + SIDEBAR */}
-      <section className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10 px-6 mt-10 mb-10">
+      <section className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6 md:gap-10 px-4 md:px-6 mt-6 md:mt-10 mb-6 md:mb-10">
 
         {/* LEFT */}
         <div className="md:col-span-2">
@@ -127,17 +127,17 @@ export default async function Home() {
 )}
                   </div>
 
-                  <h2 className="text-5xl font-serif mt-6 group-hover:text-gray-300 transition-colors">
+                  <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif mt-4 md:mt-6 group-hover:text-gray-300 transition-colors">
                     {posts[0].title}
                   </h2>
 
-                  <p className="text-gray-400 mt-4 text-lg max-w-2xl">
+                  <p className="text-gray-400 mt-3 md:mt-4 text-sm sm:text-base md:text-lg max-w-2xl">
                     {posts[0].excerpt}
                   </p>
                 </div>
               </Link>
 
-              <div className="grid grid-cols-3 gap-6 mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
                 {posts.slice(1, 4).map((post: any) => (
                   <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
                     <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">
@@ -167,7 +167,7 @@ export default async function Home() {
         </div>
 
         {/* SIDEBAR */}
-        <aside className="space-y-12 sticky top-32 h-fit">
+       <aside className="space-y-8 md:space-y-12 md:sticky md:top-32 h-fit">
 
           {/* LATEST */}
           <div>
@@ -259,7 +259,7 @@ export default async function Home() {
 
     {/* TITLE ROW */}
     <div className="flex items-center gap-2 text-white">
-      <h2 className="text-3xl font-serif tracking-tight group-hover:opacity-80 transition">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-serif tracking-tight group-hover:opacity-80 transition">
         {section.title}
       </h2>
       <span className="text-2xl mt-[2px]">›</span>
@@ -268,7 +268,7 @@ export default async function Home() {
   </div>
 </Link>
 
-      <div className="grid md:grid-cols-3 gap-10">
+      <div className="grid md:grid-cols-3 gap-6 md:gap-10">
 
         {/* LEFT BIG STORY */}
         <div className="md:col-span-2">
@@ -283,7 +283,7 @@ export default async function Home() {
   />
 )}
 
-              <h2 className="text-4xl font-serif group-hover:text-gray-300 transition">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif group-hover:text-gray-300 transition">
                 {main.title}
               </h2>
 
@@ -340,7 +340,7 @@ export default async function Home() {
       {/* FOOTER */}
       <footer className="border-t border-gray-800 mt-24 bg-black text-gray-300">
 
-  <div className="max-w-7xl mx-auto px-6 py-16">
+  <div className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-16">
 
     {/* LOGO */}
     <div className="mb-8">

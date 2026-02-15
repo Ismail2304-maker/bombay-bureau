@@ -58,10 +58,10 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="bg-zinc-900 rounded-2xl w-[420px] p-10 border border-zinc-800 shadow-2xl">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4">
+      <div className="bg-zinc-900 rounded-2xl w-full max-w-[420px] p-6 md:p-10 mx-4 border border-zinc-800 shadow-2xl">
 
-        <h1 className="text-3xl font-serif text-white text-center mb-1">
+        <h1 className="text-2xl md:text-3xl font-serif text-white text-center mb-1">
           BOMBAY BUREAU
         </h1>
 

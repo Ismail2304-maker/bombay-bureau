@@ -102,9 +102,9 @@ const articleText =
       />
       {/* HEADER */}
       <header className="border-b border-gray-800">
-        <div className="w-full px-8 py-6 flex items-center justify-between">
+        <div className="w-full px-4 md:px-8 py-4 md:py-6 flex items-center justify-between">
           <Link href="/" className="flex flex-col items-center leading-tight">
-  <h1 className="text-4xl font-serif tracking-tight">
+  <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif tracking-tight">
     BOMBAY BUREAU
   </h1>
 
@@ -118,7 +118,7 @@ const articleText =
       </header>
 
       {/* ARTICLE */}
-      <article className="max-w-[820px] mx-auto px-6 py-14">
+      <article className="max-w-[820px] mx-auto px-4 md:px-6 py-8 md:py-14">
 
   {/* CATEGORY + DATE */}
   <div className="mb-6">
@@ -130,12 +130,12 @@ const articleText =
   </div>
 
   {/* HEADLINE */}
-  <h1 className="text-4xl md:text-6xl font-serif leading-[1.1] tracking-tight mb-6">
+ <h1 className="text-2xl sm:text-3xl md:text-6xl font-serif leading-tight md:leading-[1.1] tracking-tight mb-4 md:mb-6">
     {post.title}
   </h1>
 
   {/* META LINE */}
-  <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
+  <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-gray-400 mb-6 md:mb-8">
     <ListenButton text={articleText} />
     <span>•</span>
 
@@ -161,7 +161,7 @@ const articleText =
       <img
   src={urlFor(post.mainImage).width(1800).url()}
   alt={post.mainImage?.alt || ""}
-  className="rounded-xl w-full"
+  className="rounded-lg md:rounded-xl w-full"
 />
 
       {/* CAPTION */}
@@ -174,7 +174,7 @@ const articleText =
   )}
 
   {/* ARTICLE BODY */}
-  <div className="prose prose-invert max-w-none prose-lg leading-relaxed">
+  <div className="prose prose-invert max-w-none prose-base md:prose-lg leading-relaxed">
 
     {post.body?.map((block: any, i: number) => {
       if (block._type === "block") {
@@ -187,7 +187,7 @@ const articleText =
           return (
             <p
               key={i}
-              className="first-letter:text-7xl first-letter:font-serif first-letter:mr-3 first-letter:float-left first-letter:leading-none"
+               className="first-letter:text-5xl md:first-letter:text-7xl first-letter:font-serif first-letter:mr-3 first-letter:float-left first-letter:leading-none"
             >
               {text}
             </p>
@@ -219,7 +219,7 @@ const articleText =
           More from BOMBAY BUREAU
         </h2>
 
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {more.map((m: any) => (
             <Link key={m.slug.current} href={`/article/${m.slug.current}`}>
               <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">

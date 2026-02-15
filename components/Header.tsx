@@ -15,11 +15,12 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
-        <div className="w-full px-8 py-6 flex items-center relative">
 
-          {/* LEFT ICONS */}
+        {/* TOP BAR */}
+        <div className="w-full px-4 md:px-8 py-4 md:py-6 flex items-center relative">
+
+          {/* LEFT ICON */}
           <div className="flex items-center gap-5 text-white">
-
             <button
               onClick={() => setSearchOpen(true)}
               className="hover:opacity-70 transition"
@@ -40,83 +41,79 @@ export default function Header() {
                 />
               </svg>
             </button>
-
           </div>
 
           {/* LOGO */}
           <Link
             href="/"
-            className="absolute left-1/2 -translate-x-1/2 text-center w-max mt-20"
+            className="
+              text-center w-max mx-auto
+              md:absolute md:left-1/2 md:-translate-x-1/2
+            "
           >
-            <h1 className="text-7xl font-serif tracking-wide">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif tracking-wide">
               BOMBAY BUREAU
             </h1>
-            <p className="text-lg text-gray-400 mt-1">
+
+            <p className="hidden sm:block text-sm md:text-lg text-gray-400 mt-1">
               Global affairs, Indian perspective
             </p>
           </Link>
 
-{/* USER MENU ONLY */}
-<div className="ml-auto pr-2">
-  <UserMenu />
-</div>
+          {/* USER MENU */}
+          <div className="ml-auto">
+            <UserMenu />
+          </div>
 
         </div>
 
         {/* NAVBAR */}
-        <nav className="border-t border-gray-800 mt-15">
-          <div className="flex justify-center gap-12 py-4 text-base">
+        <nav className="border-t border-gray-800">
+          <div className="
+            flex overflow-x-auto md:overflow-visible
+            justify-start md:justify-center
+            gap-6 md:gap-12
+            px-4 md:px-0
+            py-3 md:py-4
+            text-sm md:text-base
+            whitespace-nowrap
+          ">
 
-            <Link
-              href={isHome ? "/#india" : "/india"}
-              className={pathname === "/india" ? "text-white" : "text-gray-300"}
-            >
-              India
-            </Link>
+            {[
+              "India",
+              "World",
+              "Opinion",
+              "Politics",
+              "Business",
+              "Technology",
+              "About"
+            ].map((item) => {
+              const lower = item.toLowerCase();
 
-            <Link
-              href={isHome ? "/#world" : "/world"}
-              className={pathname === "/world" ? "text-white" : "text-gray-300"}
-            >
-              World
-            </Link>
+              return (
+                <Link
+                  key={item}
+                  href={
+                    item === "About"
+                      ? "/about"
+                      : isHome
+                      ? `/#${lower}`
+                      : `/${lower}`
+                  }
+                  className={
+                    pathname === `/${lower}`
+                      ? "text-white"
+                      : "text-gray-300 hover:text-white transition"
+                  }
+                >
+                  {item}
+                </Link>
+              );
+            })}
 
-            <Link
-              href={isHome ? "/#opinion" : "/opinion"}
-              className={pathname === "/opinion" ? "text-white" : "text-gray-300"}
-            >
-              Opinion
-            </Link>
-
-            <Link
-              href={isHome ? "/#politics" : "/politics"}
-              className={pathname === "/politics" ? "text-white" : "text-gray-300"}
-            >
-              Politics
-            </Link>
-
-            <Link
-              href={isHome ? "/#business" : "/business"}
-              className={pathname === "/business" ? "text-white" : "text-gray-300"}
-            >
-              Business
-            </Link>
-
-            <Link
-              href={isHome ? "/#technology" : "/technology"}
-              className={pathname === "/technology" ? "text-white" : "text-gray-300"}
-            >
-              Technology
-            </Link>
-            {/* ABOUT */}
-    <Link
-      href="/about"
-      className={pathname === "/about" ? "text-white" : "text-gray-300"}
-    >
-      About
-    </Link>
           </div>
         </nav>
+
       </header>
 
       {searchOpen && (
