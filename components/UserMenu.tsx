@@ -30,7 +30,7 @@ export default function UserMenu() {
   if (!user) {
     return (
       <Link href="/signin">
-        <button className="px-5 py-2 rounded-full border border-gray-700 text-sm hover:bg-white hover:text-black transition">
+        <button className="px-3 md:px-5 py-1.5 md:py-2 rounded-full border border-gray-700 text-xs md:text-sm hover:bg-white hover:text-black transition">
           Sign in
         </button>
       </Link>
