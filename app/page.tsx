@@ -1,4 +1,3 @@
-import ForYou from "@/components/ForYou";
 import Header from "@/components/Header";
 import Link from "next/link";
 
@@ -227,9 +226,6 @@ export default async function Home() {
         </aside>
       </section>
       
-      <div className="max-w-7xl mx-auto px-6 mt-20 border-t border-gray-800 pt-10">
-  <ForYou posts={JSON.parse(JSON.stringify(posts))} />
-</div>
             
     {/* CATEGORY SECTIONS */}
 <section className="max-w-7xl mx-auto px-6 mt-24 space-y-24">
