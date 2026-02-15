@@ -67,11 +67,14 @@ export default function UserMenu() {
                   </button>
                 </Link>
 
-                <Link href="/studio">
-                  <button className="text-left hover:text-white">
-                    Write article
-                  </button>
-                </Link>
+                <a
+  href="https://bombay-bureau-admin.sanity.studio"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-left hover:text-white"
+>
+  Write article
+</a>
               </>
             )}
 
