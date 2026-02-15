@@ -60,7 +60,17 @@ export async function GET() {
         messages: [
           {
             role: "system",
-            content: "Rewrite into a professional 500-word news article. Return ONLY JSON with { title, body }"
+            content: `
+Rewrite into a professional 400-600 word news article.
+
+Return ONLY valid JSON in this exact format:
+
+{
+  "title": "Clean headline",
+  "body": "Full article body text",
+  "altText": "SEO optimized descriptive alt text for the article image"
+}
+`
           },
           {
             role: "user",
@@ -88,15 +98,16 @@ export async function GET() {
     }));
 
     await sanity.create({
-      _type: "post",
-      title: parsed.title,
-      slug: {
-        _type: "slug",
-        current: parsed.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 96),
-      },
-      publishedAt: new Date().toISOString(),
-      body: portableBody,
-    });
+  _type: "post",
+  title: parsed.title,
+  slug: {
+    _type: "slug",
+    current: parsed.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 96),
+  },
+  publishedAt: new Date().toISOString(),
+  body: portableBody,
+  imageAlt: parsed.altText || "",
+});
 
     return NextResponse.json({ success: true });
   } catch (err) {
