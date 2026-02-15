@@ -8,15 +8,12 @@ import { cache } from "react";
 
 const builder = imageUrlBuilder(client);
 const urlFor = (source: any) => {
-  if (
-    !source ||
-    !source.asset ||
-    !source.asset._ref
-  ) {
+  try {
+    if (!source?.asset?._ref) return null;
+    return builder.image(source);
+  } catch {
     return null;
   }
-
-  return builder.image(source);
 };
 
 export const revalidate = 60;
@@ -124,7 +121,7 @@ export default async function Home() {
 
         {/* LEFT */}
         <div className="md:col-span-2">
-          {posts[0] && (
+          {posts.length > 0 && (
   <>
     <Link href={`/article/${posts[0].slug.current}`}>
       <div className="group cursor-pointer">
