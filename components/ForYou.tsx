@@ -2,19 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import imageUrlBuilder from "@sanity/image-url";
 import { client } from "@/lib/sanity";
 
 const builder = imageUrlBuilder(client);
-
-const urlFor = (source: any) => {
-  try {
-    if (!source?.asset?._ref) return null;
-    return builder.image(source);
-  } catch {
-    return null;
-  }
-};
+const urlFor = (source: any) => builder.image(source);
 
 export default function ForYou({ posts }: any) {
   const [items, setItems] = useState<any[]>([]);
@@ -47,31 +40,29 @@ export default function ForYou({ posts }: any) {
       </h2>
 
       <div className="grid md:grid-cols-4 gap-6">
-        {items.map((post: any) => {
-          const imageBuilder = urlFor(post.mainImage);
+        {items.map((post: any) => (
+          <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
+            <div className="group cursor-pointer">
 
-          return (
-            <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
-              <div className="group cursor-pointer">
+              {post.mainImage && (
+                <div className="overflow-hidden rounded-lg mb-3">
+                  <Image
+                    src={urlFor(post.mainImage).url()}
+                    alt=""
+                    width={400}
+                    height={250}
+                    className="transition-transform duration-700 group-hover:scale-[1.05]"
+                  />
+                </div>
+              )}
 
-                {imageBuilder && (
-                  <div className="overflow-hidden rounded-lg mb-3">
-                    <img
-                      src={imageBuilder.width(600).url()}
-                      alt=""
-                      className="w-full h-[250px] object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-                    />
-                  </div>
-                )}
+              <h3 className="font-serif group-hover:text-gray-300 transition-colors">
+                {post.title}
+              </h3>
 
-                <h3 className="font-serif group-hover:text-gray-300 transition-colors">
-                  {post.title}
-                </h3>
-
-              </div>
-            </Link>
-          );
-        })}
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );
