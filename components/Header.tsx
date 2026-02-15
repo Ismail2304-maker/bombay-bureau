@@ -56,10 +56,20 @@ export default function Header() {
             </p>
           </Link>
 
-          {/* USER MENU */}
-          <div className="ml-auto pr-2">
-            <UserMenu />
-          </div>
+          {/* ADMIN + USER MENU */}
+<div className="ml-auto pr-2 flex items-center gap-6">
+
+  <Link
+    href="https://bombay-bureau-admin.sanity.studio"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-sm text-gray-300 hover:text-white transition"
+  >
+    Write Article
+  </Link>
+
+  <UserMenu />
+</div>
 
         </div>
 
