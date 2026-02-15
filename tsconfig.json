@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "bombay-bureau-clean/next.config.mjs"  ],
   "exclude": ["node_modules"]
 }
