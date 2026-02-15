@@ -5,7 +5,7 @@ import Image from "next/image";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import { cache } from "react";
-
+export const dynamic = "force-dynamic";
 const builder = imageUrlBuilder(client);
 const urlFor = (source: any) => {
   try {
@@ -99,7 +99,7 @@ const getPosts = cache(async () => {
 
 export default async function Home() {
   const data = await getPosts();
-  const posts = data.all || [];
+  const posts = data?.all || [];
 
   const trending = (data.trendingRaw || [])
     .map((p: any) => {
