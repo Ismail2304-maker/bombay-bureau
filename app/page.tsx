@@ -59,15 +59,6 @@ const getPosts = cache(async () => {
   "caption": mainImage.alt
 },
 
-"opinion": *[_type=="post" && "Opinion" in categories[]->title]
-| order(publishedAt desc)[0..5]{
-  title,
-  slug,
-  mainImage,
-  "excerpt": pt::text(body)[0..140],
-  "caption": mainImage.alt
-},
-
 "business": *[_type=="post" && "Business" in categories[]->title]
 | order(publishedAt desc)[0..5]{
   title,
@@ -233,7 +224,6 @@ export default async function Home() {
 {[
   { title: "India", data: data.india },
   { title: "World", data: data.world },
-  { title: "Opinion", data: data.opinion },
   { title: "Politics", data: data.politics },
   { title: "Business", data: data.business },
   { title: "Technology", data: data.technology },

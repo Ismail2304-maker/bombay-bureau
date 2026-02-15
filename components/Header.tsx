@@ -80,7 +80,6 @@ export default function Header() {
             {[
               "India",
               "World",
-              "Opinion",
               "Politics",
               "Business",
               "Technology",

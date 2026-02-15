@@ -26,7 +26,13 @@ async function getPosts(category: string) {
 export default async function CategoryPage(props: any) {
   const params = await props.params;
   const categorySlug = params.category;
-
+  if (categorySlug.toLowerCase() === "opinion") {
+  return (
+    <main className="bg-black text-white min-h-screen flex items-center justify-center">
+      <h1 className="text-2xl font-serif">Category not available</h1>
+    </main>
+  );
+}
   const categoryName =
     categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1);
 
