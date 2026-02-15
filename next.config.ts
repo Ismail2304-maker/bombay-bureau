@@ -1,8 +1,9 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   images: {
-    domains: ['cdn.sanity.io'],
+    unoptimized: true,
   },
 };
 
-export default nextConfig; 
+export default nextConfig;
