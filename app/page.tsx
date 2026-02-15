@@ -102,7 +102,7 @@ const getPosts = cache(async () => {
 
 export default async function Home() {
   const data = await getPosts();
-  const posts = data.all;
+  const posts = data.all || [];
 
   const trending = (data.trendingRaw || [])
     .map((p: any) => {
@@ -129,18 +129,21 @@ export default async function Home() {
     <Link href={`/article/${posts[0].slug.current}`}>
       <div className="group cursor-pointer">
         <div className="overflow-hidden rounded-lg">
-          {urlFor(posts[0].mainImage) ? (
-            <Image
-              src={urlFor(posts[0].mainImage)!.width(1600).url()}
-              alt={posts[0].title}
-              width={1600}
-              height={900}
-              priority
-              className="rounded-lg"
-            />
-          ) : (
-            <div className="w-full h-[400px] bg-gray-800 rounded-lg" />
-          )}
+          {(() => {
+  const imageBuilder = urlFor(posts[0].mainImage);
+  return imageBuilder ? (
+    <Image
+      src={imageBuilder.width(1600).url()}
+      alt={posts[0].title || ""}
+      width={1600}
+      height={900}
+      priority
+      className="rounded-lg"
+    />
+  ) : (
+    <div className="w-full h-[400px] bg-gray-800 rounded-lg" />
+  );
+})()}
         </div>
 
         <h2 className="text-5xl font-serif mt-6 group-hover:text-gray-300 transition-colors">
@@ -157,18 +160,19 @@ export default async function Home() {
       {posts.slice(1, 4).map((post: any) => (
         <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
           <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">
-            {urlFor(post.mainImage) && (
-              <div className="overflow-hidden rounded-lg mb-2">
-                <Image
-                  src={urlFor(post.mainImage)!.width(600).url()}
-                  alt={post.title}
-                  width={600}
-                  height={400}
-                  loading="lazy"
-                  className="transition-transform duration-700 group-hover:scale-[1.06]"
-                />
-              </div>
-            )}
+            {(() => {
+  const imageBuilder = urlFor(post.mainImage);
+  return imageBuilder ? (
+    <Image
+      src={imageBuilder.width(600).url()}
+      alt={post.title || ""}
+      width={600}
+      height={400}
+      loading="lazy"
+      className="transition-transform duration-700 group-hover:scale-[1.06]"
+    />
+  ) : null;
+})()}
 
             <h3 className="font-serif group-hover:text-gray-300 transition-colors">
               {post.title}
@@ -194,15 +198,18 @@ export default async function Home() {
   <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
     <div className="flex gap-3 py-3 border-b border-gray-800 hover:translate-x-1 transition cursor-pointer">
 
-      {urlFor(post.mainImage) && (
-        <Image
-  src={urlFor(post.mainImage)!.width(80).url()}
-  alt={post.title}
-  width={80}
-  height={60}
-  className="rounded-md object-cover"
-/>
-      )}
+      {(() => {
+  const imageBuilder = urlFor(post.mainImage);
+  return imageBuilder ? (
+    <Image
+      src={imageBuilder.width(80).url()}
+      alt={post.title || ""}
+      width={80}
+      height={60}
+      className="rounded-md object-cover"
+    />
+  ) : null;
+})()}
 
       <div>
         <p className="text-xs text-gray-500">{i + 1}</p>
@@ -296,17 +303,20 @@ export default async function Home() {
             <div className="group cursor-pointer">
 
               
-  {urlFor(main.mainImage) ? (
-  <Image
-    src={urlFor(main.mainImage)!.width(1600).url()}
-    alt={main.title}
-    width={1600}
-    height={900}
-    className="rounded-lg mb-5"
-  />
-) : (
-  <div className="w-full h-[400px] bg-gray-800 rounded-lg mb-5" />
-)}
+  {(() => {
+  const imageBuilder = urlFor(main.mainImage);
+  return imageBuilder ? (
+    <Image
+      src={imageBuilder.width(1600).url()}
+      alt={main.title || ""}
+      width={1600}
+      height={900}
+      className="rounded-lg mb-5"
+    />
+  ) : (
+    <div className="w-full h-[400px] bg-gray-800 rounded-lg mb-5" />
+  );
+})()}
 
 
               <h2 className="text-4xl font-serif group-hover:text-gray-300 transition">
@@ -333,15 +343,18 @@ export default async function Home() {
             <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
               <div className="flex gap-4 group cursor-pointer">
 
-   {urlFor(post.mainImage) && (
-  <Image
-    src={urlFor(post.mainImage)!.width(300).url()}
-    alt={post.title}
-    width={120}
-    height={80}
-    className="rounded-md"
-  />
-)}         <div>
+   {(() => {
+  const imageBuilder = urlFor(post.mainImage);
+  return imageBuilder ? (
+    <Image
+      src={imageBuilder.width(300).url()}
+      alt={post.title || ""}
+      width={120}
+      height={80}
+      className="rounded-md"
+    />
+  ) : null;
+})()}        <div>
                   <h3 className="font-serif group-hover:text-gray-300 transition">
                     {post.title}
                   </h3>
