@@ -6,7 +6,15 @@ import imageUrlBuilder from "@sanity/image-url";
 import { client } from "@/lib/sanity";
 
 const builder = imageUrlBuilder(client);
-const urlFor = (source: any) => builder.image(source);
+
+const urlFor = (source: any) => {
+  try {
+    if (!source?.asset?._ref) return null;
+    return builder.image(source);
+  } catch {
+    return null;
+  }
+};
 
 export default function ForYou({ posts }: any) {
   const [items, setItems] = useState<any[]>([]);
@@ -39,27 +47,31 @@ export default function ForYou({ posts }: any) {
       </h2>
 
       <div className="grid md:grid-cols-4 gap-6">
-        {items.map((post: any) => (
-          <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
-            <div className="group cursor-pointer">
+        {items.map((post: any) => {
+          const imageBuilder = urlFor(post.mainImage);
 
-              {post?.mainImage && (
-                <div className="overflow-hidden rounded-lg mb-3">
-                  <img
-                    src={urlFor(post.mainImage).width(600).url()}
-                    alt=""
-                    className="w-full h-[250px] object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-                  />
-                </div>
-              )}
+          return (
+            <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
+              <div className="group cursor-pointer">
 
-              <h3 className="font-serif group-hover:text-gray-300 transition-colors">
-                {post.title}
-              </h3>
+                {imageBuilder && (
+                  <div className="overflow-hidden rounded-lg mb-3">
+                    <img
+                      src={imageBuilder.width(600).url()}
+                      alt=""
+                      className="w-full h-[250px] object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                    />
+                  </div>
+                )}
 
-            </div>
-          </Link>
-        ))}
+                <h3 className="font-serif group-hover:text-gray-300 transition-colors">
+                  {post.title}
+                </h3>
+
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
