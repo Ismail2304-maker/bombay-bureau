@@ -17,13 +17,13 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
 
   {/* TOP BAR */}
-  <div className="relative w-full px-4 md:px-12 py-4 md:py-20 flex items-center justify-between">
+  <div className="relative w-full py-4 md:py-10">
 
-  {/* LEFT */}
-  <div className="flex items-center gap-5 text-white">
+  {/* SEARCH — TOP LEFT */}
+  <div className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2">
     <button
       onClick={() => setSearchOpen(true)}
-      className="hover:opacity-70 transition"
+      className="text-white hover:opacity-70 transition"
       aria-label="Search"
     >
       <svg
@@ -44,21 +44,20 @@ export default function Header() {
   </div>
 
   {/* CENTER LOGO */}
-  <Link
-    href="/"
-    className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center text-center"
-  >
-    <h1 className="text-2xl sm:text-4xl md:text-7xl font-serif tracking-wide whitespace-nowrap">
-      BOMBAY BUREAU
-    </h1>
+  <div className="flex flex-col items-center text-center">
+    <Link href="/">
+      <h1 className="text-2xl sm:text-4xl md:text-7xl font-serif tracking-wide whitespace-nowrap">
+        BOMBAY BUREAU
+      </h1>
+    </Link>
 
     <p className="hidden md:block text-sm md:text-lg text-gray-400 mt-1">
       Global affairs, Indian perspective
     </p>
-  </Link>
+  </div>
 
-  {/* RIGHT */}
-  <div>
+  {/* USER — TOP RIGHT */}
+  <div className="absolute right-2 md:right-12 top-1/2 -translate-y-1/2">
     <UserMenu />
   </div>
 
