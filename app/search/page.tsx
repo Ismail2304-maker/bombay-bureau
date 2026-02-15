@@ -50,7 +50,7 @@ export default async function SearchPage({
     {/* 🔙 BACK TO HOME */}
     <Link
       href="/"
-      className="absolute top-28 left-6 md:left-0 md:-left-16 text-white hover:opacity-70 transition-opacity"
+      className="fixed top-8 left-6 text-white hover:opacity-70 transition-all duration-200 z-50"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
