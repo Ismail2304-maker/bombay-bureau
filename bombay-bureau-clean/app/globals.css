@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* ============================= */
+/* PREMIUM EDITORIAL MOTION SYS */
+/* ============================= */
+
+:root {
+  --motion-fast: 180ms;
+  --motion-mid: 280ms;
+  --motion-slow: 420ms;
+
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Card lift */
+.hover-lift {
+  transition:
+    transform var(--motion-mid) var(--ease-premium),
+    box-shadow var(--motion-mid) var(--ease-premium);
+}
+
+.hover-lift:hover {
+  transform: translateY(-6px);
+}
+
+/* Image zoom */
+.hover-zoom img {
+  transition: transform 700ms var(--ease-premium);
+}
+
+.hover-zoom:hover img {
+  transform: scale(1.06);
+}
+
+/* Fade text */
+.hover-fade {
+  transition: color var(--motion-mid) var(--ease-premium),
+              opacity var(--motion-mid) var(--ease-premium);
+}
+
+.hover-fade:hover {
+  opacity: 0.85;
+}
+
+/* Premium card container */
+.premium-card {
+  @apply cursor-pointer;
+  transition: transform var(--motion-mid) var(--ease-premium);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+}
+html {
+  scroll-behavior: smooth;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease;
+}
+/* ===== PREMIUM FADE IN ===== */
+.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== ARTICLE IMAGE FADE ===== */
+.image-fade {
+  animation: imageFade 0.9s ease forwards;
+}
+
+@keyframes imageFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== NAV HOVER ===== */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background: white;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
