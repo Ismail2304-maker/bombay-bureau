@@ -17,7 +17,7 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
 
   {/* TOP BAR */}
-  <div className="relative w-full px-4 md:px-12 py-4 md:py-30 flex items-center justify-between">
+  <div className="relative w-full px-4 md:px-12 py-4 md:py-20 flex items-center justify-between">
 
   {/* LEFT */}
   <div className="flex items-center gap-5 text-white">
