@@ -40,7 +40,7 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search articles, topics, authors…"
-            className="w-full bg-transparent border-b border-gray-700 text-5xl font-serif outline-none pb-6 placeholder:text-gray-600"
+            className="w-full bg-transparent border-b border-gray-700 text-2xl sm:text-4xl md:text-5xl font-serif outline-none pb-4 md:pb-6 placeholder:text-gray-600"
           />
 
           <p className="text-gray-500 mt-4 text-sm">

@@ -16,56 +16,37 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
 
-        {/* TOP BAR */}
-        <div className="w-full px-4 md:px-12 py-4 md:py-6 flex items-center relative">
+  {/* TOP BAR */}
+  <div className="w-full px-4 md:px-12 py-4 md:py-6 grid grid-cols-3 items-center">
 
-          {/* LEFT ICON */}
-          <div className="flex items-center gap-5 text-white">
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="hover:opacity-70 transition"
-              aria-label="Search"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.7}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m21 21-4.3-4.3m0 0A7.5 7.5 0 1 0 5 5a7.5 7.5 0 0 0 11.7 11.7Z"
-                />
-              </svg>
-            </button>
-          </div>
+    {/* LEFT */}
+    <div className="flex items-center justify-start text-white">
+      <button
+        onClick={() => setSearchOpen(true)}
+        className="hover:opacity-70 transition"
+        aria-label="Search"
+      >
+        {/* Keep your SVG icon here */}
+      </button>
+    </div>
 
-          {/* LOGO */}
-          <Link
-  href="/"
-  className="
-    flex flex-col items-start md:items-center
-    md:absolute md:left-1/2 md:-translate-x-1/2
-  "
->
-            <h1 className="text-2xl sm:text-4xl md:text-7xl font-serif tracking-wide">
-              BOMBAY BUREAU
-            </h1>
+    {/* CENTER LOGO */}
+    <Link href="/" className="flex flex-col items-center text-center col-span-1">
+      <h1 className="text-2xl sm:text-4xl md:text-7xl font-serif tracking-wide">
+        BOMBAY BUREAU
+      </h1>
 
-            <p className="hidden md:block text-sm md:text-lg text-gray-400 mt-1">
-              Global affairs, Indian perspective
-            </p>
-          </Link>
+      <p className="hidden md:block text-sm md:text-lg text-gray-400 mt-1">
+        Global affairs, Indian perspective
+      </p>
+    </Link>
 
-          {/* USER MENU */}
-          <div className="ml-auto">
-            <UserMenu />
-          </div>
+    {/* RIGHT */}
+    <div className="flex justify-end">
+      <UserMenu />
+    </div>
 
-        </div>
+  </div>
 
         {/* NAVBAR */}
         <nav className="border-t border-gray-800">
