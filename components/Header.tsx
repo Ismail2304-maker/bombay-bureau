@@ -20,7 +20,7 @@ export default function Header() {
   <div className="relative w-full py-4 md:py-10">
 
   {/* SEARCH — TOP LEFT */}
-  <div className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2">
+  <div className="absolute left-4 md:left-12 top-3 md:top-6">
     <button
       onClick={() => setSearchOpen(true)}
       className="text-white hover:opacity-70 transition"
@@ -57,7 +57,7 @@ export default function Header() {
   </div>
 
   {/* USER — TOP RIGHT */}
-  <div className="absolute right-2 md:right-12 top-1/2 -translate-y-1/2">
+  <div className="absolute right-2 md:right-12 top-3 md:top-6">
     <UserMenu />
   </div>
 
