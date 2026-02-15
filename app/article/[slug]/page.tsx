@@ -10,14 +10,25 @@ import Image from "next/image";
 import { cache } from "react";
 
 const builder = imageUrlBuilder(client);
-function urlFor(source: any) {
+const urlFor = (source: any) => {
   try {
-    if (!source?.asset?._ref) return null;
+    if (!source?.asset?._ref) {
+      return {
+        width: () => ({
+          url: () => "",
+        }),
+      };
+    }
+
     return builder.image(source);
   } catch {
-    return null;
+    return {
+      width: () => ({
+        url: () => "",
+      }),
+    };
   }
-}
+};
 
 export const revalidate = 60;
 
