@@ -58,7 +58,28 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4">
+    <div className="relative min-h-screen bg-black flex items-center justify-center px-4">
+
+  {/* 🔙 BACK TO HOME */}
+  <Link
+    href="/"
+    className="fixed top-8 left-6 text-white hover:-translate-x-1 hover:opacity-70 transition-all duration-200 z-50"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2.5}
+      stroke="currentColor"
+      className="w-8 h-8"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15 19l-7-7 7-7"
+      />
+    </svg>
+  </Link>
       <div className="bg-zinc-900 rounded-2xl w-full max-w-[420px] p-6 md:p-10 mx-4 border border-zinc-800 shadow-2xl">
 
         <h1 className="text-2xl md:text-3xl font-serif text-white text-center mb-1">
