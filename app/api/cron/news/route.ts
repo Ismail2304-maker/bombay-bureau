@@ -1,16 +1,8 @@
-console.log("AUTOMATION STABLE VERSION RUNNING");
-
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 import { createClient } from "@sanity/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-  baseURL: process.env.OPENAI_BASE_URL,
-});
 
 const sanity = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
@@ -20,117 +12,95 @@ const sanity = createClient({
   useCdn: false,
 });
 
-const AUTHOR_ID = "0664ef92-6a72-48c3-b1bf-2e2b73ac67c9";
-
-const CATEGORY_MAP: Record<string, string> = {
-  india: "18088637-4ede-4976-b169-d55b6a298d8e",
-  world: "b4863bf0-a551-4f82-b18c-33b5f76d077e",
-  opinion: "0b2d62d2-5630-4dcc-b149-e350e70bfb23",
-  politics: "fdf8818a-8773-47a9-8f4b-d38822882b69",
-  business: "4fe8a141-3319-46b8-a2c4-3667ac8ba5e7",
-  technology: "001e7baf-fe5b-44f2-9e2c-74a59c69890e",
-};
+const RSS_FEEDS = [
+  "https://feeds.bbci.co.uk/news/world/rss.xml",
+  "https://feeds.bbci.co.uk/news/india/rss.xml",
+];
 
 function detectCategory(title: string) {
   const lower = title.toLowerCase();
 
-  if (lower.includes("india")) return CATEGORY_MAP.india;
-  if (lower.includes("tech")) return CATEGORY_MAP.technology;
-  if (lower.includes("market")) return CATEGORY_MAP.business;
-  if (lower.includes("election")) return CATEGORY_MAP.politics;
+  if (lower.includes("india")) return "India";
+  if (lower.includes("tech")) return "Technology";
+  if (lower.includes("market")) return "Business";
+  if (lower.includes("election")) return "Politics";
 
-  return CATEGORY_MAP.world;
+  return "World";
 }
 
 export async function GET() {
   try {
-    const newsRes = await fetch(
-      `https://newsapi.org/v2/top-headlines?country=in&pageSize=5&apiKey=${process.env.NEWS_API_KEY}`
-    );
+    const now = new Date();
+    const ist = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+    const hour = ist.getHours();
 
-    const newsData = await newsRes.json();
-
-    if (!newsData.articles?.length) {
-      return NextResponse.json({ success: false });
+    if (hour < 6 || hour >= 19) {
+      return NextResponse.json({ message: "Outside publishing window" });
     }
 
-    const randomArticle =
-      newsData.articles[Math.floor(Math.random() * newsData.articles.length)];
+    // Fetch RSS
+    const feedUrl = RSS_FEEDS[Math.floor(Math.random() * RSS_FEEDS.length)];
+    const rssRes = await fetch(feedUrl);
+    const xml = await rssRes.text();
 
-    const completion = await openai.chat.completions.create({
-      model: "openai/gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `
-You are a senior journalist at Bombay Bureau.
-Rewrite professionally.
-Return ONLY JSON:
-{
-"title":"Clean headline",
-"body":"800 word article"
-}
-          `,
-        },
-        {
-          role: "user",
-          content: `
-Headline: ${randomArticle.title}
-Summary: ${randomArticle.description}
-          `,
-        },
-      ],
-      temperature: 0.7,
+    const titleMatch = xml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/);
+    if (!titleMatch) return NextResponse.json({ error: "No RSS title" });
+
+    const rssTitle = titleMatch[1];
+
+    // Call OpenRouter
+    const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "meta-llama/llama-3.1-8b-instruct",
+        messages: [
+          {
+            role: "system",
+            content: "Rewrite into a professional 500-word news article. Return ONLY JSON with { title, body }"
+          },
+          {
+            role: "user",
+            content: rssTitle
+          }
+        ],
+        temperature: 0.7,
+      }),
     });
 
-    const raw = completion.choices[0].message.content;
-    if (!raw) throw new Error("No AI response");
+    const aiData = await aiRes.json();
+    const content = aiData.choices[0].message.content;
+    const parsed = JSON.parse(content);
 
-    const parsed = JSON.parse(raw);
-
-    const portableBody = parsed.body
-      .split("\n")
-      .filter((p: string) => p.trim() !== "")
-      .map((paragraph: string) => ({
-        _type: "block",
-        _key: crypto.randomUUID(),
-        children: [
-          {
-            _type: "span",
-            _key: crypto.randomUUID(),
-            text: paragraph,
-          },
-        ],
-      }));
+    const portableBody = parsed.body.split("\n").map((p: string) => ({
+      _type: "block",
+      _key: crypto.randomUUID(),
+      children: [
+        {
+          _type: "span",
+          _key: crypto.randomUUID(),
+          text: p,
+        },
+      ],
+    }));
 
     await sanity.create({
       _type: "post",
       title: parsed.title,
       slug: {
         _type: "slug",
-        current: parsed.title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .slice(0, 96),
+        current: parsed.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 96),
       },
       publishedAt: new Date().toISOString(),
       body: portableBody,
-      views: 0,
-      author: {
-        _type: "reference",
-        _ref: AUTHOR_ID,
-      },
-      categories: [
-        {
-          _type: "reference",
-          _ref: detectCategory(parsed.title),
-        },
-      ],
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("AUTOMATION ERROR:", error);
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ success: false });
   }
 }
