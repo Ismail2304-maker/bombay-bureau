@@ -5,16 +5,9 @@ import Image from "next/image";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import { cache } from "react";
-export const dynamic = "force-dynamic";
+
 const builder = imageUrlBuilder(client);
-const urlFor = (source: any) => {
-  try {
-    if (!source?.asset?._ref) return null;
-    return builder.image(source);
-  } catch {
-    return null;
-  }
-};
+const urlFor = (source: any) => builder.image(source);
 
 export const revalidate = 60;
 
@@ -99,7 +92,7 @@ const getPosts = cache(async () => {
 
 export default async function Home() {
   const data = await getPosts();
-  const posts = data?.all || [];
+  const posts = data.all;
 
   const trending = (data.trendingRaw || [])
     .map((p: any) => {
@@ -121,65 +114,63 @@ export default async function Home() {
 
         {/* LEFT */}
         <div className="md:col-span-2">
-          {posts.length > 0 && (
-  <>
-    <Link href={`/article/${posts[0].slug.current}`}>
-      <div className="group cursor-pointer">
-        <div className="overflow-hidden rounded-lg">
-          {(() => {
-  const imageBuilder = urlFor(posts[0].mainImage);
-  return imageBuilder ? (
-    <Image
-      src={imageBuilder.width(1600).url()}
-      alt={posts[0].title || ""}
-      width={1600}
-      height={900}
-      priority
-      className="rounded-lg"
-    />
-  ) : (
-    <div className="w-full h-[400px] bg-gray-800 rounded-lg" />
-  );
-})()}
-        </div>
+          {posts[0] && (
+            <>
+              <Link href={`/article/${posts[0].slug.current}`}>
+                <div className="group cursor-pointer">
+                  <div className="overflow-hidden rounded-lg">
+                    <Image
+                      src={urlFor(posts[0].mainImage).width(1600).url()}
+                      alt=""
+                      width={1600}
+                      height={900}
+                      priority
+                      placeholder="blur"
+                      blurDataURL={`${urlFor(posts[0].mainImage).width(20).blur(50).url()}`}
+                      className="transition-transform duration-700 group-hover:scale-[1.05]"
+                    />
+                  </div>
 
-        <h2 className="text-5xl font-serif mt-6 group-hover:text-gray-300 transition-colors">
-          {posts[0].title}
-        </h2>
+                  <h2 className="text-5xl font-serif mt-6 group-hover:text-gray-300 transition-colors">
+                    {posts[0].title}
+                  </h2>
 
-        <p className="text-gray-400 mt-4 text-lg max-w-2xl">
-          {posts[0].excerpt}
-        </p>
-      </div>
-    </Link>
+                  <p className="text-gray-400 mt-4 text-lg max-w-2xl">
+                    {posts[0].excerpt}
+                  </p>
+                </div>
+              </Link>
 
-    <div className="grid grid-cols-3 gap-6 mt-6">
-      {posts.slice(1, 4).map((post: any) => (
-        <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
-          <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">
-            {(() => {
-  const imageBuilder = urlFor(post.mainImage);
-  return imageBuilder ? (
-    <Image
-      src={imageBuilder.width(600).url()}
-      alt={post.title || ""}
-      width={600}
-      height={400}
-      loading="lazy"
-      className="transition-transform duration-700 group-hover:scale-[1.06]"
-    />
-  ) : null;
-})()}
+              <div className="grid grid-cols-3 gap-6 mt-6">
+                {posts.slice(1, 4).map((post: any) => (
+                  <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
+                    <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">
 
-            <h3 className="font-serif group-hover:text-gray-300 transition-colors">
-              {post.title}
-            </h3>
-          </div>
-        </Link>
-      ))}
-    </div>
-  </>
-)}
+                      {post.mainImage && (
+                        <div className="overflow-hidden rounded-lg mb-2">
+                          <Image
+                            src={urlFor(post.mainImage).width(600).url()}
+                            alt=""
+                            width={600}
+                            height={400}
+                            loading="lazy"
+                            placeholder="blur"
+                            blurDataURL={`${urlFor(post.mainImage).width(20).blur(50).url()}`}
+                            className="transition-transform duration-700 group-hover:scale-[1.06]"
+                          />
+                        </div>
+                      )}
+
+                      <h3 className="font-serif group-hover:text-gray-300 transition-colors">
+                        {post.title}
+                      </h3>
+
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* SIDEBAR */}
@@ -195,18 +186,15 @@ export default async function Home() {
   <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
     <div className="flex gap-3 py-3 border-b border-gray-800 hover:translate-x-1 transition cursor-pointer">
 
-      {(() => {
-  const imageBuilder = urlFor(post.mainImage);
-  return imageBuilder ? (
-    <Image
-      src={imageBuilder.width(80).url()}
-      alt={post.title || ""}
-      width={80}
-      height={60}
-      className="rounded-md object-cover"
-    />
-  ) : null;
-})()}
+      {post.mainImage && (
+        <Image
+          src={urlFor(post.mainImage).width(80).url()}
+          alt=""
+          width={80}
+          height={60}
+          className="rounded-md object-cover"
+        />
+      )}
 
       <div>
         <p className="text-xs text-gray-500">{i + 1}</p>
@@ -299,22 +287,13 @@ export default async function Home() {
           <Link href={`/article/${main.slug.current}`}>
             <div className="group cursor-pointer">
 
-              
-  {(() => {
-  const imageBuilder = urlFor(main.mainImage);
-  return imageBuilder ? (
-    <Image
-      src={imageBuilder.width(1600).url()}
-      alt={main.title || ""}
-      width={1600}
-      height={900}
-      className="rounded-lg mb-5"
-    />
-  ) : (
-    <div className="w-full h-[400px] bg-gray-800 rounded-lg mb-5" />
-  );
-})()}
-
+              <Image
+                src={urlFor(main.mainImage).width(1600).url()}
+                alt=""
+                width={1600}
+                height={900}
+                className="rounded-lg mb-5"
+              />
 
               <h2 className="text-4xl font-serif group-hover:text-gray-300 transition">
                 {main.title}
@@ -340,18 +319,15 @@ export default async function Home() {
             <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
               <div className="flex gap-4 group cursor-pointer">
 
-   {(() => {
-  const imageBuilder = urlFor(post.mainImage);
-  return imageBuilder ? (
-    <Image
-      src={imageBuilder.width(300).url()}
-      alt={post.title || ""}
-      width={120}
-      height={80}
-      className="rounded-md"
-    />
-  ) : null;
-})()}        <div>
+                <Image
+                  src={urlFor(post.mainImage).width(300).url()}
+                  alt=""
+                  width={120}
+                  height={80}
+                  className="rounded-md"
+                />
+
+                <div>
                   <h3 className="font-serif group-hover:text-gray-300 transition">
                     {post.title}
                   </h3>
