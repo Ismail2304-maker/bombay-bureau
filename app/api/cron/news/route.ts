@@ -18,12 +18,13 @@ const RSS_FEEDS = [
 ];
 
 export async function GET(req: Request) {
-  // 🔐 CRON SECURITY
+  // 🔐 CRON SECURITY CHECK
   if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" });
   }
 
   try {
+    // 🕒 IST Time Check (6 AM – 7 PM)
     const now = new Date();
     const ist = new Date(
       now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
@@ -34,9 +35,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: "Outside publishing window" });
     }
 
-    // 🎯 FETCH RSS
+    // 📡 FETCH RSS
     const feedUrl =
       RSS_FEEDS[Math.floor(Math.random() * RSS_FEEDS.length)];
+
     const rssRes = await fetch(feedUrl);
 
     if (!rssRes.ok) {
@@ -45,28 +47,23 @@ export async function GET(req: Request) {
 
     const xml = await rssRes.text();
 
-    // Extract RSS items properly
-const items = xml.match(/<item>([\s\S]*?)<\/item>/g);
+    // ✅ Extract titles only from <item>
+    const itemMatches = [
+      ...xml.matchAll(/<item>[\s\S]*?<title>(.*?)<\/title>/g),
+    ];
 
-if (!items || items.length === 0) {
-  return NextResponse.json({ error: "No RSS items found" });
-}
+    if (!itemMatches.length) {
+      return NextResponse.json({ error: "No RSS title found" });
+    }
 
-// Pick random item
-const randomItem = items[Math.floor(Math.random() * items.length)];
+    const randomItem =
+      itemMatches[Math.floor(Math.random() * itemMatches.length)];
 
-// Extract title inside item
-const titleMatch = randomItem.match(/<title>(.*?)<\/title>/);
+    const rssTitle = randomItem[1]
+      .replace(/<!\[CDATA\[(.*?)\]\]>/, "$1")
+      .trim();
 
-if (!titleMatch) {
-  return NextResponse.json({ error: "No RSS title found" });
-}
-
-const rssTitle = titleMatch[1]
-  .replace(/<!\[CDATA\[(.*?)\]\]>/, "$1")
-  .trim();
-
-    // 🛑 CHECK DUPLICATE
+    // 🚫 DUPLICATE CHECK
     const existing = await sanity.fetch(
       `*[_type=="post" && title==$title][0]`,
       { title: rssTitle }
@@ -92,9 +89,9 @@ const rssTitle = titleMatch[1]
               role: "system",
               content: `Return ONLY valid JSON:
 {
-  "title": "Headline",
-  "body": "Article body text",
-  "altText": "Image alt description"
+  "title": "Professional headline",
+  "body": "400-600 word article",
+  "altText": "SEO image description"
 }`,
             },
             {
@@ -118,24 +115,28 @@ const rssTitle = titleMatch[1]
       return NextResponse.json({ error: "AI returned empty content" });
     }
 
-    // 🧠 SAFER JSON PARSE (clean AI output first)
-let parsed;
+    // 🧠 SAFE JSON EXTRACTION
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
 
-try {
-  const cleaned = content
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .replace(/[\u0000-\u001F]+/g, "") // remove control characters
-    .trim();
+    if (!jsonMatch) {
+      console.error("AI RAW RESPONSE:", content);
+      return NextResponse.json({ error: "AI did not return valid JSON" });
+    }
 
-  parsed = JSON.parse(cleaned);
+    let parsed;
+    try {
+      const cleaned = jsonMatch[0]
+        .replace(/[\u0000-\u001F]+/g, "")
+        .trim();
 
-} catch (error) {
-  console.error("AI JSON Parse Failed:");
-  console.error(content);
-  return NextResponse.json({ error: "Invalid AI JSON format" });
-}
+      parsed = JSON.parse(cleaned);
+    } catch (err) {
+      console.error("JSON PARSE ERROR:", err);
+      console.error("AI RAW:", content);
+      return NextResponse.json({ error: "Invalid AI JSON format" });
+    }
 
+    // 📝 Convert to Sanity Portable Text
     const portableBody = parsed.body.split("\n").map((p: string) => ({
       _type: "block",
       _key: crypto.randomUUID(),
@@ -148,6 +149,7 @@ try {
       ],
     }));
 
+    // 💾 Save to Sanity
     await sanity.create({
       _type: "post",
       title: parsed.title,
@@ -160,12 +162,13 @@ try {
       },
       publishedAt: new Date().toISOString(),
       body: portableBody,
+      imageAlt: parsed.altText || "",
       views: 0,
     });
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error("SERVER ERROR:", err);
     return NextResponse.json({ error: "Server crashed" });
   }
 }
