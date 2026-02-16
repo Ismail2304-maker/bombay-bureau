@@ -14,126 +14,73 @@ const sanity = createClient({
 });
 
 export async function GET(req: Request) {
-  // 🔐 CRON SECURITY
-  if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" });
-  }
-
   try {
-    // 🕒 IST TIME CHECK (6 AM – 7 PM)
-    const now = new Date();
-    const ist = new Date(
-      now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-    );
-    const hour = ist.getHours();
-
-    if (hour < 6 || hour >= 19) {
-      return NextResponse.json({ message: "Outside publishing window" });
-    }
-
-    // 📰 FETCH RSS ARTICLE
     const rssArticle = await getRandomArticleFromRSS();
 
     if (!rssArticle || !rssArticle.title) {
-      return NextResponse.json({ error: "No RSS article found" });
+      return NextResponse.json({ success: false, error: "No RSS title" });
     }
 
     const rssTitle = rssArticle.title.trim();
 
-    // 🚫 DUPLICATE CHECK
+    // Prevent duplicates
     const existing = await sanity.fetch(
       `*[_type=="post" && title==$title][0]`,
       { title: rssTitle }
     );
 
     if (existing) {
-      return NextResponse.json({ message: "Already published" });
+      return NextResponse.json({ success: false, message: "Already exists" });
     }
 
-    // 🤖 CALL OPENROUTER (STRICT JSON MODE)
-    // 🤖 CALL OPENROUTER
-const aiRes = await fetch(
-  "https://openrouter.ai/api/v1/chat/completions",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "meta-llama/llama-3.1-8b-instruct",
-      messages: [
-        {
-          role: "system",
-          content:
-            "Write a 400-600 word professional news article. Format EXACTLY like this:\n\nTITLE:\nYour headline here\n\nBODY:\nFull article text here.\n\nNo markdown. No stars. No extra text.",
+    // Call OpenRouter
+    const aiRes = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
         },
-        {
-          role: "user",
-          content: rssTitle,
-        },
-      ],
-      temperature: 0.7,
-    }),
-  }
-);
+        body: JSON.stringify({
+          model: "meta-llama/llama-3.1-8b-instruct",
+          messages: [
+            {
+              role: "system",
+              content:
+                "Write a 500 word professional news article. Format strictly as:\nTITLE: headline\nBODY:\narticle text",
+            },
+            {
+              role: "user",
+              content: rssTitle,
+            },
+          ],
+          temperature: 0.7,
+        }),
+      }
+    );
 
-if (!aiRes.ok) {
-  return NextResponse.json({ error: "AI request failed" });
-}
+    if (!aiRes.ok) {
+      return NextResponse.json({ success: false, error: "AI failed" });
+    }
 
-const aiData = await aiRes.json();
-let content = aiData.choices?.[0]?.message?.content;
+    const aiData = await aiRes.json();
+    const content = aiData.choices?.[0]?.message?.content;
 
-if (!content) {
-  return NextResponse.json({ error: "AI returned empty content" });
-}
+    if (!content) {
+      return NextResponse.json({ success: false, error: "AI empty" });
+    }
 
-// Remove markdown stars just in case
-content = content.replace(/\*\*/g, "");
+    const titleMatch = content.match(/TITLE:\s*(.*?)\n/);
+    const bodyMatch = content.match(/BODY:\s*([\s\S]*)/);
 
-// Extract TITLE and BODY
-const titleMatch = content.match(/TITLE:\s*(.*?)\n\s*BODY:/);
-const bodyMatch = content.match(/BODY:\s*([\s\S]*)/);
+    if (!titleMatch || !bodyMatch) {
+      return NextResponse.json({ success: false, error: "AI format invalid" });
+    }
 
-if (!titleMatch || !bodyMatch) {
-  console.error("AI format error:", content);
-  return NextResponse.json({ error: "AI format invalid" });
-}
+    const parsedTitle = titleMatch[1].trim();
+    const parsedBody = bodyMatch[1].trim();
 
-const parsedTitle = titleMatch[1].trim();
-const parsedBody = bodyMatch[1].trim();
-
-// 🔥 CLEAN HARD BEFORE PARSE
-content = content
-  .replace(/```json/g, "")
-  .replace(/```/g, "")
-  .replace(/\r/g, "")             // remove carriage returns
-  .replace(/\t/g, " ")            // remove tabs
-  .replace(/\u0000/g, "")         // remove null bytes
-  .replace(/[\u0001-\u001F]+/g, "") // remove ALL control characters
-  .trim();
-
-// Extract only JSON block
-const jsonMatch = content.match(/\{[\s\S]*\}/);
-
-if (!jsonMatch) {
-  console.error("AI JSON missing:", content);
-  return NextResponse.json({ error: "Invalid AI format" });
-}
-
-let parsed;
-
-try {
-  parsed = JSON.parse(jsonMatch[0]);
-} catch (err) {
-  console.error("JSON Parse Failed:", jsonMatch[0]);
-  return NextResponse.json({ error: "JSON parsing failed" });
-}
-
-    const bodyText = parsed.body || "";
-
-    // 📝 Convert to Sanity Portable Text
     const portableBody = parsedBody
   .split("\n")
   .filter((p: string) => p.trim() !== "")
@@ -149,25 +96,24 @@ try {
     ],
   }));
 
-    // 💾 SAVE TO SANITY
     await sanity.create({
-  _type: "post",
-  title: parsedTitle,
-  slug: {
-    _type: "slug",
-    current: parsedTitle
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .slice(0, 96),
-  },
-  publishedAt: new Date().toISOString(),
-  body: portableBody,
-  views: 0,
-});
+      _type: "post",
+      title: parsedTitle,
+      slug: {
+        _type: "slug",
+        current: parsedTitle
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .slice(0, 96),
+      },
+      publishedAt: new Date().toISOString(),
+      body: portableBody,
+      views: 0,
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("SERVER ERROR:", err);
-    return NextResponse.json({ error: "Server crashed" });
+    console.error(err);
+    return NextResponse.json({ success: false, error: "Server error" });
   }
 }
