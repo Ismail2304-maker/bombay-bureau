@@ -86,46 +86,62 @@ export async function GET(req: Request) {
     }
 
     const aiData = await aiRes.json();
-    const content = aiData.choices?.[0]?.message?.content;
+let content = aiData.choices?.[0]?.message?.content;
 
-    if (!content) {
-      return NextResponse.json({ error: "AI returned empty content" });
-    }
+if (!content) {
+  return NextResponse.json({ error: "AI returned empty content" });
+}
 
-    // 🧠 SAFE JSON PARSE
-    let parsed;
+// Remove markdown code blocks
+content = content.replace(/```json/g, "").replace(/```/g, "");
 
-    try {
-      let cleaned = content
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .replace(/[\u2018\u2019]/g, "'")
-        .replace(/[\u201C\u201D]/g, '"')
-        .replace(/[\u0000-\u001F]+/g, "")
-        .trim();
+// Remove bold markdown (**)
+content = content.replace(/\*\*/g, "");
 
-      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+// Fix smart quotes
+content = content
+  .replace(/[\u2018\u2019]/g, "'")
+  .replace(/[\u201C\u201D]/g, '"');
 
-      if (!jsonMatch) throw new Error("No JSON found");
+// Remove control characters
+content = content.replace(/[\u0000-\u001F]+/g, "");
 
-      parsed = JSON.parse(jsonMatch[0]);
-    } catch (err) {
-      console.error("AI JSON ERROR:", content);
-      return NextResponse.json({ error: "Invalid AI JSON format" });
-    }
+// Extract JSON only
+const jsonMatch = content.match(/\{[\s\S]*\}/);
+
+if (!jsonMatch) {
+  console.error("AI did not return valid JSON:");
+  console.error(content);
+  return NextResponse.json({ error: "AI returned invalid format" });
+}
+
+let parsed;
+
+try {
+  parsed = JSON.parse(jsonMatch[0]);
+} catch (error) {
+  console.error("JSON Parse Error:");
+  console.error(content);
+  return NextResponse.json({ error: "JSON parsing failed" });
+}
 
     // 📝 Convert to Sanity Portable Text
-    const portableBody = parsed.body.split("\n").map((p: string) => ({
-      _type: "block",
-      _key: crypto.randomUUID(),
-      children: [
-        {
-          _type: "span",
-          _key: crypto.randomUUID(),
-          text: p,
-        },
-      ],
-    }));
+    const bodyText = parsed.body || "";
+
+const portableBody = bodyText
+  .split("\n")
+  .filter((p: string) => p.trim() !== "")
+  .map((p: string) => ({
+    _type: "block",
+    _key: crypto.randomUUID(),
+    children: [
+      {
+        _type: "span",
+        _key: crypto.randomUUID(),
+        text: p,
+      },
+    ],
+  }));
 
     // 💾 Save
     await sanity.create({
