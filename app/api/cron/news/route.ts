@@ -28,7 +28,13 @@ function detectCategory(title: string) {
   return "World";
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+
+  // 🔐 CRON SECURITY CHECK
+  if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ success: false });
+  }
+
   try {
     const now = new Date();
     const ist = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
@@ -43,10 +49,21 @@ export async function GET() {
     const rssRes = await fetch(feedUrl);
     const xml = await rssRes.text();
 
-    const titleMatch = xml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/);
-    if (!titleMatch) return NextResponse.json({ error: "No RSS title" });
+   const items = xml.match(/<item>([\s\S]*?)<\/item>/g);
 
-    const rssTitle = titleMatch[1];
+if (!items || items.length === 0) {
+  return NextResponse.json({ error: "No RSS items found" });
+}
+
+const randomItem = items[Math.floor(Math.random() * items.length)];
+
+const titleMatch = randomItem.match(/<title>(<!\[CDATA\[)?(.*?)(\]\]>)?<\/title>/);
+
+if (!titleMatch) {
+  return NextResponse.json({ error: "No RSS title found" });
+}
+
+const rssTitle = titleMatch[2];
 
     // Call OpenRouter
     const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -82,8 +99,19 @@ Return ONLY valid JSON in this exact format:
     });
 
     const aiData = await aiRes.json();
-    const content = aiData.choices[0].message.content;
-    const parsed = JSON.parse(content);
+
+if (!aiData.choices || !aiData.choices.length) {
+  console.error("OpenRouter error:", aiData);
+  return NextResponse.json({ success: false });
+}
+
+const content = aiData.choices[0].message.content;
+
+if (!content) {
+  return NextResponse.json({ success: false });
+}
+
+const parsed = JSON.parse(content);
 
     const portableBody = parsed.body.split("\n").map((p: string) => ({
       _type: "block",
@@ -97,16 +125,19 @@ Return ONLY valid JSON in this exact format:
       ],
     }));
 
-    await sanity.create({
+  await sanity.create({
   _type: "post",
   title: parsed.title,
   slug: {
     _type: "slug",
-    current: parsed.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 96),
+    current: parsed.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .slice(0, 96),
   },
   publishedAt: new Date().toISOString(),
   body: portableBody,
-  imageAlt: parsed.altText || "",
+  views: 0,
 });
 
     return NextResponse.json({ success: true });
