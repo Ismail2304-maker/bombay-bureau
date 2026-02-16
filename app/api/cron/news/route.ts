@@ -20,7 +20,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    // 🕒 IST Time Check (6AM–7PM)
+    // 🕒 IST TIME CHECK (6 AM – 7 PM)
     const now = new Date();
     const ist = new Date(
       now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
@@ -31,7 +31,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: "Outside publishing window" });
     }
 
-    // 📰 Get RSS Article
+    // 📰 FETCH RSS ARTICLE
     const rssArticle = await getRandomArticleFromRSS();
 
     if (!rssArticle || !rssArticle.title) {
@@ -40,7 +40,7 @@ export async function GET(req: Request) {
 
     const rssTitle = rssArticle.title.trim();
 
-    // 🚫 Prevent duplicates
+    // 🚫 DUPLICATE CHECK
     const existing = await sanity.fetch(
       `*[_type=="post" && title==$title][0]`,
       { title: rssTitle }
@@ -50,7 +50,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: "Already published" });
     }
 
-    // 🤖 Call OpenRouter
+    // 🤖 CALL OPENROUTER (STRICT JSON MODE)
     const aiRes = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
       {
@@ -61,19 +61,16 @@ export async function GET(req: Request) {
         },
         body: JSON.stringify({
           model: "meta-llama/llama-3.1-8b-instruct",
+          response_format: { type: "json_object" }, // 🔥 Forces clean JSON
           messages: [
             {
               role: "system",
-              content: `Return ONLY valid JSON:
-{
-  "title": "Professional headline",
-  "body": "400-600 word article",
-  "altText": "SEO image description"
-}`,
+              content:
+                "Return ONLY valid JSON with keys: title, body, altText. No markdown. No explanation.",
             },
             {
               role: "user",
-              content: rssTitle,
+              content: `Rewrite this into a 400-600 word professional news article:\n\n${rssTitle}`,
             },
           ],
           temperature: 0.7,
@@ -82,68 +79,46 @@ export async function GET(req: Request) {
     );
 
     if (!aiRes.ok) {
+      const errText = await aiRes.text();
+      console.error("AI REQUEST FAILED:", errText);
       return NextResponse.json({ error: "AI request failed" });
     }
 
     const aiData = await aiRes.json();
-let content = aiData.choices?.[0]?.message?.content;
+    const content = aiData.choices?.[0]?.message?.content;
 
-if (!content) {
-  return NextResponse.json({ error: "AI returned empty content" });
-}
+    if (!content) {
+      return NextResponse.json({ error: "AI returned empty content" });
+    }
 
-// Remove markdown code blocks
-content = content.replace(/```json/g, "").replace(/```/g, "");
+    // 🧠 SAFE JSON PARSE
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch (error) {
+      console.error("JSON Parse Error:", content);
+      return NextResponse.json({ error: "JSON parsing failed" });
+    }
 
-// Remove bold markdown (**)
-content = content.replace(/\*\*/g, "");
-
-// Fix smart quotes
-content = content
-  .replace(/[\u2018\u2019]/g, "'")
-  .replace(/[\u201C\u201D]/g, '"');
-
-// Remove control characters
-content = content.replace(/[\u0000-\u001F]+/g, "");
-
-// Extract JSON only
-const jsonMatch = content.match(/\{[\s\S]*\}/);
-
-if (!jsonMatch) {
-  console.error("AI did not return valid JSON:");
-  console.error(content);
-  return NextResponse.json({ error: "AI returned invalid format" });
-}
-
-let parsed;
-
-try {
-  parsed = JSON.parse(jsonMatch[0]);
-} catch (error) {
-  console.error("JSON Parse Error:");
-  console.error(content);
-  return NextResponse.json({ error: "JSON parsing failed" });
-}
-
-    // 📝 Convert to Sanity Portable Text
     const bodyText = parsed.body || "";
 
-const portableBody = bodyText
-  .split("\n")
-  .filter((p: string) => p.trim() !== "")
-  .map((p: string) => ({
-    _type: "block",
-    _key: crypto.randomUUID(),
-    children: [
-      {
-        _type: "span",
+    // 📝 Convert to Sanity Portable Text
+    const portableBody = bodyText
+      .split("\n")
+      .filter((p: string) => p.trim() !== "")
+      .map((p: string) => ({
+        _type: "block",
         _key: crypto.randomUUID(),
-        text: p,
-      },
-    ],
-  }));
+        children: [
+          {
+            _type: "span",
+            _key: crypto.randomUUID(),
+            text: p,
+          },
+        ],
+      }));
 
-    // 💾 Save
+    // 💾 SAVE TO SANITY
     await sanity.create({
       _type: "post",
       title: parsed.title,
@@ -156,12 +131,10 @@ const portableBody = bodyText
       },
       publishedAt: new Date().toISOString(),
       body: portableBody,
-      imageAlt: parsed.altText || "",
       views: 0,
     });
 
     return NextResponse.json({ success: true });
-
   } catch (err) {
     console.error("SERVER ERROR:", err);
     return NextResponse.json({ error: "Server crashed" });
