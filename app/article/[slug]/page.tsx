@@ -241,7 +241,7 @@ const articleText =
           ))}
         </div>
       </section>
-      <AdminEditButton postId={post._id} />
+      
     </main>
   );
 }
