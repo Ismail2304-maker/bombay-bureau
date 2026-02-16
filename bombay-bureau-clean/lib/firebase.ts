@@ -9,9 +9,8 @@ const firebaseConfig = {
   storageBucket: "bombay-bureau.firebasestorage.app",
   messagingSenderId: "809339827214",
   appId: "1:809339827214:web:8c621d448da6d90446785f",
-  measurementId: "G-Q0Z5PDFM4Z",
+  measurementId: "G-Q0Z5PDFM4Z"
 };
 
 const app = initializeApp(firebaseConfig);
-
 export const auth = getAuth(app);
