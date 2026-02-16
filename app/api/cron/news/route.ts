@@ -106,13 +106,23 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "AI returned empty content" });
     }
 
-    // 🧠 SAFER JSON PARSE
-    let parsed;
-    try {
-      parsed = JSON.parse(content);
-    } catch {
-      return NextResponse.json({ error: "Invalid AI JSON format" });
-    }
+    // 🧠 SAFER JSON PARSE (clean AI output first)
+let parsed;
+
+try {
+  const cleaned = content
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .replace(/[\u0000-\u001F]+/g, "") // remove control characters
+    .trim();
+
+  parsed = JSON.parse(cleaned);
+
+} catch (error) {
+  console.error("AI JSON Parse Failed:");
+  console.error(content);
+  return NextResponse.json({ error: "Invalid AI JSON format" });
+}
 
     const portableBody = parsed.body.split("\n").map((p: string) => ({
       _type: "block",
