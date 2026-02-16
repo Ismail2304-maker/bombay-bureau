@@ -19,30 +19,24 @@ const CATEGORY_MAP: Record<string, string> = {
   Business: "4fe8a141-3319-46b8-a2c4-3667ac8ba5e7",
   Technology: "001e7baf-fe5b-44f2-9e2c-74a59c69890e",
 };
-
-function detectCategory(title: string) {
-  const lower = title.toLowerCase();
-
-  if (/\b(india|andhra pradesh|arunachal pradesh|assam|bihar|chhattisgarh|goa|gujarat|haryana|himachal pradesh|jharkhand|karnataka|kerala|madhya pradesh|maharashtra|manipur|meghalaya|mizoram|nagaland|odisha|punjab|rajasthan|sikkim|tamil nadu|telangana|tripura|uttar pradesh|uttarakhand|west bengal|andaman|chandigarh|dadra|daman|delhi|jammu|kashmir|ladakh|lakshadweep|puducherry)\b/.test(lower))
-    return "India";
-
-  if (/\b(election|parliament|minister|government|policy|senate|congress|vote|assembly|bill|cabinet)\b/.test(lower))
-    return "Politics";
-
-  if (/\b(stock|gdp|fund|market|investment|economy|private equity|firm|company|corporate|earnings|revenue|ipo|acquisition|merger|finance|bank|industry|inflation|trade)\b/.test(lower))
-    return "Business";
-
-  if (/\b(artificial intelligence|technology|software|startup|chip|digital|ai|data|cyber|robot|semiconductor|cloud|app|platform)\b/.test(lower))
-    return "Technology";
-
-  return "World";
-}
+const QUERY_MAP: Record<string, string> = {
+  India: "India",
+  World: "global OR international OR geopolitics",
+  Business: "business OR markets OR economy OR finance OR corporate",
+  Technology: "technology OR AI OR startup OR software OR semiconductor",
+  Politics: "politics OR election OR government OR policy",
+};
 
 export async function GET() {
   try {
     const apiKey = process.env.GNEWS_API_KEY;
     const aiKey = process.env.OPENROUTER_API_KEY;
+    const categories = ["India", "World", "Business", "Technology", "Politics"];
 
+const chosenCategory =
+  categories[Math.floor(Math.random() * categories.length)];
+
+const query = QUERY_MAP[chosenCategory];
     if (!apiKey || !aiKey) {
       return NextResponse.json({ error: "Missing API keys" }, { status: 500 });
     }
@@ -51,8 +45,8 @@ export async function GET() {
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
     const response = await fetch(
-      `https://gnews.io/api/v4/search?q=India OR Business OR Technology OR World&lang=en&max=10&apikey=${apiKey}`
-    );
+  `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=10&apikey=${apiKey}`
+);
 
     const data = await response.json();
 
@@ -162,7 +156,7 @@ ${selected.publishedAt}
         ],
       }));
 
-    const categoryName = detectCategory(title);
+    const categoryName = chosenCategory;
     const categoryId = CATEGORY_MAP[categoryName];
 
     const slug = title
