@@ -27,8 +27,19 @@ function getRandomCategories() {
   return shuffled.slice(0, Math.floor(Math.random() * 2) + 1);
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+
+    // 🔐 SECRET CHECK
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get("secret");
+
+    if (secret !== process.env.PUBLISH_SECRET) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     const selectedCategories = getRandomCategories();
 
     const aiRes = await fetch(
