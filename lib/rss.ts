@@ -5,45 +5,54 @@ const parser = new Parser({
 });
 
 const RSS_FEEDS = [
-  "https://feeds.bbci.co.uk/news/rss.xml",
-  "https://feeds.bbci.co.uk/news/world/rss.xml",
-  "https://feeds.bbci.co.uk/news/world/asia/india/rss.xml",
+  // 🌍 WORLD
+  { url: "https://feeds.bbci.co.uk/news/world/rss.xml", category: "world" },
+  { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "world" },
+
+  // 🇮🇳 INDIA
+  { url: "https://www.thehindu.com/news/national/feeder/default.rss", category: "india" },
+  { url: "https://indianexpress.com/section/india/feed/", category: "india" },
+
+  // 🏛 POLITICS
+  { url: "https://indianexpress.com/section/political-pulse/feed/", category: "politics" },
+  { url: "https://www.thehindu.com/news/national/feeder/default.rss", category: "politics" },
+
+  // 💼 BUSINESS
+  { url: "https://www.thehindu.com/business/feeder/default.rss", category: "business" },
+  { url: "https://www.business-standard.com/rss/home_page_top_stories.rss", category: "business" },
+
+  // 💻 TECHNOLOGY
+  { url: "https://www.thehindu.com/sci-tech/technology/feeder/default.rss", category: "technology" },
+  { url: "https://feeds.feedburner.com/gadgets360-latest", category: "technology" },
 ];
 
 export async function getRandomArticleFromRSS() {
-  try {
-    const randomFeed =
-      RSS_FEEDS[Math.floor(Math.random() * RSS_FEEDS.length)];
+  for (const feedConfig of RSS_FEEDS) {
+    try {
+      console.log("Trying RSS:", feedConfig.url);
 
-    const feed = await parser.parseURL(randomFeed);
+      const feed = await parser.parseURL(feedConfig.url);
 
-    if (!feed.items || feed.items.length === 0) {
-      console.error("RSS has no items");
-      return null;
+      if (!feed.items || feed.items.length === 0) continue;
+
+      const randomItem =
+        feed.items[Math.floor(Math.random() * feed.items.length)];
+
+      if (!randomItem.title) continue;
+
+      return {
+        title: randomItem.title.trim(),
+        content:
+          randomItem.contentSnippet ||
+          randomItem.content ||
+          "",
+        category: feedConfig.category,
+      };
+    } catch (error) {
+      console.error("RSS failed:", feedConfig.url);
+      continue;
     }
-
-    const validItems = feed.items.filter(
-      (item) => item.title && item.title.trim() !== ""
-    );
-
-    if (validItems.length === 0) {
-      console.error("No valid titles found");
-      return null;
-    }
-
-    const randomItem =
-      validItems[Math.floor(Math.random() * validItems.length)];
-
-    return {
-      title: randomItem.title!.trim(),
-      content:
-        randomItem.contentSnippet ||
-        randomItem.content ||
-        "",
-    };
-
-  } catch (error) {
-    console.error("RSS PARSER ERROR:", error);
-    return null;
   }
+
+  return null;
 }
