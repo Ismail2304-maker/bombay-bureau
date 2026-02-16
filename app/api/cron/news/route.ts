@@ -111,7 +111,17 @@ if (!content) {
   return NextResponse.json({ success: false });
 }
 
-const parsed = JSON.parse(content);
+let parsed;
+
+try {
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON found in AI response");
+
+  parsed = JSON.parse(jsonMatch[0]);
+} catch (err) {
+  console.error("AI JSON parsing failed:", content);
+  return NextResponse.json({ success: false, error: "Invalid AI JSON" });
+}
 
     const portableBody = parsed.body.split("\n").map((p: string) => ({
       _type: "block",
