@@ -15,7 +15,6 @@ const RSS_FEEDS = [
 
   // 🏛 POLITICS
   { url: "https://indianexpress.com/section/political-pulse/feed/", category: "politics" },
-  { url: "https://www.thehindu.com/news/national/feeder/default.rss", category: "politics" },
 
   // 💼 BUSINESS
   { url: "https://www.thehindu.com/business/feeder/default.rss", category: "business" },
@@ -33,24 +32,29 @@ export async function getRandomArticleFromRSS() {
 
       const feed = await parser.parseURL(feedConfig.url);
 
-      if (!feed.items || feed.items.length === 0) continue;
+      if (!feed?.items?.length) continue;
 
-      const randomItem =
-        feed.items[Math.floor(Math.random() * feed.items.length)];
+    const validItems = feed.items.filter((item) => {
+  return (
+    typeof item.title === "string" &&
+    item.title.length > 15 &&
+    !item.title.toLowerCase().includes("live updates")
+  );
+});
 
-      if (!randomItem.title) continue;
+if (validItems.length === 0) continue;
 
-      return {
-        title: randomItem.title.trim(),
-        content:
-          randomItem.contentSnippet ||
-          randomItem.content ||
-          "",
-        category: feedConfig.category,
-      };
+const randomItem =
+  validItems[Math.floor(Math.random() * validItems.length)];
+
+return {
+  title: randomItem.title!.trim(),
+  content: randomItem.contentSnippet ?? "",
+  category: feedConfig.category,
+};
     } catch (error) {
       console.error("RSS failed:", feedConfig.url);
-      continue;
+      continue; // Skip broken feed safely
     }
   }
 
