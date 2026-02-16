@@ -55,14 +55,17 @@ export default function AdminPage() {
         </Link>
 
         {/* ✍️ WRITE ARTICLE */}
-<Link href="/studio">
+<a
+  href="https://bombay-bureau-studio.vercel.app/"
+  target="_blank"
+  rel="noopener noreferrer"
+>
   <button
-    
     className="border border-gray-700 px-6 py-3 rounded-full hover:bg-white hover:text-black transition"
   >
     Write / Edit Article
   </button>
-</Link>
+</a>
         {/* LOGOUT */}
         <button
           onClick={()=>signOut(auth)}
