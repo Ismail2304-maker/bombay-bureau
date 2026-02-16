@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@sanity/client";
+import { getRandomArticleFromRSS } from "@/lib/rss";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,19 +13,14 @@ const sanity = createClient({
   useCdn: false,
 });
 
-const RSS_FEEDS = [
-  "https://feeds.bbci.co.uk/news/world/rss.xml",
-  "https://feeds.bbci.co.uk/news/india/rss.xml",
-];
-
 export async function GET(req: Request) {
-  // 🔐 CRON SECURITY CHECK
+  // 🔐 CRON SECURITY
   if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" });
   }
 
   try {
-    // 🕒 IST Time Check (6 AM – 7 PM)
+    // 🕒 IST Time Check (6AM–7PM)
     const now = new Date();
     const ist = new Date(
       now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
@@ -35,35 +31,16 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: "Outside publishing window" });
     }
 
-    // 📡 FETCH RSS
-    const feedUrl =
-      RSS_FEEDS[Math.floor(Math.random() * RSS_FEEDS.length)];
+    // 📰 Get RSS Article
+    const rssArticle = await getRandomArticleFromRSS();
 
-    const rssRes = await fetch(feedUrl);
-
-    if (!rssRes.ok) {
-      return NextResponse.json({ error: "RSS fetch failed" });
+    if (!rssArticle || !rssArticle.title) {
+      return NextResponse.json({ error: "No RSS article found" });
     }
 
-    const xml = await rssRes.text();
+    const rssTitle = rssArticle.title.trim();
 
-    // ✅ Extract titles only from <item>
-    const itemMatches = [
-      ...xml.matchAll(/<item>[\s\S]*?<title>(.*?)<\/title>/g),
-    ];
-
-    if (!itemMatches.length) {
-      return NextResponse.json({ error: "No RSS title found" });
-    }
-
-    const randomItem =
-      itemMatches[Math.floor(Math.random() * itemMatches.length)];
-
-    const rssTitle = randomItem[1]
-      .replace(/<!\[CDATA\[(.*?)\]\]>/, "$1")
-      .trim();
-
-    // 🚫 DUPLICATE CHECK
+    // 🚫 Prevent duplicates
     const existing = await sanity.fetch(
       `*[_type=="post" && title==$title][0]`,
       { title: rssTitle }
@@ -73,7 +50,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: "Already published" });
     }
 
-    // 🤖 CALL OPENROUTER
+    // 🤖 Call OpenRouter
     const aiRes = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
       {
@@ -115,24 +92,25 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "AI returned empty content" });
     }
 
-    // 🧠 SAFE JSON EXTRACTION
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-
-    if (!jsonMatch) {
-      console.error("AI RAW RESPONSE:", content);
-      return NextResponse.json({ error: "AI did not return valid JSON" });
-    }
-
+    // 🧠 SAFE JSON PARSE
     let parsed;
+
     try {
-      const cleaned = jsonMatch[0]
+      let cleaned = content
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .replace(/[\u2018\u2019]/g, "'")
+        .replace(/[\u201C\u201D]/g, '"')
         .replace(/[\u0000-\u001F]+/g, "")
         .trim();
 
-      parsed = JSON.parse(cleaned);
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+
+      if (!jsonMatch) throw new Error("No JSON found");
+
+      parsed = JSON.parse(jsonMatch[0]);
     } catch (err) {
-      console.error("JSON PARSE ERROR:", err);
-      console.error("AI RAW:", content);
+      console.error("AI JSON ERROR:", content);
       return NextResponse.json({ error: "Invalid AI JSON format" });
     }
 
@@ -149,7 +127,7 @@ export async function GET(req: Request) {
       ],
     }));
 
-    // 💾 Save to Sanity
+    // 💾 Save
     await sanity.create({
       _type: "post",
       title: parsed.title,
@@ -167,6 +145,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ success: true });
+
   } catch (err) {
     console.error("SERVER ERROR:", err);
     return NextResponse.json({ error: "Server crashed" });
