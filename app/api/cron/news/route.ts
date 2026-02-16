@@ -17,9 +17,13 @@ export async function GET(req: Request) {
   try {
     const rssArticle = await getRandomArticleFromRSS();
 
-    if (!rssArticle || !rssArticle.title) {
-      return NextResponse.json({ success: false, error: "No RSS title" });
-    }
+    if (!rssArticle) {
+  return NextResponse.json({ success: false, error: "RSS returned null" });
+}
+
+if (!rssArticle.title) {
+  return NextResponse.json({ success: false, error: "RSS missing title" });
+}
 
     const rssTitle = rssArticle.title.trim();
 
