@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDkfTwHN4HZovG3CxyF87tYaWKnrql81Mg",
+  apiKey: "AIzaSyBvFKyFVlay-tmXc4o9AbdZxeA6JPx9DXU",
   authDomain: "bombay-bureau.firebaseapp.com",
   projectId: "bombay-bureau",
   storageBucket: "bombay-bureau.firebasestorage.app",
