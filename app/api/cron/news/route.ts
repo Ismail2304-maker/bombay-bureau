@@ -45,14 +45,26 @@ export async function GET(req: Request) {
 
     const xml = await rssRes.text();
 
-    const matches = [...xml.matchAll(/<title>(.*?)<\/title>/g)];
-    if (!matches || matches.length < 2) {
-      return NextResponse.json({ error: "No RSS title found" });
-    }
+    // Extract RSS items properly
+const items = xml.match(/<item>([\s\S]*?)<\/item>/g);
 
-    const rssTitle = matches[1][1]
-      .replace(/<!\[CDATA\[(.*?)\]\]>/, "$1")
-      .trim();
+if (!items || items.length === 0) {
+  return NextResponse.json({ error: "No RSS items found" });
+}
+
+// Pick random item
+const randomItem = items[Math.floor(Math.random() * items.length)];
+
+// Extract title inside item
+const titleMatch = randomItem.match(/<title>(.*?)<\/title>/);
+
+if (!titleMatch) {
+  return NextResponse.json({ error: "No RSS title found" });
+}
+
+const rssTitle = titleMatch[1]
+  .replace(/<!\[CDATA\[(.*?)\]\]>/, "$1")
+  .trim();
 
     // 🛑 CHECK DUPLICATE
     const existing = await sanity.fetch(
