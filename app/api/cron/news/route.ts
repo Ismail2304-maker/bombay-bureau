@@ -17,111 +17,102 @@ const RSS_FEEDS = [
   "https://feeds.bbci.co.uk/news/india/rss.xml",
 ];
 
-function detectCategory(title: string) {
-  const lower = title.toLowerCase();
-
-  if (lower.includes("india")) return "India";
-  if (lower.includes("tech")) return "Technology";
-  if (lower.includes("market")) return "Business";
-  if (lower.includes("election")) return "Politics";
-
-  return "World";
-}
-
 export async function GET(req: Request) {
-
-  // 🔐 CRON SECURITY CHECK
+  // 🔐 CRON SECURITY
   if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ success: false });
+    return NextResponse.json({ error: "Unauthorized" });
   }
 
   try {
     const now = new Date();
-    const ist = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+    const ist = new Date(
+      now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
     const hour = ist.getHours();
 
     if (hour < 6 || hour >= 19) {
       return NextResponse.json({ message: "Outside publishing window" });
     }
 
-    // Fetch RSS
-    const feedUrl = RSS_FEEDS[Math.floor(Math.random() * RSS_FEEDS.length)];
+    // 🎯 FETCH RSS
+    const feedUrl =
+      RSS_FEEDS[Math.floor(Math.random() * RSS_FEEDS.length)];
     const rssRes = await fetch(feedUrl);
+
+    if (!rssRes.ok) {
+      return NextResponse.json({ error: "RSS fetch failed" });
+    }
+
     const xml = await rssRes.text();
 
-   const items = xml.match(/<item>([\s\S]*?)<\/item>/g);
+    const matches = [...xml.matchAll(/<title>(.*?)<\/title>/g)];
+    if (!matches || matches.length < 2) {
+      return NextResponse.json({ error: "No RSS title found" });
+    }
 
-if (!items || items.length === 0) {
-  return NextResponse.json({ error: "No RSS items found" });
-}
+    const rssTitle = matches[1][1]
+      .replace(/<!\[CDATA\[(.*?)\]\]>/, "$1")
+      .trim();
 
-const randomItem = items[Math.floor(Math.random() * items.length)];
+    // 🛑 CHECK DUPLICATE
+    const existing = await sanity.fetch(
+      `*[_type=="post" && title==$title][0]`,
+      { title: rssTitle }
+    );
 
-const titleMatch = randomItem.match(/<title>(<!\[CDATA\[)?(.*?)(\]\]>)?<\/title>/);
+    if (existing) {
+      return NextResponse.json({ message: "Already published" });
+    }
 
-if (!titleMatch) {
-  return NextResponse.json({ error: "No RSS title found" });
-}
-
-const rssTitle = titleMatch[2];
-
-    // Call OpenRouter
-    const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "meta-llama/llama-3.1-8b-instruct",
-        messages: [
-          {
-            role: "system",
-            content: `
-Rewrite into a professional 400-600 word news article.
-
-Return ONLY valid JSON in this exact format:
-
+    // 🤖 CALL OPENROUTER
+    const aiRes = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "meta-llama/llama-3.1-8b-instruct",
+          messages: [
+            {
+              role: "system",
+              content: `Return ONLY valid JSON:
 {
-  "title": "Clean headline",
-  "body": "Full article body text",
-  "altText": "SEO optimized descriptive alt text for the article image"
-}
-`
-          },
-          {
-            role: "user",
-            content: rssTitle
-          }
-        ],
-        temperature: 0.7,
-      }),
-    });
+  "title": "Headline",
+  "body": "Article body text",
+  "altText": "Image alt description"
+}`,
+            },
+            {
+              role: "user",
+              content: rssTitle,
+            },
+          ],
+          temperature: 0.7,
+        }),
+      }
+    );
+
+    if (!aiRes.ok) {
+      return NextResponse.json({ error: "AI request failed" });
+    }
 
     const aiData = await aiRes.json();
+    const content = aiData.choices?.[0]?.message?.content;
 
-if (!aiData.choices || !aiData.choices.length) {
-  console.error("OpenRouter error:", aiData);
-  return NextResponse.json({ success: false });
-}
+    if (!content) {
+      return NextResponse.json({ error: "AI returned empty content" });
+    }
 
-const content = aiData.choices[0].message.content;
-
-if (!content) {
-  return NextResponse.json({ success: false });
-}
-
-let parsed;
-
-try {
-  const jsonMatch = content.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("No JSON found in AI response");
-
-  parsed = JSON.parse(jsonMatch[0]);
-} catch (err) {
-  console.error("AI JSON parsing failed:", content);
-  return NextResponse.json({ success: false, error: "Invalid AI JSON" });
-}
+    // 🧠 SAFER JSON PARSE
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch {
+      return NextResponse.json({ error: "Invalid AI JSON format" });
+    }
 
     const portableBody = parsed.body.split("\n").map((p: string) => ({
       _type: "block",
@@ -135,24 +126,24 @@ try {
       ],
     }));
 
-  await sanity.create({
-  _type: "post",
-  title: parsed.title,
-  slug: {
-    _type: "slug",
-    current: parsed.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .slice(0, 96),
-  },
-  publishedAt: new Date().toISOString(),
-  body: portableBody,
-  views: 0,
-});
+    await sanity.create({
+      _type: "post",
+      title: parsed.title,
+      slug: {
+        _type: "slug",
+        current: parsed.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .slice(0, 96),
+      },
+      publishedAt: new Date().toISOString(),
+      body: portableBody,
+      views: 0,
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ success: false });
+    return NextResponse.json({ error: "Server crashed" });
   }
 }
