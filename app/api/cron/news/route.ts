@@ -85,20 +85,38 @@ export async function GET(req: Request) {
     }
 
     const aiData = await aiRes.json();
-    const content = aiData.choices?.[0]?.message?.content;
+let content = aiData.choices?.[0]?.message?.content;
 
-    if (!content) {
-      return NextResponse.json({ error: "AI returned empty content" });
-    }
+if (!content) {
+  return NextResponse.json({ error: "AI returned empty content" });
+}
 
-    // 🧠 SAFE JSON PARSE
-    let parsed;
-    try {
-      parsed = JSON.parse(content);
-    } catch (error) {
-      console.error("JSON Parse Error:", content);
-      return NextResponse.json({ error: "JSON parsing failed" });
-    }
+// 🔥 CLEAN HARD BEFORE PARSE
+content = content
+  .replace(/```json/g, "")
+  .replace(/```/g, "")
+  .replace(/\r/g, "")             // remove carriage returns
+  .replace(/\t/g, " ")            // remove tabs
+  .replace(/\u0000/g, "")         // remove null bytes
+  .replace(/[\u0001-\u001F]+/g, "") // remove ALL control characters
+  .trim();
+
+// Extract only JSON block
+const jsonMatch = content.match(/\{[\s\S]*\}/);
+
+if (!jsonMatch) {
+  console.error("AI JSON missing:", content);
+  return NextResponse.json({ error: "Invalid AI format" });
+}
+
+let parsed;
+
+try {
+  parsed = JSON.parse(jsonMatch[0]);
+} catch (err) {
+  console.error("JSON Parse Failed:", jsonMatch[0]);
+  return NextResponse.json({ error: "JSON parsing failed" });
+}
 
     const bodyText = parsed.body || "";
 
