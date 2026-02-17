@@ -68,7 +68,7 @@ export default function UserMenu() {
                 </Link>
 
                 <a
-  href="https://bombay-bureau-admin.sanity.studio"
+  href="https://bombay-bureau-studio.vercel.app/"
   target="_blank"
   rel="noopener noreferrer"
   className="text-left hover:text-white"
