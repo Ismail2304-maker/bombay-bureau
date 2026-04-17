@@ -8,60 +8,53 @@ export default function MaintenancePage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "24px",
         textAlign: "center",
+        padding: "20px",
         fontFamily: "serif",
       }}
     >
-      <div style={{ maxWidth: "700px" }}>
-        
-        {/* MASTHEAD STYLE TITLE */}
+      <div style={{ maxWidth: "640px" }}>
+
+        {/* 503 */}
         <h1
           style={{
-            fontSize: "56px",
-            letterSpacing: "1px",
-            marginBottom: "20px",
-          }}
-        >
-          Bombay Bureau
-        </h1>
-
-        {/* STATUS CODE */}
-        <p
-          style={{
-            fontSize: "22px",
-            marginBottom: "12px",
-            opacity: 0.9,
+            fontSize: "72px",
+            fontWeight: 400,
+            marginBottom: "24px",
           }}
         >
           503
-        </p>
+        </h1>
 
-        {/* MESSAGE */}
-        <p
+        {/* HEADLINE */}
+        <h2
           style={{
-            fontSize: "20px",
-            marginBottom: "16px",
+            fontSize: "32px",
+            fontWeight: 400,
+            marginBottom: "20px",
           }}
         >
           Bombay Bureau is temporarily unavailable
-        </p>
+        </h2>
 
+        {/* DESCRIPTION */}
         <p
           style={{
-            color: "#aaa",
-            fontSize: "16px",
+            color: "#9ca3af",
+            fontSize: "18px",
+            lineHeight: "1.6",
+            marginBottom: "28px",
           }}
         >
           We are currently performing maintenance and improving the platform.
           Please check back shortly.
         </p>
 
+        {/* SIGNATURE */}
         <p
           style={{
-            color: "#666",
-            marginTop: "32px",
-            fontSize: "14px",
+            color: "#6b7280",
+            fontSize: "16px",
           }}
         >
           — Bombay Bureau Editorial Team
