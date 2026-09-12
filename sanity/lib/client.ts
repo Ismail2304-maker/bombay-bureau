@@ -1,6 +1,6 @@
 import "dotenv/config"
 import { createClient } from "next-sanity"
-import { apiVersion, dataset, projectId } from "../env.js"
+import { apiVersion, dataset, projectId } from "../env"
 
 /* READ CLIENT */
 export const client = createClient({

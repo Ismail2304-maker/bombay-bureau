@@ -7,7 +7,7 @@ console.log("🟢 Bombay Bureau Auto News Running...")
 /* AUTHOR */
 const AUTHOR_ID = "0664ef92-6a72-48c3-b1bf-2e2b73ac67c9"
 
-/* CATEGORY IDs (YOUR REAL ONES) */
+/* CATEGORY IDs */
 const CATEGORY_IDS = {
   India: "18088637-4ede-4976-b169-d55b6a298d8e",
   World: "b4863bf0-a551-4f82-b18c-33b5f76d077e",
@@ -23,36 +23,16 @@ async function fetchNews() {
     "https://api.spaceflightnewsapi.net/v4/articles/?limit=5"
   )
 
+  if (!res.ok) {
+    throw new Error(`News API failed: ${res.status}`)
+  }
+
   const data: any = await res.json()
 
   return data.results
 }
 
-/* UPLOAD IMAGE TO SANITY */
-async function uploadImage(url: string, title: string) {
-  try {
-    const res = await fetch(url)
-    const buffer = await res.arrayBuffer()
-
-    const asset = await writeClient.assets.upload(
-      "image",
-      Buffer.from(buffer),
-      { filename: "news.jpg" }
-    )
-
-    return {
-      _type: "image",
-      asset: {
-        _type: "reference",
-        _ref: asset._id,
-      },
-      alt: title, // 🟢 ALT TEXT HERE
-    }
-  } catch {
-    console.log("⚠️ image failed, skipping")
-    return null
-  }
-}
+/* BUILD ARTICLE BODY */
 function buildBody(title: string, summary: string) {
   const p1 = `${title} is rapidly becoming a focal point in international discussions as fresh developments continue to unfold. ${summary} Analysts across global policy and business circles say the story reflects broader shifts in geopolitical priorities, economic momentum, and technological competition. Governments and industry leaders are closely tracking the situation as it evolves.`
 
@@ -76,6 +56,7 @@ function buildBody(title: string, summary: string) {
   ]
 }
 
+/* CREATE SANITY TEXT BLOCK */
 function block(text: string) {
   return {
     _type: "block",
@@ -89,17 +70,45 @@ function block(text: string) {
     ],
   }
 }
+
+/* DETECT CATEGORY */
 function detectCategory(title: string) {
   const t = title.toLowerCase()
 
   if (t.includes("india")) return CATEGORY_IDS.India
-  if (t.includes("government") || t.includes("election")) return CATEGORY_IDS.Politics
-  if (t.includes("market") || t.includes("economy")) return CATEGORY_IDS.Business
-  if (t.includes("tech") || t.includes("ai")) return CATEGORY_IDS.Technology
+
+  if (
+    t.includes("government") ||
+    t.includes("election") ||
+    t.includes("minister") ||
+    t.includes("parliament")
+  ) {
+    return CATEGORY_IDS.Politics
+  }
+
+  if (
+    t.includes("market") ||
+    t.includes("economy") ||
+    t.includes("business") ||
+    t.includes("company")
+  ) {
+    return CATEGORY_IDS.Business
+  }
+
+  if (
+    t.includes("technology") ||
+    t.includes("tech") ||
+    t.includes("ai") ||
+    t.includes("artificial intelligence")
+  ) {
+    return CATEGORY_IDS.Technology
+  }
+
   if (t.includes("opinion")) return CATEGORY_IDS.Opinion
 
   return CATEGORY_IDS.World
 }
+
 /* CREATE POSTS */
 async function run() {
   const news = await fetchNews()
@@ -108,9 +117,8 @@ async function run() {
     const slug = article.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
       .slice(0, 50)
-
-    const image = await uploadImage(article.image_url, article.title)
 
     const doc: any = {
       _type: "post",
@@ -129,33 +137,34 @@ async function run() {
 
       publishedAt: new Date().toISOString(),
 
-      /* BODY */
-      body: buildBody(article.title, article.summary),
+      body: buildBody(
+        article.title,
+        article.summary || "New developments are drawing attention as the situation continues to evolve."
+      ),
 
-      /* CATEGORY */
       categories: [
-  {
-    _type: "reference",
-    _ref: detectCategory(article.title),
-    _key: crypto.randomUUID(),
-  },
-],
+        {
+          _type: "reference",
+          _ref: detectCategory(article.title),
+          _key: crypto.randomUUID(),
+        },
+      ],
 
       views: 0,
     }
 
-    if (image) {
-      doc.mainImage = image
-    }
+    /* NO AUTOMATIC IMAGE UPLOAD */
+    /* You will add the article image manually in Sanity. */
 
-    await writeClient.create({
-  ...doc,
-  _id: `drafts.${crypto.randomUUID()}`
-})
-    console.log("📰 Added:", article.title)
+    await writeClient.create(doc)
+
+    console.log("📰 Published:", article.title)
   }
 
   console.log("✅ Done.")
 }
 
-run()
+run().catch((error) => {
+  console.error("❌ Auto News Error:", error)
+  process.exit(1)
+})
