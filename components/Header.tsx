@@ -82,16 +82,6 @@ export default function Header() {
                   Global affairs, Indian perspective
                 </p>
 
-                {/* Elegant divider */}
-                <div className="flex items-center gap-3 mt-4">
-                  <div className="w-12 md:w-20 h-px bg-gray-400/60" />
-
-                  <span className="text-white text-sm">
-                    ✦
-                  </span>
-
-                  <div className="w-12 md:w-20 h-px bg-gray-400/60" />
-                </div>
 
               </div>
 
