@@ -38,7 +38,7 @@ export default function Header() {
           <div className="relative z-10">
 
             {/* MAIN BRAND AREA */}
-            <div className="relative h-[205px] md:h-[225px]">
+            <div className="relative h-[175px] md:h-[195px]">
 
               {/* SEARCH — REAL / ACTIVE */}
               <div className="absolute left-5 md:left-10 top-5 md:top-6">
@@ -70,7 +70,7 @@ export default function Header() {
               </div>
 
               {/* CENTER BRANDING */}
-              <div className="absolute inset-x-0 top-[48px] md:top-[52px] flex flex-col items-center text-center px-4">
+              <div className="absolute inset-x-0 top-[38px] md:top-[42px] flex flex-col items-center text-center px-4">
 
                 <Link href="/" className="group">
                   <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif tracking-wide whitespace-nowrap text-white drop-shadow-2xl group-hover:text-gray-200 transition">
