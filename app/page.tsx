@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Link from "next/link";
-
+import MarketSnapshot from "@/components/MarketSnapshot";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import { cache } from "react";
@@ -317,6 +317,9 @@ export default async function Home() {
         </aside>
       </section>
       
+{/* MARKET SNAPSHOT */}
+      <MarketSnapshot />
+
       {/* CATEGORY SECTIONS */}
       <section className="max-w-7xl mx-auto px-4 md:px-6 mt-20 md:mt-24 space-y-20 md:space-y-24">
 
