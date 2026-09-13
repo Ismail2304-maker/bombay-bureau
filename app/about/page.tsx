@@ -1,70 +1,79 @@
 export default function AboutPage() {
   return (
     <main className="bg-black text-white min-h-screen">
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16 md:py-24">
+      <div className="max-w-6xl mx-auto px-6 md:px-10">
 
-        {/* Header */}
-        <div className="flex items-center gap-5 mb-12 md:mb-16">
-          <span className="text-[10px] md:text-xs uppercase tracking-[0.35em] text-gray-500">
-            About Bombay Bureau
-          </span>
-
-          <div className="h-px bg-gray-800 flex-1" />
+        {/* Top label */}
+        <div className="pt-12 md:pt-16">
+          <div className="flex items-center gap-4">
+            <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500">
+              About
+            </span>
+            <div className="h-px bg-gray-800 flex-1" />
+          </div>
         </div>
 
         {/* Hero */}
-        <section className="grid md:grid-cols-2 gap-12 md:gap-24 items-end">
-          <div>
-            <h1 className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.86] tracking-tight">
-              Bombay
+        <section className="py-14 md:py-20 border-b border-gray-800">
+          <div className="max-w-5xl">
+            <p className="text-xs uppercase tracking-[0.28em] text-gray-500 mb-5">
+              Bombay Bureau
+            </p>
+
+            <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl leading-[0.95] tracking-tight">
+              Global affairs,
               <br />
-              Bureau
+              Indian perspective.
             </h1>
-          </div>
 
-          <div className="max-w-xl pb-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-gray-500 mb-6">
-              Global affairs, Indian perspective
-            </p>
-
-            <p className="font-serif text-2xl md:text-3xl leading-relaxed text-gray-200">
-              An independent digital newsroom covering the world
-              through an Indian perspective.
+            <p className="mt-8 max-w-2xl text-base md:text-lg leading-relaxed text-gray-400">
+              An independent digital newsroom covering the events,
+              ideas, and developments shaping India’s place in the world.
             </p>
           </div>
         </section>
 
-        {/* Intro */}
-        <section className="mt-20 md:mt-28 border-t border-gray-800 pt-12 md:pt-16">
-          <div className="max-w-4xl">
-            <p className="font-serif text-3xl md:text-5xl leading-[1.25] text-gray-100">
-              Bombay Bureau is an independent digital newsroom covering global
-              affairs through an Indian perspective.
-            </p>
-
-            <p className="text-gray-400 text-base md:text-lg leading-relaxed mt-8 max-w-3xl">
-              Our reporting focuses on geopolitics, business, technology, and
-              policy developments that shape India’s place in the world.
-            </p>
-          </div>
-        </section>
-
-        {/* The Publication */}
-        <section className="mt-20 md:mt-28 border-t border-gray-800 pt-10 md:pt-14">
+        {/* Introduction */}
+        <section className="py-14 md:py-20 border-b border-gray-800">
           <div className="grid md:grid-cols-[220px_1fr] gap-8 md:gap-16">
+            
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-gray-500">
-                The Publication
+              <p className="text-[10px] uppercase tracking-[0.28em] text-gray-500">
+                About the Bureau
               </p>
             </div>
 
             <div className="max-w-3xl">
-              <p className="text-lg md:text-xl leading-relaxed text-gray-300">
+              <p className="font-serif text-2xl md:text-3xl leading-[1.35] text-gray-100">
+                Bombay Bureau is an independent digital newsroom covering
+                global affairs through an Indian perspective.
+              </p>
+
+              <p className="mt-7 text-gray-400 leading-relaxed">
+                Our reporting focuses on geopolitics, business, technology,
+                and policy developments that shape India’s place in the world.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Publication */}
+        <section className="py-14 md:py-20 border-b border-gray-800">
+          <div className="grid md:grid-cols-[220px_1fr] gap-8 md:gap-16">
+
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.28em] text-gray-500">
+                The Publication
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-10 md:gap-16 max-w-4xl">
+              <p className="text-base md:text-lg leading-relaxed text-gray-300">
                 Founded as a modern digital-first publication, Bombay Bureau
                 combines editorial analysis with fast-moving news coverage.
               </p>
 
-              <p className="text-gray-500 leading-relaxed mt-6">
+              <p className="text-base md:text-lg leading-relaxed text-gray-500">
                 The platform aims to deliver clear, concise, and globally
                 relevant reporting for readers in India and abroad.
               </p>
@@ -72,47 +81,51 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Editorial Philosophy */}
-        <section className="mt-20 md:mt-28 border-t border-gray-800 pt-10 md:pt-14">
+        {/* Editorial philosophy */}
+        <section className="py-14 md:py-20 border-b border-gray-800">
           <div className="grid md:grid-cols-[220px_1fr] gap-8 md:gap-16">
+
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-gray-500">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-gray-500">
                 Editorial Approach
               </p>
             </div>
 
             <div className="max-w-4xl">
-              <blockquote className="font-serif text-3xl md:text-5xl leading-[1.25] text-gray-100">
-                “International awareness while maintaining a strong Indian
-                context.”
+              <blockquote className="font-serif text-2xl md:text-4xl leading-[1.3] text-gray-100">
+                “Stories are written with clarity, balance, and long-term
+                perspective rather than short-lived viral cycles.”
               </blockquote>
 
-              <p className="text-gray-400 leading-relaxed mt-8 max-w-3xl">
+              <p className="mt-7 max-w-3xl text-gray-400 leading-relaxed">
                 Our editorial approach is rooted in international awareness
-                while maintaining a strong Indian context. Stories are written
-                with clarity, balance, and long-term perspective rather than
-                short-lived viral cycles.
+                while maintaining a strong Indian context.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Contact */}
-        <section className="mt-20 md:mt-28 border-t border-gray-800 pt-10 md:pt-14 pb-8">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-gray-500 mb-4">
-                Contact
-              </p>
+        {/* Closing statement */}
+        <section className="py-14 md:py-20">
+          <div className="max-w-4xl">
+            <p className="text-[10px] uppercase tracking-[0.28em] text-gray-500 mb-5">
+              Bombay Bureau
+            </p>
 
-              <h2 className="font-serif text-4xl md:text-5xl">
-                Get in touch.
-              </h2>
-            </div>
+            <p className="font-serif text-3xl md:text-5xl leading-[1.2] text-gray-100">
+              Understanding India in a changing world.
+            </p>
+          </div>
+
+          {/* Contact */}
+          <div className="mt-14 pt-6 border-t border-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <span className="text-xs uppercase tracking-[0.25em] text-gray-500">
+              Contact
+            </span>
 
             <a
               href="mailto:editor@bombaybureau.com"
-              className="text-gray-400 hover:text-white transition-colors border-b border-gray-700 hover:border-white pb-2"
+              className="text-sm text-gray-400 hover:text-white transition-colors"
             >
               editor@bombaybureau.com
             </a>
