@@ -8,7 +8,6 @@ import { useState } from "react";
 
 export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
 
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -138,138 +137,45 @@ export default function Header() {
                     href = "/";
                   }
 
+                  if (item === "Markets") {
+                    href = "/markets";
+                  }
+
                   if (
                     isHome &&
-                    ["India", "World", "Politics", "Business", "Technology"].includes(item)
+                    [
+                      "India",
+                      "World",
+                      "Politics",
+                      "Business",
+                      "Technology",
+                      "Opinion",
+                      "Explainers",
+                      "Video",
+                    ].includes(item)
                   ) {
                     href = `/#${lower}`;
                   }
 
                   return (
                     <Link
-                      key={item}
-                      href={href}
-                      className="
-                        text-gray-400
-                        hover:text-white
-                        transition-colors
-                        duration-200
-                        shrink-0
-                      "
-                    >
-                      {item}
-                    </Link>
+  key={item}
+  href={href}
+  scroll={true}
+  className="
+    text-gray-400
+    hover:text-white
+    transition-colors
+    duration-200
+    shrink-0
+  "
+>
+  {item}
+</Link>
                   );
                 })}
-
-                {/* ================= MORE ================= */}
-                <div className="relative shrink-0">
-                  <button
-                    onClick={() => setMoreOpen(!moreOpen)}
-                    className="
-                      flex items-center gap-1
-                      text-gray-400
-                      hover:text-white
-                      transition-colors
-                      duration-200
-                    "
-                  >
-                    <span>More</span>
-
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className={`w-3 h-3 transition-transform ${
-                        moreOpen ? "rotate-180" : ""
-                      }`}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                      />
-                    </svg>
-                  </button>
-
-                  {moreOpen && (
-                    <div className="absolute right-0 top-full mt-3 w-48 border border-gray-800 bg-black shadow-2xl">
-                      <Link
-                        href="/about"
-                        onClick={() => setMoreOpen(false)}
-                        className="block px-5 py-3 text-xs uppercase tracking-[0.12em] text-gray-400 hover:text-white hover:bg-gray-900 transition"
-                      >
-                        About
-                      </Link>
-
-                      <Link
-                        href="/contact"
-                        onClick={() => setMoreOpen(false)}
-                        className="block px-5 py-3 text-xs uppercase tracking-[0.12em] text-gray-400 hover:text-white hover:bg-gray-900 transition"
-                      >
-                        Contact
-                      </Link>
-
-                      <Link
-                        href="/terms"
-                        onClick={() => setMoreOpen(false)}
-                        className="block px-5 py-3 text-xs uppercase tracking-[0.12em] text-gray-400 hover:text-white hover:bg-gray-900 transition"
-                      >
-                        Terms
-                      </Link>
-
-                      <Link
-                        href="/privacy"
-                        onClick={() => setMoreOpen(false)}
-                        className="block px-5 py-3 text-xs uppercase tracking-[0.12em] text-gray-400 hover:text-white hover:bg-gray-900 transition"
-                      >
-                        Privacy
-                      </Link>
-                    </div>
-                  )}
-                </div>
               </div>
             </nav>
-
-            {/* ================= MARKET UTILITY BAR ================= */}
-            <div className="hidden md:flex items-center justify-center border-t border-gray-800 bg-black/95">
-              <div className="flex items-center gap-8 px-6 py-2 text-[9px] uppercase tracking-[0.16em] text-gray-500">
-
-                <Link
-                  href="/"
-                  className="hover:text-white transition"
-                >
-                  Latest
-                </Link>
-
-                <span className="text-gray-800">|</span>
-
-                <span className="text-gray-500">
-                  Market Data
-                </span>
-
-                <span className="text-gray-800">|</span>
-
-                <Link
-                  href="/"
-                  className="hover:text-white transition"
-                >
-                  Most Read
-                </Link>
-
-                <span className="text-gray-800">|</span>
-
-                <Link
-                  href="/"
-                  className="hover:text-white transition"
-                >
-                  Explainers
-                </Link>
-
-              </div>
-            </div>
 
           </div>
         </div>
