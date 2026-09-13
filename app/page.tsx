@@ -336,7 +336,7 @@ export default async function Home() {
             <section
               id={section.title.toLowerCase()}
               key={section.title}
-              className="scroll-mt-52"
+              className="scroll-mt-[240px]"
             >
 
               {/* CATEGORY LINE */}
