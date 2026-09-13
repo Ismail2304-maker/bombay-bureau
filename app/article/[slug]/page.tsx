@@ -1,4 +1,4 @@
-import UserButton from "@/components/UserButton";
+import UserMenu from "@/components/UserMenu";
 import AdminEditButton from "@/components/AdminEditButton";
 import ListenButton from "@/components/ListenButton";
 import ShareBar from "@/components/ShareBar";
@@ -103,8 +103,14 @@ const articleText =
         }}
       />
       {/* HEADER */}
-      <header className="border-b border-gray-800">
-        <div className="w-full px-4 md:px-8 py-4 md:py-6 flex items-center justify-between">
+      <header className="relative border-b border-gray-800 overflow-hidden bg-black">
+  <div
+    className="absolute inset-0 bg-cover bg-center"
+    style={{ backgroundImage: "url('/article-header.png')" }}
+  />
+  <div className="absolute inset-0 bg-black/70" />
+
+  <div className="relative w-full px-4 md:px-8 py-4 md:py-6 flex items-center justify-between">
           <Link href="/" className="flex flex-col items-center leading-tight">
   <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif tracking-tight">
     BOMBAY BUREAU
@@ -115,7 +121,7 @@ const articleText =
   </p>
 </Link>
 
-          <UserButton />
+          <UserMenu />
         </div>
       </header>
 
