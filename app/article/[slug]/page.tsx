@@ -50,7 +50,9 @@ const getMoreArticles = cache(async (slug: string) => {
      | order(publishedAt desc)[0..3]{
       title,
       slug,
-      mainImage
+      mainImage,
+      publishedAt,
+      "category": categories[0]->title
     }`,
     { slug }
   );
