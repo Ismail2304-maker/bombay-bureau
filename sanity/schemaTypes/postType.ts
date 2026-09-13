@@ -56,7 +56,30 @@ export const postType = defineType({
       type: "blockContent",
     }),
 
-    // 🟢 ADD THIS FIELD (MOST IMPORTANT)
+    // 🎥 VIDEO URL
+    defineField({
+      name: "videoUrl",
+      title: "Video URL",
+      type: "url",
+      description:
+        "Paste the URL of the video. Use this field for posts in the Video category.",
+      validation: (Rule) =>
+        Rule.uri({
+          allowRelative: false,
+          scheme: ["http", "https"],
+        }),
+    }),
+
+    // 🕒 VIDEO DURATION
+    defineField({
+      name: "duration",
+      title: "Video Duration",
+      type: "string",
+      description:
+        "Optional. Example: 1:39, 2:05, 5:42",
+    }),
+
+    // 🟢 VIEWS
     defineField({
       name: "views",
       title: "Views",
@@ -73,6 +96,7 @@ export const postType = defineType({
     },
     prepare(selection) {
       const { author } = selection;
+
       return {
         ...selection,
         subtitle: author && `by ${author}`,
