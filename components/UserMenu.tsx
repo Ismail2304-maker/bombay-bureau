@@ -28,14 +28,17 @@ export default function UserMenu() {
 
   // 🔴 logged out
   if (!user) {
-    return (
-      <Link href="/signin">
-        <button className="px-3 md:px-5 py-1.5 md:py-2 rounded-full border border-gray-700 text-xs md:text-sm hover:bg-white hover:text-black transition">
-          Sign in
-        </button>
-      </Link>
-    );
-  }
+  return (
+    <Link href="/signin">
+      <button
+        className="group flex items-center gap-2 px-2 md:px-3 py-2 text-[10px] md:text-xs uppercase tracking-[0.18em] text-gray-300 transition-colors duration-300 hover:text-white"
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-gray-600 transition-colors duration-300 group-hover:bg-white" />
+        <span>Sign in</span>
+      </button>
+    </Link>
+  );
+}
 
   const letter = user.email?.charAt(0).toUpperCase();
   const admin = isAdmin(user.email);
