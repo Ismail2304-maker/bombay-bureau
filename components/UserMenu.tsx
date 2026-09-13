@@ -41,11 +41,11 @@ export default function UserMenu() {
   const admin = isAdmin(user.email);
 
   return (
-    <div className="relative">
+    <div className="relative z-50">
       {/* AVATAR */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-10 h-10 rounded-full bg-white text-black font-bold flex items-center justify-center"
+        className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white text-black font-bold flex items-center justify-center text-sm md:text-base"
       >
         {letter}
       </button>

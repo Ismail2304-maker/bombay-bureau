@@ -15,7 +15,7 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 mx-auto w-full px-1 md:px-4 isolate">
-        <div className="relative overflow-hidden rounded-b-2xl border border-gray-800 bg-black shadow-2xl">
+        <div className="relative overflow-visible rounded-b-2xl border border-gray-800 bg-black shadow-2xl">
 
           {/* ================= LANDMARK BACKGROUND ================= */}
           <div className="absolute inset-0 overflow-hidden bg-black">
@@ -106,7 +106,7 @@ export default function Header() {
             </div>
 
             {/* ================= NAVIGATION ================= */}
-            <nav className="relative z-20 border-t border-gray-700 bg-black">
+            <nav className="relative z-0 border-t border-gray-700 bg-black">
               <div
                 className="
                   flex overflow-x-auto
