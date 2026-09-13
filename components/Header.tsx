@@ -8,9 +8,23 @@ import { useState } from "react";
 
 export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const pathname = usePathname();
   const isHome = pathname === "/";
+
+  const mainNav = [
+    "Latest",
+    "India",
+    "World",
+    "Politics",
+    "Business",
+    "Markets",
+    "Technology",
+    "Opinion",
+    "Explainers",
+    "Video",
+  ];
 
   return (
     <>
@@ -19,7 +33,6 @@ export default function Header() {
 
           {/* ================= LANDMARK BACKGROUND ================= */}
           <div className="absolute inset-0 overflow-hidden bg-black">
-
             <img
               src="/india-landmarks.png"
               alt=""
@@ -31,21 +44,18 @@ export default function Header() {
               "
             />
 
-            {/* Dark cinematic overlay */}
             <div className="absolute inset-0 bg-black/40" />
 
-            {/* Extra black fade at bottom */}
             <div className="absolute inset-x-0 bottom-0 h-16 md:h-24 bg-gradient-to-t from-black via-black/30 to-transparent" />
-
           </div>
 
           {/* ================= HEADER CONTENT ================= */}
           <div className="relative z-10">
 
-            {/* MAIN BRAND AREA */}
-           <div className="relative h-[145px] md:h-[195px]">
+            {/* ================= BRAND AREA ================= */}
+            <div className="relative h-[145px] md:h-[195px]">
 
-              {/* SEARCH — REAL / ACTIVE */}
+              {/* SEARCH */}
               <div className="absolute left-4 md:left-10 top-4 md:top-6">
                 <button
                   onClick={() => setSearchOpen(true)}
@@ -69,14 +79,13 @@ export default function Header() {
                 </button>
               </div>
 
-              {/* USER — REAL / ACTIVE */}
+              {/* USER */}
               <div className="absolute right-3 md:right-10 top-3 md:top-5">
                 <UserMenu />
               </div>
 
               {/* CENTER BRANDING */}
               <div className="absolute inset-x-0 top-[50px] md:top-[42px] flex flex-col items-center text-center px-3">
-
                 <Link href="/" className="group">
                   <h1
                     className="
@@ -100,62 +109,173 @@ export default function Header() {
                 <p className="text-xs sm:text-sm md:text-lg text-gray-300 tracking-wide mt-1 md:mt-2 drop-shadow-lg">
                   Global affairs, Indian perspective
                 </p>
-
               </div>
-
             </div>
 
-            {/* ================= NAVIGATION ================= */}
+            {/* ================= PRIMARY NAVIGATION ================= */}
             <nav className="relative z-0 border-t border-gray-700 bg-black">
               <div
                 className="
-                  flex overflow-x-auto
-                  justify-center
-                  gap-5 sm:gap-6 md:gap-12
-                  px-4 md:px-0
+                  flex items-center
+                  overflow-x-auto
+                  justify-start md:justify-center
+                  gap-5 sm:gap-6 md:gap-9
+                  px-4 md:px-6
                   py-2.5 md:py-3
-                  text-xs sm:text-sm md:text-base
+                  text-[11px] sm:text-xs md:text-sm
+                  uppercase
+                  tracking-[0.08em]
                   whitespace-nowrap
+                  scrollbar-hide
                 "
               >
-                {[
-                  "India",
-                  "World",
-                  "Politics",
-                  "Business",
-                  "Technology",
-                  "About",
-                ].map((item) => {
+                {mainNav.map((item) => {
                   const lower = item.toLowerCase();
+
+                  let href = `/${lower}`;
+
+                  if (item === "Latest") {
+                    href = "/";
+                  }
+
+                  if (
+                    isHome &&
+                    ["India", "World", "Politics", "Business", "Technology"].includes(item)
+                  ) {
+                    href = `/#${lower}`;
+                  }
 
                   return (
                     <Link
                       key={item}
-                      href={
-                        item === "About"
-                          ? "/about"
-                          : isHome
-                          ? `/#${lower}`
-                          : `/${lower}`
-                      }
-                      className={
-                        pathname === `/${lower}`
-                          ? "text-white"
-                          : "text-gray-300 hover:text-white transition"
-                      }
+                      href={href}
+                      className="
+                        text-gray-400
+                        hover:text-white
+                        transition-colors
+                        duration-200
+                        shrink-0
+                      "
                     >
                       {item}
                     </Link>
                   );
                 })}
+
+                {/* ================= MORE ================= */}
+                <div className="relative shrink-0">
+                  <button
+                    onClick={() => setMoreOpen(!moreOpen)}
+                    className="
+                      flex items-center gap-1
+                      text-gray-400
+                      hover:text-white
+                      transition-colors
+                      duration-200
+                    "
+                  >
+                    <span>More</span>
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className={`w-3 h-3 transition-transform ${
+                        moreOpen ? "rotate-180" : ""
+                      }`}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                      />
+                    </svg>
+                  </button>
+
+                  {moreOpen && (
+                    <div className="absolute right-0 top-full mt-3 w-48 border border-gray-800 bg-black shadow-2xl">
+                      <Link
+                        href="/about"
+                        onClick={() => setMoreOpen(false)}
+                        className="block px-5 py-3 text-xs uppercase tracking-[0.12em] text-gray-400 hover:text-white hover:bg-gray-900 transition"
+                      >
+                        About
+                      </Link>
+
+                      <Link
+                        href="/contact"
+                        onClick={() => setMoreOpen(false)}
+                        className="block px-5 py-3 text-xs uppercase tracking-[0.12em] text-gray-400 hover:text-white hover:bg-gray-900 transition"
+                      >
+                        Contact
+                      </Link>
+
+                      <Link
+                        href="/terms"
+                        onClick={() => setMoreOpen(false)}
+                        className="block px-5 py-3 text-xs uppercase tracking-[0.12em] text-gray-400 hover:text-white hover:bg-gray-900 transition"
+                      >
+                        Terms
+                      </Link>
+
+                      <Link
+                        href="/privacy"
+                        onClick={() => setMoreOpen(false)}
+                        className="block px-5 py-3 text-xs uppercase tracking-[0.12em] text-gray-400 hover:text-white hover:bg-gray-900 transition"
+                      >
+                        Privacy
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
             </nav>
+
+            {/* ================= MARKET UTILITY BAR ================= */}
+            <div className="hidden md:flex items-center justify-center border-t border-gray-800 bg-black/95">
+              <div className="flex items-center gap-8 px-6 py-2 text-[9px] uppercase tracking-[0.16em] text-gray-500">
+
+                <Link
+                  href="/"
+                  className="hover:text-white transition"
+                >
+                  Latest
+                </Link>
+
+                <span className="text-gray-800">|</span>
+
+                <span className="text-gray-500">
+                  Market Data
+                </span>
+
+                <span className="text-gray-800">|</span>
+
+                <Link
+                  href="/"
+                  className="hover:text-white transition"
+                >
+                  Most Read
+                </Link>
+
+                <span className="text-gray-800">|</span>
+
+                <Link
+                  href="/"
+                  className="hover:text-white transition"
+                >
+                  Explainers
+                </Link>
+
+              </div>
+            </div>
 
           </div>
         </div>
       </header>
 
-      {/* REAL SEARCH OVERLAY */}
+      {/* ================= SEARCH OVERLAY ================= */}
       {searchOpen && (
         <SearchOverlay onClose={() => setSearchOpen(false)} />
       )}
