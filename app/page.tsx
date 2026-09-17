@@ -132,8 +132,14 @@ const getPosts = cache(async () => {
   "caption": mainImage.alt,
   publishedAt,
   duration,
-  "videoUrl": videoFile.asset->url,
-  "videoMimeType": videoFile.asset->mimeType
+  "videoUrl": coalesce(
+    videoFile.asset->url,
+    videoUrl
+  ),
+  "videoMimeType": coalesce(
+    videoFile.asset->mimeType,
+    videoMimeType
+  )
 }
   }
   `);

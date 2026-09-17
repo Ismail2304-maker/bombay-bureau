@@ -23,10 +23,7 @@ export default function VideoSection({ videos }: Props) {
 
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
-  if (!videos || videos.length === 0) {
-    return null;
-  }
-
+ 
   const playVideo = async (key: string) => {
     const video = videoRefs.current[key];
 
