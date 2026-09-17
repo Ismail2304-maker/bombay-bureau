@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Sanity Studio local/build files
+sanity-studio/node_modules/
+sanity-studio/dist/
+sanity-studio/.sanity/
+sanity-studio/.vercel/
+sanity-studio/.env.local

@@ -41,9 +41,38 @@ export const postType = defineType({
     }),
 
     defineField({
+      name: "videoFile",
+      title: "Video File",
+      type: "file",
+      description: "Upload the video file for Video posts.",
+      options: {
+        accept: "video/*",
+      },
+    }),
+
+    defineField({
+      name: "videoUrl",
+      title: "Video URL",
+      type: "url",
+      description: "Optional fallback video URL.",
+    }),
+
+    defineField({
+      name: "duration",
+      title: "Duration",
+      type: "string",
+      description: "Example: 00:42",
+    }),
+
+    defineField({
       name: "categories",
       type: "array",
-      of: [defineArrayMember({ type: "reference", to: { type: "category" } })],
+      of: [
+        defineArrayMember({
+          type: "reference",
+          to: { type: "category" },
+        }),
+      ],
     }),
 
     defineField({
@@ -55,41 +84,7 @@ export const postType = defineType({
       name: "body",
       type: "blockContent",
     }),
-     
-    defineField({
-  name: "videoFile",
-  title: "Video File",
-  type: "file",
-  description: "Upload the video file for Video posts.",
-  options: {
-    accept: "video/*",
-  },
-}),
 
-    // 🎥 VIDEO URL
-    defineField({
-      name: "videoUrl",
-      title: "Video URL",
-      type: "url",
-      description:
-        "Paste the URL of the video. Use this field for posts in the Video category.",
-      validation: (Rule) =>
-        Rule.uri({
-          allowRelative: false,
-          scheme: ["http", "https"],
-        }),
-    }),
-
-    // 🕒 VIDEO DURATION
-    defineField({
-      name: "duration",
-      title: "Video Duration",
-      type: "string",
-      description:
-        "Optional. Example: 1:39, 2:05, 5:42",
-    }),
-
-    // 🟢 VIEWS
     defineField({
       name: "views",
       title: "Views",

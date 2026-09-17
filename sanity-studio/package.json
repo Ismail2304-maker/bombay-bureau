@@ -1,0 +1,16 @@
+{
+  "name": "bombay-bureau-studio-source",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "start": "sanity start"
+  },
+  "dependencies": {
+    "@sanity/icons": "^3.7.4",
+    "@sanity/vision": "^4.22.0",
+    "sanity": "^4.22.0",
+    "styled-components": "^6.5.3"
+  }
+}

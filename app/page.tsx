@@ -4,6 +4,7 @@ import MarketSnapshot from "@/components/MarketSnapshot";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import { cache } from "react";
+import VideoSection from "@/components/VideoSection";
 
 const builder = imageUrlBuilder(client);
 const urlFor = (source: any) => builder.image(source);
@@ -33,7 +34,7 @@ function formatFreshness(date: string) {
 const getPosts = cache(async () => {
   return await client.fetch(`
   {
-    "all": *[_type == "post"] | order(publishedAt desc){
+    "all": *[_type == "post" && defined(slug.current)] | order(publishedAt desc){
       title,
       slug,
       mainImage,
@@ -44,7 +45,7 @@ const getPosts = cache(async () => {
       "categories": categories[]->title
     },
 
-    "trendingRaw": *[_type=="post" && defined(views)]{
+    "trendingRaw": *[_type=="post" && defined(views) && defined(slug.current)]{
       title,
       slug,
       mainImage,
@@ -52,7 +53,7 @@ const getPosts = cache(async () => {
       publishedAt
     } | order(publishedAt desc)[0..12],
 
-    "india": *[_type=="post" && "India" in categories[]->title]
+   "india": *[_type=="post" && defined(slug.current) && "India" in categories[]->title]
     | order(publishedAt desc)[0..5]{
       title,
       slug,
@@ -62,7 +63,7 @@ const getPosts = cache(async () => {
       publishedAt
     },
 
-    "world": *[_type=="post" && "World" in categories[]->title]
+    "world": *[_type=="post" && defined(slug.current) && "World" in categories[]->title]
     | order(publishedAt desc)[0..5]{
       title,
       slug,
@@ -72,7 +73,7 @@ const getPosts = cache(async () => {
       publishedAt
     },
 
-    "politics": *[_type=="post" && "Politics" in categories[]->title]
+    "politics": *[_type=="post" && defined(slug.current) && "Politics" in categories[]->title]
     | order(publishedAt desc)[0..5]{
       title,
       slug,
@@ -82,7 +83,7 @@ const getPosts = cache(async () => {
       publishedAt
     },
 
-    "business": *[_type=="post" && "Business" in categories[]->title]
+    "business": *[_type=="post" && defined(slug.current) && "Business" in categories[]->title]
     | order(publishedAt desc)[0..5]{
       title,
       slug,
@@ -92,7 +93,7 @@ const getPosts = cache(async () => {
       publishedAt
     },
 
-    "technology": *[_type=="post" && "Technology" in categories[]->title]
+    "technology": *[_type=="post" && defined(slug.current) && "Technology" in categories[]->title]
     | order(publishedAt desc)[0..5]{
       title,
       slug,
@@ -102,7 +103,7 @@ const getPosts = cache(async () => {
       publishedAt
     },
 
-    "opinion": *[_type=="post" && "Opinion" in categories[]->title]
+    "opinion": *[_type=="post" && defined(slug.current) && "Opinion" in categories[]->title]
     | order(publishedAt desc)[0..7]{
       title,
       slug,
@@ -112,7 +113,7 @@ const getPosts = cache(async () => {
       publishedAt
     },
 
-    "explainers": *[_type=="post" && "Explainers" in categories[]->title]
+    "explainers": *[_type=="post" && defined(slug.current) && "Explainers" in categories[]->title]
     | order(publishedAt desc)[0..7]{
       title,
       slug,
@@ -122,16 +123,18 @@ const getPosts = cache(async () => {
       publishedAt
     },
 
-    "video": *[_type=="post" && "Video" in categories[]->title]
-    | order(publishedAt desc)[0..9]{
-      title,
-      slug,
-      mainImage,
-      "excerpt": pt::text(body)[0..140],
-      "caption": mainImage.alt,
-      publishedAt,
-      duration
-    }
+    "video": *[_type=="post" && defined(slug.current) && "Video" in categories[]->title]
+| order(publishedAt desc)[0..9]{
+  title,
+  slug,
+  mainImage,
+  "excerpt": pt::text(body)[0..140],
+  "caption": mainImage.alt,
+  publishedAt,
+  duration,
+  "videoUrl": videoFile.asset->url,
+  "videoMimeType": videoFile.asset->mimeType
+}
   }
   `);
 });
@@ -175,7 +178,13 @@ export default async function Home() {
         <div className="md:col-span-2">
           {posts[0] && (
             <>
-              <Link href={`/article/${posts[0].slug.current}`}>
+              <Link
+  href={
+    posts[0]?.slug?.current
+      ? `/article/${posts[0].slug.current}`
+      : "/"
+  }
+>
                 <div className="group cursor-pointer">
 
                   <div className="overflow-hidden rounded-lg">
@@ -654,152 +663,11 @@ export default async function Home() {
       </section>
 
       {/* =========================================================
-          VIDEO / WATCH
-          VIDEO CAROUSEL STYLE
-      ========================================================= */}
-      <section
-        id="video"
-        className="border-t border-gray-800 mt-20 md:mt-24 pt-10 pb-6 scroll-mt-32"
-      >
-
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-
-          {/* WATCH HEADER */}
-          <div className="flex items-center justify-between mb-7">
-
-            <h2 className="text-lg md:text-xl font-bold tracking-tight">
-              Watch
-            </h2>
-
-            <Link
-              href="/video"
-              className="text-[9px] uppercase tracking-[0.18em] text-gray-500 hover:text-white transition"
-            >
-              Explore More
-            </Link>
-
-
-          </div>
-
-          {data.video?.length > 0 ? (
-
-            <>
-
-              {/* VIDEO ROW */}
-              <div className="flex gap-5 overflow-x-auto pb-5 snap-x snap-mandatory scrollbar-hide">
-
-                {data.video.slice(0, 10).map((post: any) => (
-
-                  <Link
-                    key={post.slug.current}
-                    href={`/article/${post.slug.current}`}
-                    className="group shrink-0 w-[78vw] sm:w-[46vw] md:w-[30vw] lg:w-[23vw] snap-start"
-                  >
-
-                    <article className="relative overflow-hidden rounded-lg aspect-[4/5] bg-gray-900">
-
-                      {post.mainImage && (
-                        <img
-                          src={urlFor(post.mainImage).width(900).url()}
-                          alt=""
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-                        />
-                      )}
-
-                      {/* DARK GRADIENT */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
-
-                      {/* CATEGORY BADGE */}
-                      <div className="absolute top-4 left-4">
-                        <span className="bg-black/70 backdrop-blur-sm text-white text-[11px] px-2 py-1 rounded">
-                          Video
-                        </span>
-                      </div>
-
-                      {/* PLAY BUTTON */}
-                      <div className="absolute left-5 bottom-24 w-11 h-11 rounded-full border-2 border-white flex items-center justify-center">
-
-                        <svg
-                          viewBox="0 0 24 24"
-                          className="w-5 h-5 fill-white ml-0.5"
-                        >
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-
-                      </div>
-
-                      {/* DURATION */}
-                      {post.duration && (
-                        <div className="absolute left-[4.2rem] bottom-[6.15rem]">
-                          <span className="text-sm font-medium text-white">
-                            {post.duration}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* TITLE */}
-                      <div className="absolute left-5 right-5 bottom-5">
-
-                        <h3 className="text-lg sm:text-xl md:text-2xl font-serif font-medium leading-tight text-white">
-                          {post.title}
-                        </h3>
-
-                      </div>
-
-                    </article>
-
-                  </Link>
-
-                ))}
-
-              </div>
-
-              {/* PAGINATION DOTS */}
-              <div className="flex justify-center gap-2 mt-5">
-
-                <span className="w-2.5 h-2.5 rounded-full bg-white"></span>
-
-                <span className="w-2.5 h-2.5 rounded-full bg-gray-600"></span>
-
-              </div>
-
-              {/* CAROUSEL ARROWS */}
-              <div className="flex justify-end gap-3 mt-[-25px]">
-
-                <button
-                  type="button"
-                  aria-label="Previous videos"
-                  className="w-10 h-10 rounded-full border border-gray-800 text-gray-600 flex items-center justify-center"
-                >
-                  ‹
-                </button>
-
-                <button
-                  type="button"
-                  aria-label="Next videos"
-                  className="w-10 h-10 rounded-full border border-white text-white flex items-center justify-center"
-                >
-                  ›
-                </button>
-
-              </div>
-
-            </>
-
-          ) : (
-
-            <div className="border border-gray-800 rounded-lg py-12 text-center">
-              <p className="text-gray-500 text-sm">
-                Videos will appear here.
-              </p>
-            </div>
-
-          )}
-
-        </div>
-
-      </section>
-
+    VIDEO / WATCH
+========================================================= */}
+<VideoSection
+  videos={data.video || []}
+/>
       {/* =========================================================
           FOOTER
       ========================================================= */}
