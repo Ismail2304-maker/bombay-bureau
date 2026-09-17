@@ -34,7 +34,13 @@ function formatFreshness(date: string) {
 const getPosts = cache(async () => {
   return await client.fetch(`
   {
-    "all": *[_type == "post" && defined(slug.current)] | order(publishedAt desc){
+    "all": *[
+  _type == "post" &&
+  defined(slug.current) &&
+  !("Opinion" in categories[]->title) &&
+  !("Explainers" in categories[]->title) &&
+  !("Video" in categories[]->title)
+] | order(publishedAt desc){
       title,
       slug,
       mainImage,
