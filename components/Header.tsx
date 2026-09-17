@@ -22,7 +22,6 @@ export default function Header() {
     "Technology",
     "Opinion",
     "Explainers",
-    "Video",
   ];
 
   return (
@@ -151,7 +150,6 @@ export default function Header() {
                       "Technology",
                       "Opinion",
                       "Explainers",
-                      "Video",
                     ].includes(item)
                   ) {
                     href = `/#${lower}`;
@@ -159,19 +157,19 @@ export default function Header() {
 
                   return (
                     <Link
-  key={item}
-  href={href}
-  scroll={true}
-  className="
-    text-gray-400
-    hover:text-white
-    transition-colors
-    duration-200
-    shrink-0
-  "
->
-  {item}
-</Link>
+                      key={item}
+                      href={href}
+                      scroll={true}
+                      className="
+                        text-gray-400
+                        hover:text-white
+                        transition-colors
+                        duration-200
+                        shrink-0
+                      "
+                    >
+                      {item}
+                    </Link>
                   );
                 })}
               </div>
