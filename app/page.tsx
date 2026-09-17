@@ -397,10 +397,10 @@ export default async function Home() {
 
           return (
             <section
-              id={section.title.toLowerCase()}
-              key={section.title}
-              className="scroll-mt-32"
-            >
+  id={section.title.toLowerCase()}
+  key={section.title}
+  className="scroll-mt-[210px] md:scroll-mt-[250px]"
+>
 
               {/* CATEGORY HEADER */}
               <Link href={`/${section.title.toLowerCase()}`}>
@@ -525,9 +525,9 @@ export default async function Home() {
           SMALL EDITORIAL CARD GRID
       ========================================================= */}
       <section
-        id="opinion"
-        className="max-w-7xl mx-auto px-4 md:px-6 mt-20 md:mt-24 scroll-mt-32"
-      >
+  id="opinion"
+  className="max-w-7xl mx-auto px-4 md:px-6 mt-20 md:mt-24 scroll-mt-[210px] md:scroll-mt-[250px]"
+>
 
         <div className="border-t border-gray-800 pt-5 mb-7">
 
@@ -602,9 +602,9 @@ export default async function Home() {
           SMALL EDITORIAL CARD GRID
       ========================================================= */}
       <section
-        id="explainers"
-        className="max-w-7xl mx-auto px-4 md:px-6 mt-20 md:mt-24 scroll-mt-32"
-      >
+  id="explainers"
+  className="max-w-7xl mx-auto px-4 md:px-6 mt-20 md:mt-24 scroll-mt-[210px] md:scroll-mt-[250px]"
+>
 
         <div className="border-t border-gray-800 pt-5 mb-7">
 
