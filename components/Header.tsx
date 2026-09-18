@@ -22,6 +22,7 @@ export default function Header() {
     "Technology",
     "Opinion",
     "Explainers",
+    "About",
   ];
 
   return (
