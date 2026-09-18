@@ -708,15 +708,15 @@ export default async function Home() {
           <div className="flex flex-wrap gap-6 text-sm mb-10">
 
             <Link href="/">Home</Link>
-            <Link href="/india">India</Link>
-            <Link href="/world">World</Link>
-            <Link href="/politics">Politics</Link>
-            <Link href="/business">Business</Link>
-            <Link href="/technology">Technology</Link>
-            <Link href="/markets">Markets</Link>
-            <Link href="/opinion">Opinion</Link>
-            <Link href="/explainers">Explainers</Link>
-            <Link href="/video">Video</Link>
+            <Link href="/#india">India</Link>
+            <Link href="/#world">World</Link>
+            <Link href="/#politics">Politics</Link>
+            <Link href="/#business">Business</Link>
+            <Link href="/#technology">Technology</Link>
+            <Link href="/#markets">Markets</Link>
+            <Link href="/#opinion">Opinion</Link>
+            <Link href="/#explainers">Explainers</Link>
+            <Link href="/#video">Video</Link>
 
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
@@ -772,13 +772,13 @@ export default async function Home() {
           {/* LEGAL LINKS */}
           <div className="flex flex-wrap gap-6 text-xs text-gray-500 mb-6">
 
-            <Link href="#">Terms of Use</Link>
-            <Link href="#">Privacy Policy</Link>
-            <Link href="#">Cookies</Link>
-            <Link href="#">Advertise</Link>
-            <Link href="#">Careers</Link>
-            <Link href="#">Contact</Link>
-            <Link href="#">Sitemap</Link>
+            <Link href="/terms">Terms of Use</Link>
+            <Link href="/privacy">Privacy Policy</Link>
+            <span>Cookies</span>
+            <a href="mailto:editor@bombaybureau.com">Advertise</a>
+            <a href="mailto:editor@bombaybureau.com">Careers</a>
+            <Link href="/contact">Contact</Link>
+            <a href="/sitemap.xml">Sitemap</a>
 
           </div>
 
