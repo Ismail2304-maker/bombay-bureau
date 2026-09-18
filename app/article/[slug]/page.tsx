@@ -67,7 +67,7 @@ export async function generateMetadata(
       description,
       publishedTime: post.publishedAt || undefined,
       modifiedTime: post._updatedAt || post.publishedAt || undefined,
-      authors: [`/author/muhammed-ismail`],
+      authors: [`https://bombay-bureau.vercel.app/author/muhammed-ismail`],
       images: post.mainImage
         ? [{ url: urlFor(post.mainImage).width(1200).url() }]
         : undefined,
@@ -389,7 +389,7 @@ const articleText =
   <img
     src={urlFor(m.mainImage).width(400).url()}
     alt={m.title}
-    className="w-full h-[250px object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
+    className="w-full h-[250px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
   />
 )}
 
