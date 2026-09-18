@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Stock = {
   ticker_id?: string;
@@ -89,9 +89,18 @@ export default function MarketSnapshot() {
   const [exchange, setExchange] = useState<"NSE" | "BSE">("NSE");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    async function loadMarkets() {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    let loaded = false;
+    let observer: IntersectionObserver | null = null;
+
+    const loadMarkets = async () => {
+      if (loaded) return;
+      loaded = true;
       try {
         const response = await fetch("/api/markets", {
           cache: "no-store",
@@ -111,7 +120,19 @@ export default function MarketSnapshot() {
       }
     }
 
-    loadMarkets();
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          loadMarkets();
+          observer?.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" }
+    );
+
+    observer.observe(section);
+
+    return () => observer?.disconnect();
   }, []);
 
   const movers =
@@ -125,7 +146,7 @@ export default function MarketSnapshot() {
       : extractStocks(data?.bse_most_active);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 md:px-6 mt-12 md:mt-16">
+    <section ref={sectionRef} className="max-w-7xl mx-auto px-4 md:px-6 mt-12 md:mt-16">
       {/* HEADER */}
       <div className="border-t border-gray-800 pt-4 mb-6">
         <div className="flex items-end justify-between gap-4">
