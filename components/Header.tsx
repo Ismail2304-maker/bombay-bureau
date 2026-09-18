@@ -52,7 +52,7 @@ export default function Header() {
           <div className="relative z-10">
 
             {/* ================= BRAND AREA ================= */}
-            <div className="relative h-[145px] md:h-[195px]">
+            <div className="relative h-[125px] md:h-[195px]">
 
               {/* SEARCH */}
               <div className="absolute left-4 md:left-10 top-4 md:top-6">
@@ -84,7 +84,7 @@ export default function Header() {
               </div>
 
               {/* CENTER BRANDING */}
-              <div className="absolute inset-x-0 top-[50px] md:top-[42px] flex flex-col items-center text-center px-3">
+              <div className="absolute inset-x-0 top-[42px] md:top-[42px] flex flex-col items-center text-center px-3">
                 <Link href="/" className="group">
                   <h1
                     className="
@@ -105,7 +105,7 @@ export default function Header() {
                   </h1>
                 </Link>
 
-                <p className="text-xs sm:text-sm md:text-lg text-gray-300 tracking-wide mt-1 md:mt-2 drop-shadow-lg">
+                <p className="text-[10px] sm:text-sm md:text-lg text-gray-300 tracking-wide mt-1 md:mt-2 drop-shadow-lg">
                   Global affairs, Indian perspective
                 </p>
               </div>
