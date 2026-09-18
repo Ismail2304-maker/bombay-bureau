@@ -1,13 +1,6 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import SearchButton from "@/components/SearchButton";
-
-const UserMenu = dynamic(() => import("@/components/UserMenu"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800 animate-pulse" />
-  ),
-});
+import UserMenuLoader from "@/components/UserMenuLoader";
 
 export default function Header() {
   const mainNav = [
@@ -59,7 +52,7 @@ export default function Header() {
 
               {/* USER */}
               <div className="absolute right-3 md:right-10 top-3 md:top-5">
-                <UserMenu />
+                <UserMenuLoader />
               </div>
 
               {/* CENTER BRANDING */}
