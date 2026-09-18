@@ -22,6 +22,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/ai-policy",
     "/corrections",
     "/author/muhammed-ismail",
+    "/india",
+    "/world",
+    "/politics",
+    "/business",
+    "/technology",
+    "/markets",
+    "/explainers",
   ];
 
   const staticUrls = staticPaths.map((path) => ({
