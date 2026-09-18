@@ -40,12 +40,10 @@ const getPosts = cache(async () => {
   !("Opinion" in categories[]->title) &&
   !("Explainers" in categories[]->title) &&
   !("Video" in categories[]->title)
-] | order(publishedAt desc){
+[0..19]{
       title,
       slug,
       mainImage,
-      body,
-      views,
       publishedAt,
       "excerpt": pt::text(body)[0..160],
       "categories": categories[]->title
@@ -54,7 +52,6 @@ const getPosts = cache(async () => {
     "trendingRaw": *[_type=="post" && defined(views) && defined(slug.current)]{
       title,
       slug,
-      mainImage,
       views,
       publishedAt
     } | order(publishedAt desc)[0..12],
