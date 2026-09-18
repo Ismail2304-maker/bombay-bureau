@@ -4,11 +4,22 @@ import imageUrlBuilder from "@sanity/image-url";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 const builder = imageUrlBuilder(client);
 const urlFor = (src: any) => builder.image(src);
 
 export const revalidate = 60;
+
+const validCategorySlugs = [
+  "india",
+  "world",
+  "politics",
+  "business",
+  "technology",
+  "markets",
+  "explainers",
+];
 
 const categoryDescriptions: Record<string, string> = {
   india: "Latest India news and reporting from Bombay Bureau.",
@@ -59,13 +70,10 @@ async function getPosts(category: string) {
 
 export default async function CategoryPage(props: any) {
   const params = await props.params;
-  const categorySlug = params.category;
-  if (categorySlug.toLowerCase() === "opinion") {
-    return (
-      <main className="bg-black text-white min-h-screen flex items-center justify-center">
-        <h1 className="text-2xl font-serif">Category not available</h1>
-      </main>
-    );
+  const categorySlug = params.category.toLowerCase();
+
+  if (!validCategorySlugs.includes(categorySlug)) {
+    notFound();
   }
 
   const categoryName =
@@ -88,7 +96,7 @@ export default async function CategoryPage(props: any) {
               {lead?.mainImage && (
                 <Image
                   src={urlFor(lead.mainImage).width(1200).url()}
-                  alt=""
+                  alt={lead.title}
                   width={1200}
                   height={700}
                   className="rounded-lg"
@@ -113,7 +121,7 @@ export default async function CategoryPage(props: any) {
                     {post?.mainImage && (
                       <Image
                         src={urlFor(post.mainImage).width(400).url()}
-                        alt=""
+                        alt={post.title}
                         width={400}
                         height={250}
                         className="rounded-md"
