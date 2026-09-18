@@ -99,7 +99,8 @@ export default async function CategoryPage(props: any) {
                   alt={lead.title}
                   width={1200}
                   height={700}
-                  className="rounded-lg"
+                  className="rounded-lg w-full h-auto"
+                  sizes="(max-width: 767px) 100vw, 50vw"
                 />
               )}
               <div>
@@ -112,11 +113,11 @@ export default async function CategoryPage(props: any) {
           </Link>
         )}
 
-        <div className="grid md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="md:col-span-2 space-y-10">
             {rest.map((post: any) => (
               <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
-                <div className="grid grid-cols-3 gap-6 border-b border-gray-800 pb-8 group cursor-pointer">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 border-b border-gray-800 pb-8 group cursor-pointer">
                   <div className="col-span-1">
                     {post?.mainImage && (
                       <Image
@@ -124,7 +125,8 @@ export default async function CategoryPage(props: any) {
                         alt={post.title}
                         width={400}
                         height={250}
-                        className="rounded-md"
+                        className="rounded-md w-full h-auto"
+                        sizes="(max-width: 767px) 100vw, 33vw"
                       />
                     )}
                   </div>
@@ -139,7 +141,7 @@ export default async function CategoryPage(props: any) {
             ))}
           </div>
 
-          <aside className="space-y-10 ml-6">
+          <aside className="space-y-10 md:ml-6">
             <div>
               <h3 className="text-lg font-bold mb-4 border-b border-gray-800 pb-2">
                 Latest
