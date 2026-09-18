@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { cache } from "react";
+import { notFound } from "next/navigation";
 import { PortableText } from "@portabletext/react";
 import { client } from "@/lib/sanity";
 
@@ -51,16 +52,7 @@ export default async function AuthorPage(
   const author = await getAuthor(slug);
 
   if (!author) {
-    return (
-      <main className="min-h-screen bg-black text-white px-6 py-20">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-gray-500">Author not found.</p>
-          <Link href="/" className="inline-block mt-4 underline underline-offset-4">
-            Return to Bombay Bureau
-          </Link>
-        </div>
-      </main>
-    );
+    notFound();
   }
 
   return (
@@ -119,7 +111,7 @@ export default async function AuthorPage(
               {author.articles.map((article: any) => (
                 <Link
                   key={article.slug?.current || article.title}
-                  href={article.slug?.current ? `/article/${article.slug.current}` : "#"}
+                  href={`/article/${article.slug.current}`}
                   className="group border-b border-gray-800 py-6 md:py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
                 >
                   <div>
