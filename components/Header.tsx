@@ -113,7 +113,7 @@ export default function Header() {
                   let href = `/#${lower}`;
 
                   if (item === "Latest") {
-                    href = "/";
+                    href = "/#latest";
                   }
 
                   if (item === "Markets") {
