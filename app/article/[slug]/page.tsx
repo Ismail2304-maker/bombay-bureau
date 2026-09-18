@@ -8,6 +8,7 @@ import imageUrlBuilder from "@sanity/image-url";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { cache } from "react";
 
@@ -117,7 +118,7 @@ export default async function ArticlePage(
   const post = await getArticle(slug);
 
   if (!post) {
-    return <div className="text-white p-10">Article not found</div>;
+    notFound();
   }
 
   
@@ -261,7 +262,7 @@ const articleText =
     <figure className="mb-10">
       <img
   src={urlFor(post.mainImage).width(1800).url()}
-  alt={post.mainImage?.alt || ""}
+  alt={post.mainImage?.alt || post.title}
   className="rounded-lg md:rounded-xl w-full"
 />
 
@@ -387,8 +388,8 @@ const articleText =
                 {m?.mainImage && (
   <img
     src={urlFor(m.mainImage).width(400).url()}
-    alt=""
-    className="w-full h-[250px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
+    alt={m.title}
+    className="w-full h-[250px object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
   />
 )}
 
