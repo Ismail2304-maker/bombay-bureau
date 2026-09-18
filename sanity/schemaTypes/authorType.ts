@@ -18,19 +18,13 @@ export const authorType = defineType({
       name: "role",
       title: "Role",
       type: "string",
-      description: "Example: Founder, Publisher & Editor",
+      description: "Example: Founder & Editor, Bombay Bureau",
     }),
     defineField({
       name: "location",
       title: "Location",
       type: "string",
       description: "Example: India",
-    }),
-    defineField({
-      name: "image",
-      title: "Profile Photo",
-      type: "image",
-      options: { hotspot: true },
     }),
     defineField({
       name: "bio",
@@ -46,6 +40,6 @@ export const authorType = defineType({
     }),
   ],
   preview: {
-    select: { title: "name", subtitle: "role", media: "image" },
+    select: { title: "name", subtitle: "role" },
   },
 });
