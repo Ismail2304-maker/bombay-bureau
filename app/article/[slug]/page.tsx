@@ -243,13 +243,19 @@ const articleText =
 
     {post.publishedAt && (
       <>
-        <span>
+        <time dateTime={post.publishedAt}>
           {new Date(post.publishedAt).toLocaleDateString("en-IN", {
             day: "numeric",
             month: "long",
             year: "numeric",
           })}
-        </span>
+          {" at "}
+          {new Date(post.publishedAt).toLocaleTimeString("en-IN", {
+            hour: "numeric",
+            minute: "2-digit",
+            timeZone: "Asia/Kolkata",
+          })}{" IST"}
+        </time>
         <span>•</span>
       </>
     )}
