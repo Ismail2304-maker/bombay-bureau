@@ -7,9 +7,10 @@ type VideoItem = {
   slug?: {
     current?: string;
   };
-  mainImage?: string | null;
+  mainImage?: any;
   videoUrl?: string;
   videoMimeType?: string;
+  posterUrl?: string | null;
   duration?: string;
   publishedAt?: string;
 };
@@ -87,6 +88,7 @@ export default function VideoSection({ videos }: Props) {
                         src={video.videoUrl}
                         playsInline
                         preload="none"
+                        poster={video.posterUrl || undefined}
                         controls={playing === key}
                         className="absolute inset-0 w-full h-full object-cover"
                         onPause={() => {
