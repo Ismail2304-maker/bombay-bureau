@@ -26,7 +26,15 @@ const getArticle = cache(async (slug: string) => {
       mainImage,
       body,
       publishedAt,
-      "category": categories[0]->title
+      "category": categories[0]->title,
+      author->{
+        name,
+        slug,
+        image,
+        role,
+        location,
+        bio
+      }
     }`,
     { slug }
   );
@@ -245,10 +253,41 @@ const articleText =
 
   {/* AUTHOR */}
   <div className="mt-20 pt-10 border-t border-gray-800">
-    <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">
+    <p className="text-xs uppercase tracking-widest text-gray-500 mb-4">
       Written by
     </p>
-    <h3 className="text-lg font-serif">Bombay Bureau</h3>
+
+    <div className="flex items-start gap-4">
+      {post.author?.image && (
+        <img
+          src={urlFor(post.author.image).width(120).height(120).url()}
+          alt={post.author.name || "Author"}
+          className="w-14 h-14 rounded-full object-cover"
+        />
+      )}
+
+      <div>
+        <h3 className="text-xl font-serif">
+          {post.author?.name || "Muhammed Ismail"}
+        </h3>
+
+        {post.author?.role && (
+          <p className="mt-1 text-sm text-gray-500">
+            {post.author.role}
+            {post.author.location ? ` · ${post.author.location}` : ""}
+          </p>
+        )}
+
+        {post.author?.slug?.current && (
+          <Link
+            href={`/author/${post.author.slug.current}`}
+            className="inline-block mt-3 text-sm text-gray-300 underline underline-offset-4 hover:text-white"
+          >
+            View author profile →
+          </Link>
+        )}
+      </div>
+    </div>
   </div>
 
   <ShareBar />
