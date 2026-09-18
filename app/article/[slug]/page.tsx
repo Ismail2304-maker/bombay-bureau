@@ -6,6 +6,7 @@ import TrackView from "@/components/TrackView";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import Link from "next/link";
+import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -266,10 +267,14 @@ const articleText =
   {/* HERO IMAGE */}
   {post.mainImage && (
     <figure className="mb-10">
-      <img
+      <Image
   src={urlFor(post.mainImage).width(1800).url()}
   alt={post.mainImage?.alt || post.title}
-  className="rounded-lg md:rounded-xl w-full"
+  width={1800}
+  height={1000}
+  priority
+  sizes="(max-width: 767px) 100vw, 820px"
+  className="rounded-lg md:rounded-xl w-full h-auto"
 />
 
       {/* CAPTION */}
@@ -392,9 +397,13 @@ const articleText =
               <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">
 
                 {m?.mainImage && (
-  <img
+  <Image
     src={urlFor(m.mainImage).width(400).url()}
     alt={m.title}
+    loading="lazy"
+    width={400}
+    height={250}
+    sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 25vw"
     className="w-full h-[250px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]"
   />
 )}
