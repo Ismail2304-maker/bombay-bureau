@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Use",
+  description: "Terms governing access to and use of the Bombay Bureau website and its editorial content.",
+  alternates: { canonical: "/terms" },
+};
+
 export default function TermsPage() {
   return (
     <main className="max-w-3xl mx-auto px-6 py-20 text-white">
