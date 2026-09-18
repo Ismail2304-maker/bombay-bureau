@@ -57,7 +57,7 @@ export async function generateMetadata(
 async function getPosts(category: string) {
   return await client.fetch(
     `*[_type=="post" && $category in categories[]->title]
-     | order(publishedAt desc){
+     | order(publishedAt desc)[0..39]{
       title,
       slug,
       mainImage,
