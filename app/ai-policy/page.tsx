@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "AI & Technology Policy",
+  description: "How Bombay Bureau uses AI and technology in its newsroom while retaining human editorial responsibility.",
+  alternates: { canonical: "/ai-policy" },
+};
+
 export default function AIPolicyPage() {
   return (
     <main className="bg-black text-white min-h-screen">
