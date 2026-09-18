@@ -40,7 +40,7 @@ const getPosts = cache(async () => {
   !("Opinion" in categories[]->title) &&
   !("Explainers" in categories[]->title) &&
   !("Video" in categories[]->title)
-[0..19]{
+] | order(publishedAt desc)[0..19]{
       title,
       slug,
       mainImage,
