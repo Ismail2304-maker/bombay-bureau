@@ -133,6 +133,7 @@ const getPosts = cache(async () => {
   title,
   slug,
   mainImage,
+  "posterUrl": mainImage ? urlFor(mainImage).width(600).url() : null,
   "excerpt": pt::text(body)[0..140],
   "caption": mainImage.alt,
   publishedAt,
@@ -183,7 +184,10 @@ export default async function Home() {
       {/* =========================================================
           HERO + SIDEBAR
       ========================================================= */}
-      <section className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6 md:gap-10 px-4 md:px-6 mt-6 md:mt-10 mb-6 md:mb-10">
+      <section
+        id="latest"
+        className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6 md:gap-10 px-4 md:px-6 mt-6 md:mt-10 mb-6 md:mb-10 scroll-mt-[210px] md:scroll-mt-[250px]"
+      >
 
         {/* LEFT */}
         <div className="md:col-span-2">
@@ -580,7 +584,7 @@ export default async function Home() {
                 <article className="group cursor-pointer">
 
                   {post.mainImage && (
-                    <div className="overflow-hidden rounded-md aspect-[4/3]">
+                    <div className="relative overflow-hidden rounded-md aspect-[4/3]">
                       <Image
                         src={urlFor(post.mainImage).width(700).url()}
                         loading="lazy"
