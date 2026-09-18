@@ -378,8 +378,8 @@ const articleText =
 </article>
 
       {/* RELATED */}
-      <section className="max-w-6xl mx-auto px-6 pb-24">
-        <h2 className="text-2xl font-serif mb-10 border-t border-gray-800 pt-12">
+      <section className="max-w-6xl mx-auto px-4 md:px-6 pb-16 md:pb-24">
+        <h2 className="text-2xl md:text-3xl font-serif mb-8 md:mb-10 border-t border-gray-800 pt-10 md:pt-12">
           More from BOMBAY BUREAU
         </h2>
 
