@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Corrections Policy",
+  description: "How Bombay Bureau handles factual corrections, updates and reader reports of errors.",
+  alternates: { canonical: "/corrections" },
+};
+
 export default function CorrectionsPage() {
   return (
     <main className="bg-black text-white min-h-screen">
