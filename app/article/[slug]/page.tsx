@@ -128,6 +128,43 @@ const articleText =
   post.body?.map((block:any)=>
     block.children?.map((c:any)=>c.text).join("")
   ).join(" ") || "";
+  const articleUrl = `https://bombay-bureau.vercel.app/article/${slug}`;
+  const authorSlug = post.author?.slug?.current || "muhammed-ismail";
+  const authorName = post.author?.name || "Muhammed Ismail";
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "@id": `${articleUrl}#article`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": articleUrl,
+    },
+    headline: post.title,
+    description: post.excerpt || undefined,
+    image: post.mainImage
+      ? [urlFor(post.mainImage).width(1600).url()]
+      : undefined,
+    datePublished: post.publishedAt || undefined,
+    dateModified: post._updatedAt || post.publishedAt || undefined,
+    author: {
+      "@type": "Person",
+      name: authorName,
+      url: `https://bombay-bureau.vercel.app/author/${authorSlug}`,
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": "https://bombay-bureau.vercel.app/#organization",
+      name: "BOMBAY BUREAU",
+      url: "https://bombay-bureau.vercel.app",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://bombay-bureau.vercel.app/icon.png",
+      },
+    },
+    isAccessibleForFree: true,
+  };
+
   // Fetch more articles for the related section
   const more = await getMoreArticles(slug);
 
