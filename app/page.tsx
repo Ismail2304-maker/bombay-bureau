@@ -769,14 +769,14 @@ export default async function Home() {
             </span>
 
             {/* X */}
-            <a href="#" className="hover:opacity-70 transition">
+            <a href="#" aria-label="Bombay Bureau on X" className="hover:opacity-70 transition">
               <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24">
                 <path d="M18.244 2H21.5l-7.31 8.35L22.8 22h-6.73l-5.27-6.9L4.8 22H1.5l7.82-8.94L1 2h6.86l4.78 6.26L18.244 2Zm-2.36 18h1.88L7.1 3.9H5.08l10.8 16.1Z"/>
               </svg>
             </a>
 
             {/* INSTAGRAM */}
-            <a href="#" className="hover:opacity-70 transition">
+            <a href="#" aria-label="Bombay Bureau on Instagram" className="hover:opacity-70 transition">
               <svg
                 className="w-5 h-5 stroke-white"
                 fill="none"
@@ -790,14 +790,14 @@ export default async function Home() {
             </a>
 
             {/* FACEBOOK */}
-            <a href="#" className="hover:opacity-70 transition">
+            <a href="#" aria-label="Bombay Bureau on Facebook" className="hover:opacity-70 transition">
               <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24">
                 <path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.4V12h2.4V9.8c0-2.4 1.4-3.7 3.6-3.7 1 0 2 .2 2 .2v2.3h-1.2c-1.2 0-1.6.75-1.6 1.5V12h2.7l-.43 2.9h-2.27v7A10 10 0 0 0 22 12Z"/>
               </svg>
             </a>
 
             {/* LINKEDIN */}
-            <a href="#" className="hover:opacity-70 transition">
+            <a href="#" aria-label="Bombay Bureau on LinkedIn" className="hover:opacity-70 transition">
               <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24">
                 <path d="M6.94 6.5A1.94 1.94 0 1 1 6.94 2.6a1.94 1.94 0 0 1 0 3.88ZM4.5 8.5h4.9V22H4.5V8.5ZM13 8.5h4.7v1.85h.07c.65-1.2 2.23-2.45 4.6-2.45 4.9 0 5.8 3.22 5.8 7.4V22h-4.9v-5.9c0-1.4-.02-3.2-2-3.2-2 0-2.3 1.5-2.3 3.1V22H13V8.5Z"/>
               </svg>
