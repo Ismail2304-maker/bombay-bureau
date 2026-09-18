@@ -246,7 +246,8 @@ export default async function Home() {
                       {post.mainImage && (
                         <div className="overflow-hidden rounded-lg mb-3">
                           <img
-                            src={urlFor(post.mainImage).width(600).url()}\n                            loading="lazy"
+                            src={urlFor(post.mainImage).width(600).url()}
+                            loading="lazy"
                             alt=""
                             className="w-full rounded-lg transition-transform duration-700 group-hover:scale-[1.06]"
                           />
@@ -301,7 +302,8 @@ export default async function Home() {
 
                   {post?.mainImage && (
                     <img
-                      src={urlFor(post.mainImage).width(80).url()}\n                      loading="lazy"
+                      src={urlFor(post.mainImage).width(80).url()}
+                            loading="lazy"
                       alt=""
                       className="w-[80px] h-[60px] object-cover rounded-md"
                     />
@@ -436,7 +438,8 @@ export default async function Home() {
                       {main?.mainImage && (
                         <div className="overflow-hidden rounded-lg">
                           <img
-                            src={urlFor(main.mainImage).width(1600).url()}\n                            loading="lazy"
+                            src={urlFor(main.mainImage).width(1600).url()}
+                            loading="lazy"
                             alt=""
                             className="w-full rounded-lg transition-transform duration-700 group-hover:scale-[1.03]"
                           />
@@ -482,7 +485,8 @@ export default async function Home() {
                         {post?.mainImage && (
                           <div className="shrink-0 overflow-hidden rounded-md">
                             <img
-                              src={urlFor(post.mainImage).width(300).url()}\n                              loading="lazy"
+                              src={urlFor(post.mainImage).width(300).url()}
+                            loading="lazy"
                               alt=""
                               className="w-[120px] h-[80px] object-cover rounded-md transition-transform duration-500 group-hover:scale-[1.04]"
                             />
@@ -560,7 +564,8 @@ export default async function Home() {
                   {post.mainImage && (
                     <div className="overflow-hidden rounded-md aspect-[4/3]">
                       <img
-                        src={urlFor(post.mainImage).width(700).url()}\n                        loading="lazy"
+                        src={urlFor(post.mainImage).width(700).url()}
+                            loading="lazy"
                         alt=""
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       />
