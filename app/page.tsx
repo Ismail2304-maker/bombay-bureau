@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Link from "next/link";
+import Image from "next/image";
 import MarketSnapshot from "@/components/MarketSnapshot";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
@@ -198,9 +199,13 @@ export default async function Home() {
 
                   <div className="overflow-hidden rounded-lg">
                     {posts[0]?.mainImage && (
-                      <img
+                      <Image
                         src={urlFor(posts[0].mainImage).width(1600).url()}
-                        alt=""
+                        alt={posts[0].title}
+                        width={1600}
+                        height={900}
+                        priority
+                        sizes="(max-width: 767px) 100vw, 66vw"
                         className="w-full rounded-lg transition-transform duration-700 group-hover:scale-[1.05]"
                       />
                     )}
@@ -245,10 +250,13 @@ export default async function Home() {
 
                       {post.mainImage && (
                         <div className="overflow-hidden rounded-lg mb-3">
-                          <img
+                          <Image
                             src={urlFor(post.mainImage).width(600).url()}
                             loading="lazy"
-                            alt=""
+                            alt={post.title}
+                            width={600}
+                            height={400}
+                            sizes="(max-width: 639px) 100vw, 33vw"
                             className="w-full rounded-lg transition-transform duration-700 group-hover:scale-[1.06]"
                           />
                         </div>
@@ -301,10 +309,13 @@ export default async function Home() {
                 <div className="group flex gap-3 py-4 border-b border-gray-800 hover:translate-x-1 transition cursor-pointer">
 
                   {post?.mainImage && (
-                    <img
+                    <Image
                       src={urlFor(post.mainImage).width(80).url()}
-                            loading="lazy"
-                      alt=""
+                      loading="lazy"
+                      alt={post.title}
+                      width={80}
+                      height={60}
+                      sizes="80px"
                       className="w-[80px] h-[60px] object-cover rounded-md"
                     />
                   )}
@@ -437,10 +448,13 @@ export default async function Home() {
 
                       {main?.mainImage && (
                         <div className="overflow-hidden rounded-lg">
-                          <img
+                          <Image
                             src={urlFor(main.mainImage).width(1600).url()}
                             loading="lazy"
-                            alt=""
+                            alt={main.title}
+                            width={1600}
+                            height={900}
+                            sizes="(max-width: 767px) 100vw, 66vw"
                             className="w-full rounded-lg transition-transform duration-700 group-hover:scale-[1.03]"
                           />
                         </div>
@@ -484,10 +498,13 @@ export default async function Home() {
 
                         {post?.mainImage && (
                           <div className="shrink-0 overflow-hidden rounded-md">
-                            <img
+                            <Image
                               src={urlFor(post.mainImage).width(300).url()}
-                            loading="lazy"
-                              alt=""
+                              loading="lazy"
+                              alt={post.title}
+                              width={120}
+                              height={80}
+                              sizes="120px"
                               className="w-[120px] h-[80px] object-cover rounded-md transition-transform duration-500 group-hover:scale-[1.04]"
                             />
                           </div>
@@ -563,11 +580,13 @@ export default async function Home() {
 
                   {post.mainImage && (
                     <div className="overflow-hidden rounded-md aspect-[4/3]">
-                      <img
+                      <Image
                         src={urlFor(post.mainImage).width(700).url()}
-                            loading="lazy"
-                        alt=""
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                        loading="lazy"
+                        alt={post.title}
+                        fill
+                        sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       />
                     </div>
                   )}
@@ -641,10 +660,12 @@ export default async function Home() {
 
                   {post.mainImage && (
                     <div className="overflow-hidden rounded-md aspect-[4/3]">
-                      <img
+                      <Image
                         src={urlFor(post.mainImage).width(700).url()}
-                        alt=""
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                        alt={post.title}
+                        fill
+                        sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       />
                     </div>
                   )}
@@ -693,9 +714,12 @@ export default async function Home() {
           <div className="mb-8">
             <div className="flex items-center gap-3">
 
-              <img
+              <Image
                 src="/icon.png"
                 alt="Bombay Bureau"
+                width={40}
+                height={40}
+                sizes="40px"
                 className="w-8 h-8 md:w-10 md:h-10 object-contain"
               />
 
