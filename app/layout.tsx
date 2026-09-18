@@ -14,9 +14,53 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://bombay-bureau.vercel.app";
+
 export const metadata: Metadata = {
-  title: "BOMBAY BUREAU",
-  description: "Global affairs, Indian perspective",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "BOMBAY BUREAU",
+    template: "%s | BOMBAY BUREAU",
+  },
+  description:
+    "Bombay Bureau is an independent digital news platform covering India and the world through an Indian perspective.",
+  alternates: {
+    canonical: siteUrl,
+  },
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    siteName: "BOMBAY BUREAU",
+    title: "BOMBAY BUREAU",
+    description:
+      "Global affairs, Indian perspective.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BOMBAY BUREAU",
+    description:
+      "Global affairs, Indian perspective.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+const publisherJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${siteUrl}/#organization`,
+  name: "BOMBAY BUREAU",
+  url: siteUrl,
+  logo: `${siteUrl}/icon.png`,
+  description:
+    "An independent digital news platform covering India and the world through an Indian perspective.",
+  founder: {
+    "@type": "Person",
+    name: "Muhammed Ismail",
+    url: `${siteUrl}/author/muhammed-ismail`,
+  },
 };
 
 export default function RootLayout({
@@ -27,6 +71,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(publisherJsonLd),
+          }}
+        />
+
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-9MLBXV4XSH"
