@@ -148,7 +148,7 @@ export default function MarketSnapshot() {
       {/* CONTENT */}
       <div className="border border-gray-800 bg-[#050505]">
         {/* MAIN TABS */}
-        <div className="flex items-center border-b border-gray-800">
+        <div className="flex items-center overflow-x-auto border-b border-gray-800">
           <button
             onClick={() => setActiveSection("movers")}
             className={`px-5 md:px-6 py-3 text-[10px] uppercase tracking-[0.16em] transition ${
@@ -180,7 +180,7 @@ export default function MarketSnapshot() {
         {activeSection === "movers" && (
           <>
             {/* GAINERS / LOSERS */}
-            <div className="flex items-center border-b border-gray-800">
+            <div className="flex items-center overflow-x-auto border-b border-gray-800">
               <button
                 onClick={() => setActiveTab("gainers")}
                 className={`px-5 md:px-6 py-3 text-[10px] uppercase tracking-[0.16em] transition ${
