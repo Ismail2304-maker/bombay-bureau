@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "Read the Bombay Bureau privacy policy covering analytics, authentication and personal data.",
+  alternates: { canonical: "/privacy" },
+};
+
 export default function PrivacyPage() {
   return (
     <main className="max-w-3xl mx-auto px-6 py-20 text-white">
