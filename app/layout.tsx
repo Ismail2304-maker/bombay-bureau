@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import PageTransition from "@/components/PageTransition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -97,10 +96,7 @@ export default function RootLayout({
           className="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 z-[999]"
         />
 
-        {/* 🎬 PREMIUM PAGE TRANSITIONS */}
-        <PageTransition>
-          {children}
-        </PageTransition>
+        {children}
       </body>
     </html>
   );
