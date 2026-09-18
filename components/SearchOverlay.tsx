@@ -25,7 +25,7 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-start justify-center pt-40"
+      className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-start justify-center pt-24 sm:pt-32 md:pt-40"
       onClick={onClose}
     >
       {/* INNER */}
