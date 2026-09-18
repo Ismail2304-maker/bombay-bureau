@@ -133,7 +133,6 @@ const getPosts = cache(async () => {
   title,
   slug,
   mainImage,
-  "posterUrl": mainImage ? urlFor(mainImage).width(600).url() : null,
   "excerpt": pt::text(body)[0..140],
   "caption": mainImage.alt,
   publishedAt,
@@ -154,6 +153,12 @@ const getPosts = cache(async () => {
 export default async function Home() {
   const data = await getPosts();
   const posts = data.all;
+  const videos = (data.video || []).map((video: any) => ({
+    ...video,
+    posterUrl: video.mainImage
+      ? urlFor(video.mainImage).width(600).url()
+      : null,
+  }));
 
   const trending = (data.trendingRaw || [])
     .map((p: any) => {
@@ -706,7 +711,7 @@ export default async function Home() {
     VIDEO / WATCH
 ========================================================= */}
 <VideoSection
-  videos={data.video || []}
+  videos={videos}
 />
       {/* =========================================================
           FOOTER
