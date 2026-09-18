@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description: "Bombay Bureau is an independent, founder-led digital newsroom covering India and the world through an Indian perspective.",
+  alternates: { canonical: "/about" },
+};
+
 export default function AboutPage() {
   return (
     <main className="bg-black text-white min-h-screen">
