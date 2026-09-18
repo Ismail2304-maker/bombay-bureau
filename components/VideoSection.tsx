@@ -56,12 +56,9 @@ export default function VideoSection({ videos }: Props) {
             </p>
           </div>
 
-          <a
-            href="/video"
-            className="text-[9px] uppercase tracking-[0.18em] text-gray-500 hover:text-white transition"
-          >
-            Explore More
-          </a>
+          <span className="text-[9px] uppercase tracking-[0.18em] text-gray-600">
+            Latest visual stories
+          </span>
         </div>
 
         {/* VIDEO ROW */}
