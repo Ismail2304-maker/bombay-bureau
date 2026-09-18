@@ -1,10 +1,18 @@
-import Image from "next/image";
 import Link from "next/link";
 import { client } from "@/lib/sanity";
+import type { Metadata } from "next";
 import imageUrlBuilder from "@sanity/image-url";
 
 const builder = imageUrlBuilder(client);
 const urlFor = (src: any) => builder.image(src);
+
+export const metadata: Metadata = {
+  title: "Search",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default async function SearchPage({
   searchParams,
@@ -102,7 +110,7 @@ export default async function SearchPage({
               {post.mainImage && (
   <img
     src={urlFor(post.mainImage).width(400).url()}
-    alt=""
+    alt={post.title}
     className="w-full sm:w-[220px] h-[200px] sm:h-[140px] object-cover rounded-md"
   />
 )}
