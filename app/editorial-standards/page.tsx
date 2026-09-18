@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Editorial Standards",
+  description: "The editorial standards that guide accuracy, attribution, transparency and accountability at Bombay Bureau.",
+  alternates: { canonical: "/editorial-standards" },
+};
+
 export default function EditorialStandardsPage() {
   const standards = [
     ["Accuracy", "We aim to publish information that is accurate and supported by reliable evidence. Material factual claims are reviewed before publication."],
