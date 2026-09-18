@@ -86,7 +86,7 @@ export default function VideoSection({ videos }: Props) {
                         }}
                         src={video.videoUrl}
                         playsInline
-                        preload="metadata"
+                        preload="none"
                         controls={playing === key}
                         className="absolute inset-0 w-full h-full object-cover"
                         onPause={() => {
