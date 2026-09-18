@@ -1,25 +1,46 @@
-import { client } from "@/lib/sanity"
+import type { MetadataRoute } from "next";
+import { client } from "@/lib/sanity";
 
-export default async function sitemap() {
+const baseUrl = "https://bombay-bureau.vercel.app";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await client.fetch(`
-    *[_type=="post"]{
+    *[_type == "post" && defined(slug.current)]{
       "slug": slug.current,
+      publishedAt,
       _updatedAt
     }
-  `)
+  `);
 
-  const baseUrl = "https://bombay-bureau.vercel.app"
+  const staticPaths = [
+    "",
+    "/about",
+    "/contact",
+    "/india",
+    "/world",
+    "/politics",
+    "/business",
+    "/markets",
+    "/technology",
+    "/opinion",
+    "/explainers",
+    "/video",
+    "/privacy",
+    "/terms",
+    "/editorial-standards",
+    "/ai-policy",
+    "/corrections",
+    "/author/muhammed-ismail",
+  ];
 
-  const postUrls = posts.map((post:any) => ({
+  const staticUrls = staticPaths.map((path) => ({
+    url: `${baseUrl}${path}`,
+  }));
+
+  const postUrls = posts.map((post: any) => ({
     url: `${baseUrl}/article/${post.slug}`,
-    lastModified: post._updatedAt,
-  }))
+    lastModified: post._updatedAt || post.publishedAt || undefined,
+  }));
 
-  return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-    },
-    ...postUrls,
-  ]
+  return [...staticUrls, ...postUrls];
 }
