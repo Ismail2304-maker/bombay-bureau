@@ -1,17 +1,15 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import UserMenu from "@/components/UserMenu";
-import SearchOverlay from "./SearchOverlay";
 import Link from "next/link";
-import { useState } from "react";
+import dynamic from "next/dynamic";
+import SearchButton from "@/components/SearchButton";
+
+const UserMenu = dynamic(() => import("@/components/UserMenu"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800 animate-pulse" />
+  ),
+});
 
 export default function Header() {
-  const [searchOpen, setSearchOpen] = useState(false);
-
-  const pathname = usePathname();
-  const isHome = pathname === "/";
-
   const mainNav = [
     "Latest",
     "India",
@@ -56,26 +54,7 @@ export default function Header() {
 
               {/* SEARCH */}
               <div className="absolute left-4 md:left-10 top-4 md:top-6">
-                <button
-                  onClick={() => setSearchOpen(true)}
-                  className="text-white hover:text-gray-300 transition"
-                  aria-label="Search"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.7}
-                    stroke="currentColor"
-                    className="w-5 h-5 md:w-6 md:h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m21 21-4.3-4.3m0 0A7.5 7.5 0 1 0 5 5a7.5 7.5 0 0 0 11.7 11.7Z"
-                    />
-                  </svg>
-                </button>
+                <SearchButton />
               </div>
 
               {/* USER */}
@@ -131,7 +110,7 @@ export default function Header() {
                 {mainNav.map((item) => {
                   const lower = item.toLowerCase();
 
-                  let href = `/${lower}`;
+                  let href = `/#${lower}`;
 
                   if (item === "Latest") {
                     href = "/";
@@ -141,19 +120,8 @@ export default function Header() {
                     href = "/markets";
                   }
 
-                  if (
-                    isHome &&
-                    [
-                      "India",
-                      "World",
-                      "Politics",
-                      "Business",
-                      "Technology",
-                      "Opinion",
-                      "Explainers",
-                    ].includes(item)
-                  ) {
-                    href = `/#${lower}`;
+                  if (item === "About") {
+                    href = "/about";
                   }
 
                   return (
@@ -179,11 +147,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      {/* ================= SEARCH OVERLAY ================= */}
-      {searchOpen && (
-        <SearchOverlay onClose={() => setSearchOpen(false)} />
-      )}
     </>
   );
 }
