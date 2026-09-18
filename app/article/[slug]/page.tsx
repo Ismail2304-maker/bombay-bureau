@@ -6,6 +6,7 @@ import TrackView from "@/components/TrackView";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import Link from "next/link";
+import { PortableText } from "@portabletext/react";
 
 import { cache } from "react";
 
@@ -103,7 +104,7 @@ const articleText =
         }}
       />
       {/* HEADER */}
-      <header className="relative border-b border-gray-800 overflow-hidden bg-black">
+      <header className="relative z-40 border-b border-gray-800 overflow-visible bg-black">
   <div
     className="absolute inset-0 bg-cover bg-center"
     style={{ backgroundImage: "url('/article-header.png')" }}
@@ -182,32 +183,65 @@ const articleText =
   )}
 
   {/* ARTICLE BODY */}
-  <div className="prose prose-invert max-w-none prose-base md:prose-lg leading-relaxed">
-
-    {post.body?.map((block: any, i: number) => {
-      if (block._type === "block") {
-        const text = block.children
-          .map((child: any) => child.text)
-          .join("");
-
-        // DROP CAP FIRST PARAGRAPH
-        if (i === 0) {
-          return (
-            <p
-              key={i}
-               className="first-letter:text-5xl md:first-letter:text-7xl first-letter:font-serif first-letter:mr-3 first-letter:float-left first-letter:leading-none"
-            >
-              {text}
-            </p>
-          );
-        }
-
-        return <p key={i}>{text}</p>;
-      }
-
-      return null;
-    })}
-  </div>
+<div className="prose prose-invert max-w-none prose-base md:prose-lg leading-relaxed">
+  <PortableText
+    value={post.body}
+    components={{
+      block: {
+        normal: ({ children }) => (
+          <p>{children}</p>
+        ),
+        h2: ({ children }) => (
+          <h2 className="font-serif text-2xl md:text-3xl text-white mt-10 mb-4">
+            {children}
+          </h2>
+        ),
+        h3: ({ children }) => (
+          <h3 className="font-serif text-xl md:text-2xl text-white mt-8 mb-3">
+            {children}
+          </h3>
+        ),
+        blockquote: ({ children }) => (
+          <blockquote className="border-l-2 border-gray-600 pl-5 my-8 text-gray-400 italic">
+            {children}
+          </blockquote>
+        ),
+      },
+      list: {
+        bullet: ({ children }) => (
+          <ul className="list-disc pl-6 my-6">
+            {children}
+          </ul>
+        ),
+        number: ({ children }) => (
+          <ol className="list-decimal pl-6 my-6">
+            {children}
+          </ol>
+        ),
+      },
+      marks: {
+        strong: ({ children }) => (
+          <strong className="text-white font-semibold">
+            {children}
+          </strong>
+        ),
+        em: ({ children }) => (
+          <em>{children}</em>
+        ),
+        link: ({ value, children }) => (
+          <a
+            href={value?.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4 hover:text-gray-300"
+          >
+            {children}
+          </a>
+        ),
+      },
+    }}
+  />
+</div>
 
   {/* AUTHOR */}
   <div className="mt-20 pt-10 border-t border-gray-800">
@@ -229,7 +263,10 @@ const articleText =
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {more.map((m: any) => (
-            <Link key={m.slug.current} href={`/article/${m.slug.current}`}>
+            <Link
+  key={m.slug?.current || m.title}
+  href={m.slug?.current ? `/article/${m.slug.current}` : "#"}
+>
               <div className="group cursor-pointer hover:-translate-y-1 transition-all duration-300">
 
                 {m?.mainImage && (
