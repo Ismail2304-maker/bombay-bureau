@@ -533,18 +533,18 @@ export default async function Home() {
 
           <div className="flex items-center justify-between">
 
-            <Link href="/opinion" className="group">
+            <a href="/#opinion" className="group">
               <h2 className="text-lg md:text-xl font-bold tracking-tight group-hover:text-gray-400 transition">
                 Opinion
               </h2>
-            </Link>
+            </a>
 
-            <Link
-              href="/opinion"
+            <a
+              href="/#opinion"
               className="text-[9px] uppercase tracking-[0.18em] text-gray-500 hover:text-white transition"
             >
               Explore More
-            </Link>
+            </a>
 
           </div>
 
