@@ -87,12 +87,12 @@ export default async function CategoryPage(props: any) {
     <main className="bg-black text-white min-h-screen">
       <Header />
 
-      <section className="max-w-7xl mx-auto px-6 mt-12">
-        <h1 className="text-5xl font-serif mb-10">{categoryName}</h1>
+      <section className="max-w-7xl mx-auto px-4 md:px-6 mt-8 md:mt-12">
+        <h1 className="text-4xl md:text-5xl font-serif mb-8 md:mb-10">{categoryName}</h1>
 
         {lead && (
           <Link href={`/article/${lead.slug.current}`}>
-            <div className="grid md:grid-cols-2 gap-8 mb-14 cursor-pointer group">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12 md:mb-14 cursor-pointer group">
               {lead?.mainImage && (
                 <Image
                   src={urlFor(lead.mainImage).width(1200).url()}
@@ -113,8 +113,8 @@ export default async function CategoryPage(props: any) {
           </Link>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div className="md:col-span-2 space-y-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          <div className="md:col-span-2 space-y-8 md:space-y-10">
             {rest.map((post: any) => (
               <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 border-b border-gray-800 pb-8 group cursor-pointer">
