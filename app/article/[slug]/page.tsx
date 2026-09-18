@@ -7,6 +7,7 @@ import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
+import type { Metadata } from "next";
 
 import { cache } from "react";
 
@@ -26,11 +27,11 @@ const getArticle = cache(async (slug: string) => {
       mainImage,
       body,
       publishedAt,
+      _updatedAt,
       "category": categories[0]->title,
       author->{
         name,
         slug,
-        image,
         role,
         location,
         bio
@@ -39,6 +40,47 @@ const getArticle = cache(async (slug: string) => {
     { slug }
   );
 });
+
+export async function generateMetadata(
+  props: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await props.params;
+  const post = await getArticle(slug);
+
+  if (!post) {
+    return { title: "Article not found" };
+  }
+
+  const description =
+    post.excerpt || "Read the latest reporting and analysis from Bombay Bureau.";
+  const canonical = `/article/${slug}`;
+
+  return {
+    title: post.title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: "article",
+      url: canonical,
+      title: post.title,
+      description,
+      publishedTime: post.publishedAt || undefined,
+      modifiedTime: post._updatedAt || post.publishedAt || undefined,
+      authors: [`/author/muhammed-ismail`],
+      images: post.mainImage
+        ? [{ url: urlFor(post.mainImage).width(1200).url() }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: post.mainImage
+        ? [urlFor(post.mainImage).width(1200).url()]
+        : undefined,
+    },
+  };
+}
 
 function getReadingTime(body: any[]) {
   if (!body) return 1;
@@ -135,6 +177,11 @@ const articleText =
       </header>
 
       {/* ARTICLE */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+
       <article className="max-w-[820px] mx-auto px-4 md:px-6 py-8 md:py-14">
 
   {/* CATEGORY + DATE */}
@@ -258,14 +305,6 @@ const articleText =
     </p>
 
     <div className="flex items-start gap-4">
-      {post.author?.image && (
-        <img
-          src={urlFor(post.author.image).width(120).height(120).url()}
-          alt={post.author.name || "Author"}
-          className="w-14 h-14 rounded-full object-cover"
-        />
-      )}
-
       <div>
         <h3 className="text-xl font-serif">
           {post.author?.name || "Muhammed Ismail"}
