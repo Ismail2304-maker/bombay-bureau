@@ -8,7 +8,8 @@ import { cache } from "react";
 import VideoSection from "@/components/VideoSection";
 
 const builder = imageUrlBuilder(client);
-const urlFor = (source: any) => builder.image(source);
+const urlFor = (source: any) =>
+  builder.image(source).auto("format").quality(75);
 
 export const revalidate = 60;
 
