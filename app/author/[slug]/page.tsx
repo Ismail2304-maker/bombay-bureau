@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { cache } from "react";
 import { PortableText } from "@portabletext/react";
 import { client } from "@/lib/sanity";
@@ -23,6 +24,25 @@ const getAuthor = cache(async (slug: string) => {
     { slug }
   );
 });
+
+export async function generateMetadata(
+  props: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await props.params;
+  const author = await getAuthor(slug);
+
+  if (!author) return { title: "Author not found" };
+
+  return {
+    title: author.name,
+    description:
+      author.bio?.[0]?.children?.map((child: any) => child.text).join(" ") ||
+      `${author.name} — ${author.role || "Author"} at Bombay Bureau.`,
+    alternates: {
+      canonical: `/author/${slug}`,
+    },
+  };
+}
 
 export default async function AuthorPage(
   props: { params: Promise<{ slug: string }> }
