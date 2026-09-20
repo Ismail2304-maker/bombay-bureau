@@ -15,10 +15,10 @@ export async function GET() {
   const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
 
   const posts = await client.fetch(
-    `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt >= $cutoff && !("Video" in categories[]->title)] | order(publishedAt desc)[0..999]{
+    `*[_type == "post" && defined(slug.current) && defined(publishedAt) && coalesce(firstPublishedAt, publishedAt) >= $cutoff && contentType == "news" && coalesce(workflowStatus, "published") == "published"] | order(publishedAt desc)[0..999]{
       title,
       slug,
-      publishedAt
+      "publicationDate": coalesce(firstPublishedAt, publishedAt)
     }`,
     { cutoff }
   );
@@ -33,7 +33,7 @@ export async function GET() {
               <news:name>BOMBAY BUREAU</news:name>
               <news:language>en</news:language>
             </news:publication>
-            <news:publication_date>${escapeXml(post.publishedAt)}</news:publication_date>
+            <news:publication_date>${escapeXml(post.publicationDate)}</news:publication_date>
             <news:title>${escapeXml(post.title)}</news:title>
           </news:news>
         </url>

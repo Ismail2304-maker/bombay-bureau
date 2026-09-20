@@ -177,7 +177,7 @@ export default async function ArticlePage(
 
   const articleJsonLd = {
     "@context": "https://schema.org",
-    "@type": "NewsArticle",
+    "@type": post.contentType === "news" ? "NewsArticle" : "Article",
     "@id": `${articleUrl}#article`,
     mainEntityOfPage: {"@type": "WebPage", "@id": articleUrl},
     headline: post.title,
