@@ -51,12 +51,12 @@ const getPosts = cache(async () => {
       "categories": categories[]->title
     },
 
-    "trendingRaw": *[_type=="post" && defined(views) && defined(slug.current)]{
+    "trendingRaw": *[_type=="post" && defined(views) && defined(slug.current) && defined(publishedAt) && !("Video" in categories[]->title)]{
       title,
       slug,
       views,
       publishedAt
-    } | order(publishedAt desc)[0..12],
+    } | order(views desc)[0..99],
 
    "india": *[_type=="post" && defined(slug.current) && "India" in categories[]->title]
     | order(publishedAt desc)[0..5]{
