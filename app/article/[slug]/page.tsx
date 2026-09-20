@@ -31,6 +31,7 @@ const getArticle = cache(async (slug: string) => {
       publishedAt,
       _updatedAt,
       "category": categories[0]->title,
+      "categories": categories[]->title,
       author->{name,slug,role,location,bio}
     }`,
     { slug }
@@ -83,13 +84,13 @@ function getReadingTime(body: any[]) {
   return Math.max(1, Math.ceil(text.split(/\s+/).filter(Boolean).length / 200));
 }
 
-const getMoreArticles = cache(async (slug: string, category?: string) => {
+const getMoreArticles = cache(async (slug: string, categories: string[] = []) => {
   return await client.fetch(
-    `*[_type=="post" && slug.current != $slug && defined(slug.current) && (!$category || $category in categories[]->title)]
-      | order(publishedAt desc)[0..3]{
+    `*[_type=="post" && slug.current != $slug && defined(slug.current) && count(categories[]->title[@ in $categories]) > 0]
+      | order(publishedAt desc)[0..5]{
         title, slug, mainImage, publishedAt, "category": categories[0]->title
       }`,
-    { slug, category: category || null }
+    { slug, categories }
   );
 });
 
@@ -164,7 +165,7 @@ export default async function ArticlePage(
     item:articleUrl,
   });
 
-  const more = await getMoreArticles(slug, post.category);
+  const more = await getMoreArticles(slug, post.categories || []);
 
   return (
     <main className="bg-black text-white min-h-screen">
@@ -303,13 +304,13 @@ export default async function ArticlePage(
 
       <section className="max-w-6xl mx-auto px-4 md:px-6 pb-16 md:pb-24">
         <h2 className="text-2xl md:text-3xl font-serif mb-8 md:mb-10 border-t border-gray-800 pt-10 md:pt-12">
-          More from {post.category || "BOMBAY BUREAU"}
+          Related stories
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {more.map((m:any)=>(
             <Link key={m.slug?.current || m.title} href={m.slug?.current ? `/article/${m.slug.current}` : "#"} className="group">
               <div className="cursor-pointer hover:-translate-y-1 transition-all duration-300">
-                {m.mainImage && <Image src={urlFor(m.mainImage).width(400).url()} alt={m.title} loading="lazy" width={400} height={250} sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 25vw" className="w-full h-[250px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]" />}
+                {m.mainImage && <Image src={urlFor(m.mainImage).width(400).url()} alt={m.title} loading="lazy" width={400} height={250} sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 25vw" className="w-full h-[230px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]" />}
                 {m.category && <p className="text-[10px] uppercase tracking-[0.18em] text-gray-500 mb-2">{m.category}</p>}
                 <h3 className="font-serif leading-snug group-hover:text-gray-300 transition-colors">{m.title}</h3>
               </div>
