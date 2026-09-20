@@ -40,7 +40,7 @@ const getArticle = cache(async (slug: string) => {
       sources[]{label,url},
       "category": categories[0]->title,
       "categories": categories[]->title,
-      author->{name,slug,role,location,bio}
+      author->{name,slug,role,location,bio,image}
     }`,
     { slug }
   );
@@ -186,7 +186,7 @@ export default async function ArticlePage(
     datePublished: originalPublishedAt || undefined,
     dateModified: lastPublishedAt || originalPublishedAt || undefined,
     author: post.author
-      ? {"@type": "Person", name: authorName, url: authorUrl}
+      ? {"@type": "Person", name: authorName, url: authorUrl, image: post.author?.image ? urlFor(post.author.image).width(800).url() : undefined}
       : {"@type": "Organization", name: "BOMBAY BUREAU", url: siteUrl},
     publisher: {
       "@type": "Organization",
