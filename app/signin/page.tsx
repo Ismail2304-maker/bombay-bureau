@@ -191,6 +191,7 @@ export default function SignIn() {
           </label>
 
           <button
+            type="button"
             onClick={handleEmail}
             disabled={!accepted || loading}
             className="w-full mt-6 rounded-lg bg-white text-black py-3 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-200 transition"
@@ -205,8 +206,10 @@ export default function SignIn() {
           </div>
 
           <button
+            type="button"
             onClick={handleGoogle}
             disabled={!accepted || loading}
+            aria-label="Continue with Google"
             className="w-full rounded-lg border border-gray-700 py-3 font-medium hover:bg-white hover:text-black disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-3"
           >
             <span className="text-base font-bold">G</span>
