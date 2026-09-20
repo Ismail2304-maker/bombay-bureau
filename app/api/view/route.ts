@@ -19,7 +19,8 @@ export async function POST(req: Request) {
 
   await client
     .patch(post._id)
-    .set({ views: (post.views || 0) + 1 })
+    .setIfMissing({ views: 0 })
+    .inc({ views: 1 })
     .commit();
 
   return NextResponse.json({ success: true });
