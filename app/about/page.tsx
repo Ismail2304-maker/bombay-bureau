@@ -75,9 +75,9 @@ export default function AboutPage() {
                 </div>
               </div>
               <p className="mt-8 text-gray-400 leading-relaxed">
-                Bombay Bureau is editorially led by Rayan Khan. Editorial responsibility
-                rests with the editor and publisher, including review of AI-assisted
-                work before publication.
+                Bombay Bureau is editorially led by Rayan Khan. The publisher oversees
+                the publication as owner and publisher, while editorial decisions and
+                review of published journalism are led by the editor.
               </p>
             </div>
           </div>
@@ -114,9 +114,9 @@ export default function AboutPage() {
                 Clear editorial leadership, with one clear editorial responsibility.
               </p>
               <p className="mt-7 text-gray-400 leading-relaxed">
-                Bombay Bureau is led editorially by Rayan Khan, who serves as editor.
+                Rayan Khan serves as editor and leads the publication&apos;s editorial work.
                 The newsroom may use technology and AI tools to support research and
-                production, but editorial responsibility remains human.
+                production, but editorial responsibility remains with the editor.
               </p>
             </div>
           </div>
