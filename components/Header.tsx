@@ -9,7 +9,6 @@ export default function Header() {
     "World",
     "Politics",
     "Business",
-    "Markets",
     "Technology",
     "Opinion",
     "Explainers",
@@ -109,9 +108,6 @@ export default function Header() {
                     href = "/#latest";
                   }
 
-                  if (item === "Markets") {
-                    href = "/markets";
-                  }
 
                   if (item === "About") {
                     href = "/about";
