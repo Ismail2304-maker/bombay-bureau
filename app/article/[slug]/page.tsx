@@ -25,11 +25,16 @@ const getArticle = cache(async (slug: string) => {
     `*[_type=="post" && slug.current==$slug][0]{
       _id,
       title,
-      "excerpt": pt::text(body)[0..240],
+      excerpt,
+      "fallbackExcerpt": pt::text(body)[0..240],
+      contentType,
       mainImage,
       body,
       publishedAt,
       _updatedAt,
+      updateNote,
+      correctionNote,
+      sources[]{label,url},
       "category": categories[0]->title,
       "categories": categories[]->title,
       author->{name,slug,role,location,bio}
@@ -47,7 +52,7 @@ export async function generateMetadata(
   if (!post) return { title: "Article not found" };
 
   const description =
-    post.excerpt || "Read the latest reporting and analysis from Bombay Bureau.";
+    post.excerpt || post.fallbackExcerpt || "Read the latest reporting and analysis from Bombay Bureau.";
   const canonical = `/article/${slug}`;
   const authorSlug = post.author?.slug?.current || null;
 
@@ -143,6 +148,15 @@ export default async function ArticlePage(
   if (!post) notFound();
 
   const readingTime = getReadingTime(post.body);
+  const articleExcerpt = post.excerpt || post.fallbackExcerpt;
+  const contentTypeLabel =
+    post.contentType === "opinion"
+      ? "Opinion"
+      : post.contentType === "explainer"
+        ? "Explainer"
+        : post.contentType === "video"
+          ? "Video"
+          : "News";
   const articleText = post.body?.map((block: any) => block.children?.map((c: any) => c.text).join("")).join(" ") || "";
   const articleUrl = `${siteUrl}/article/${slug}`;
   const authorSlug = post.author?.slug?.current || null;
@@ -258,8 +272,27 @@ export default async function ArticlePage(
           {post.title}
         </h1>
 
-        {post.excerpt && (
-          <p className="text-lg md:text-2xl leading-relaxed text-gray-300 max-w-4xl mb-8 border-l-2 border-gray-700 pl-4 md:pl-6">{post.excerpt}</p>
+        {articleExcerpt && (
+          <p className="text-lg md:text-2xl leading-relaxed text-gray-300 max-w-4xl mb-8 border-l-2 border-gray-700 pl-4 md:pl-6">{articleExcerpt}</p>
+        )}
+
+        <div className="mb-8 flex flex-wrap items-center gap-3 text-[9px] uppercase tracking-[0.2em] text-gray-500">
+          <span>{contentTypeLabel}</span>
+          {post.category && <><span className="text-gray-700">·</span><span>{post.category}</span></>}
+        </div>
+
+        {post.correctionNote && (
+          <aside className="mb-8 border border-gray-700 bg-gray-950 px-5 py-4">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-gray-400">Correction</p>
+            <p className="mt-2 text-sm leading-relaxed text-gray-300">{post.correctionNote}</p>
+          </aside>
+        )}
+
+        {post.updateNote && !post.correctionNote && (
+          <aside className="mb-8 border border-gray-800 bg-gray-950 px-5 py-4">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-gray-500">Updated</p>
+            <p className="mt-2 text-sm leading-relaxed text-gray-400">{post.updateNote}</p>
+          </aside>
         )}
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs md:text-sm text-gray-400 mb-8 md:mb-10 border-y border-gray-800 py-4">
@@ -320,6 +353,26 @@ export default async function ArticlePage(
             }}
           />
         </div>
+
+        {post.sources?.length > 0 && (
+          <section className="mt-16 pt-8 border-t border-gray-800">
+            <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-4">Sources &amp; References</h2>
+            <ul className="space-y-2">
+              {post.sources.map((source: any, index: number) => (
+                <li key={`${source.url}-${index}`}>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="text-sm text-gray-300 underline underline-offset-4 hover:text-white"
+                  >
+                    {source.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <div className="mt-20 pt-10 border-t border-gray-800">
           <p className="text-xs uppercase tracking-widest text-gray-500 mb-4">Written by</p>
