@@ -86,7 +86,7 @@ function getReadingTime(body: any[]) {
 
 const getMoreArticles = cache(async (slug: string, categories: string[] = []) => {
   return await client.fetch(
-    `*[_type=="post" && slug.current != $slug && defined(slug.current) && count(categories[]->title[@ in $categories]) > 0]
+    `*[_type=="post" && slug.current != $slug && defined(slug.current) && !("Video" in categories[]->title) && count(categories[]->title[@ in $categories]) > 0]
       | order(publishedAt desc)[0..5]{
         title, slug, mainImage, publishedAt, "category": categories[0]->title
       }`,
