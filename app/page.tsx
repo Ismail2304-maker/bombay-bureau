@@ -744,7 +744,6 @@ export default async function Home() {
             <Link href="/#politics">Politics</Link>
             <Link href="/#business">Business</Link>
             <Link href="/#technology">Technology</Link>
-            <Link href="/#markets">Markets</Link>
             <Link href="/#opinion">Opinion</Link>
             <Link href="/#explainers">Explainers</Link>
             <Link href="/#video">Video</Link>
