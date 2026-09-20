@@ -200,7 +200,12 @@ export default async function ArticlePage(
         "@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":breadcrumbItems
       })}} />
 
-      <article className="max-w-[820px] mx-auto px-4 md:px-6 py-8 md:py-14">
+      <article className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-14">
+        <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-8 text-[9px] md:text-[10px] uppercase tracking-[0.22em] text-gray-500">
+          <span>Bombay Bureau · Newsroom</span>
+          <span>Independent digital journalism</span>
+        </div>
+        <div className="max-w-4xl">
         <nav aria-label="Breadcrumb" className="mb-7 text-[10px] md:text-xs uppercase tracking-[0.18em] text-gray-500">
           <Link href="/" className="hover:text-white transition-colors">Home</Link>
           {post.category && <>
@@ -209,19 +214,23 @@ export default async function ArticlePage(
           </>}
         </nav>
 
-        <div className="mb-5">
-          {post.category && <span className="text-xs uppercase tracking-[0.25em] text-gray-400">{post.category}</span>}
+        <div className="mb-5 flex items-center gap-3">
+          <span className="inline-flex items-center border border-gray-700 rounded-full px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-gray-300">
+            {post.category || "News"}
+          </span>
+          <span className="h-px w-10 bg-gray-700" />
+          <span className="text-[9px] uppercase tracking-[0.18em] text-gray-600">Report</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif leading-[1.05] md:leading-[1.1] tracking-tight mb-5 md:mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif leading-[0.98] md:leading-[1.02] tracking-[-0.025em] mb-6 md:mb-7">
           {post.title}
         </h1>
 
         {post.excerpt && (
-          <p className="text-base md:text-xl leading-relaxed text-gray-300 max-w-3xl mb-7">{post.excerpt}</p>
+          <p className="text-lg md:text-2xl leading-relaxed text-gray-300 max-w-4xl mb-8 border-l-2 border-gray-700 pl-4 md:pl-6">{post.excerpt}</p>
         )}
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs md:text-sm text-gray-400 mb-7 md:mb-8">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs md:text-sm text-gray-400 mb-8 md:mb-10 border-y border-gray-800 py-4">
           <Link href={`/author/${authorSlug}`} className="text-white hover:text-gray-300 transition-colors">By {authorName}</Link>
           <span aria-hidden="true">•</span>
           {post.publishedAt && <>
@@ -239,7 +248,7 @@ export default async function ArticlePage(
         </div>
 
         {post.mainImage && (
-          <figure className="mb-10">
+          <figure className="mb-12 md:mb-14">
             <Image
               src={urlFor(post.mainImage).width(1800).url()}
               alt={post.mainImage?.alt || post.title}
@@ -253,7 +262,7 @@ export default async function ArticlePage(
           </figure>
         )}
 
-        <div className="prose prose-invert max-w-none prose-base md:prose-lg leading-relaxed">
+        <div className="prose prose-invert max-w-none prose-base md:prose-lg leading-relaxed prose-p:leading-8 md:prose-p:leading-9">
           <PortableText
             value={post.body}
             components={{
@@ -286,6 +295,10 @@ export default async function ArticlePage(
         </div>
 
         <ShareBar />
+        <div className="mt-14 border-t border-gray-800 pt-6 text-[10px] uppercase tracking-[0.18em] text-gray-600">
+          BOMBAY BUREAU · Published reporting and analysis
+        </div>
+        </div>
       </article>
 
       <section className="max-w-6xl mx-auto px-4 md:px-6 pb-16 md:pb-24">
