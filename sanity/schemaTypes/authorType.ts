@@ -7,12 +7,20 @@ export const authorType = defineType({
   type: "document",
   icon: UserIcon,
   fields: [
-    defineField({ name: "name", title: "Name", type: "string" }),
+    defineField({ name: "name", title: "Name", type: "string", validation: (Rule) => Rule.required() }),
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
       options: { source: "name" },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "image",
+      title: "Profile Image",
+      type: "image",
+      options: { hotspot: true },
+      description: "Optional author portrait. Use only an approved editorial image.",
     }),
     defineField({
       name: "role",
