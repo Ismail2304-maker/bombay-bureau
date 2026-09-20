@@ -8,7 +8,7 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   const staticPaths=[
     "","/about","/newsroom","/contact","/privacy","/terms","/editorial-standards",
     "/ai-policy","/corrections","/author/muhammed-ismail","/india","/world","/politics",
-    "/business","/technology","/markets","/explainers",
+    "/business","/technology","/explainers",
   ];
   const staticUrls=staticPaths.map(path=>({url:`${baseUrl}${path}`}));
   const postUrls=posts.map((post:any)=>({url:`${baseUrl}/article/${post.slug}`,lastModified:post._updatedAt||post.publishedAt||undefined}));
