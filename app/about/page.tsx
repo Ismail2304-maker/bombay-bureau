@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Bombay Bureau is an independent, founder-led digital newsroom covering India and the world through an Indian perspective.",
+  description: "Bombay Bureau is an independent, independent digital newsroom covering India and the world through an Indian perspective.",
   alternates: { canonical: "/about" },
 };
 
@@ -41,8 +41,8 @@ export default function AboutPage() {
                 and with context.
               </p>
               <p className="mt-7 text-gray-400 leading-relaxed">
-                Our coverage spans geopolitics, India, politics, business, markets,
-                technology, opinion, explainers, and video. We aim to give readers
+                Our coverage spans geopolitics, India, politics, business, technology,
+                opinion, explainers, and video. We aim to give readers
                 concise reporting and useful context rather than simply adding to
                 the speed and volume of the news cycle.
               </p>
@@ -67,7 +67,7 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-[0.2em] text-gray-600">Editor</p>
-                  <p className="mt-2 text-lg text-gray-200">Muhammed Ismail</p>
+                  <p className="mt-2 text-lg text-gray-200">Rayan Khan</p>
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-[0.2em] text-gray-600">Based in</p>
@@ -114,10 +114,9 @@ export default function AboutPage() {
                 A one-person newsroom, with one clear editorial responsibility.
               </p>
               <p className="mt-7 text-gray-400 leading-relaxed">
-                Bombay Bureau is currently run by Muhammed Ismail, who serves as owner,
-                publisher, editor, and writer. The newsroom may use technology and AI
-                tools to support research and production, but editorial responsibility
-                remains human.
+                Bombay Bureau is led editorially by Rayan Khan, who serves as editor.
+                The newsroom may use technology and AI tools to support research and
+                production, but editorial responsibility remains human.
               </p>
             </div>
           </div>
