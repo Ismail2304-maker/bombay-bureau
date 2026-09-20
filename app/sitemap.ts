@@ -7,7 +7,7 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   const data=await client.fetch(`
     {
       "posts": *[_type=="post" && defined(slug.current)]{
-        "slug":slug.current,publishedAt,_updatedAt
+        "slug":slug.current,publishedAt,firstPublishedAt,lastPublishedAt
       },
       "authors": *[_type=="author" && defined(slug.current)]{
         "slug":slug.current,_updatedAt
@@ -26,7 +26,7 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   }));
   const postUrls=(data.posts||[]).map((post:any)=>({
     url:`${baseUrl}/article/${post.slug}`,
-    lastModified:post._updatedAt||post.publishedAt||undefined,
+    lastModified:post.lastPublishedAt||post.firstPublishedAt||post.publishedAt||undefined,
   }));
   return [...staticUrls,...authorUrls,...postUrls];
 }
