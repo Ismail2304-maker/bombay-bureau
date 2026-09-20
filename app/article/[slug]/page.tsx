@@ -85,13 +85,42 @@ function getReadingTime(body: any[]) {
 }
 
 const getMoreArticles = cache(async (slug: string, categories: string[] = []) => {
-  return await client.fetch(
-    `*[_type=="post" && slug.current != $slug && defined(slug.current) && !("Video" in categories[]->title) && count(categories[]->title[@ in $categories]) > 0]
-      | order(publishedAt desc)[0..5]{
-        title, slug, mainImage, publishedAt, "category": categories[0]->title
-      }`,
+  const candidates = await client.fetch(
+    `*[
+      _type=="post" &&
+      slug.current != $slug &&
+      defined(slug.current) &&
+      !("Video" in categories[]->title) &&
+      count(categories[]->title[@ in $categories]) > 0
+    ] | order(publishedAt desc)[0..19]{
+      title,
+      slug,
+      mainImage,
+      publishedAt,
+      "category": categories[0]->title,
+      "categories": categories[]->title
+    }`,
     { slug, categories }
   );
+
+  const now = Date.now();
+  return (candidates || [])
+    .map((article: any) => {
+      const sharedCategories = (article.categories || []).filter((c: string) =>
+        categories.includes(c)
+      ).length;
+      const hours = Math.max(
+        0,
+        (now - new Date(article.publishedAt).getTime()) / 3600000
+      );
+      const freshness = Math.max(0, 1 - Math.min(hours, 168) / 168);
+      return {
+        ...article,
+        relatedScore: sharedCategories * 20 + freshness * 8,
+      };
+    })
+    .sort((a: any, b: any) => b.relatedScore - a.relatedScore)
+    .slice(0, 3);
 });
 
 function formatArticleDate(date: string) {
