@@ -55,7 +55,7 @@ const getPosts = cache(async () => {
       slug,
       views,
       publishedAt
-    } | order(views desc)[0..99],
+    } | order(views desc)[0..149],
 
    "india": *[_type=="post" && defined(slug.current) && "India" in categories[]->title]
     | order(publishedAt desc)[0..5]{
@@ -68,7 +68,7 @@ const getPosts = cache(async () => {
     },
 
     "world": *[_type=="post" && defined(slug.current) && "World" in categories[]->title]
-    | order(publishedAt desc)[0..5]{
+    | order(publishedAt desc)[0..11]{
       title,
       slug,
       mainImage,
@@ -78,7 +78,7 @@ const getPosts = cache(async () => {
     },
 
     "politics": *[_type=="post" && defined(slug.current) && "Politics" in categories[]->title]
-    | order(publishedAt desc)[0..5]{
+    | order(publishedAt desc)[0..11]{
       title,
       slug,
       mainImage,
@@ -88,7 +88,7 @@ const getPosts = cache(async () => {
     },
 
     "business": *[_type=="post" && defined(slug.current) && "Business" in categories[]->title]
-    | order(publishedAt desc)[0..5]{
+    | order(publishedAt desc)[0..11]{
       title,
       slug,
       mainImage,
@@ -98,7 +98,7 @@ const getPosts = cache(async () => {
     },
 
     "technology": *[_type=="post" && defined(slug.current) && "Technology" in categories[]->title]
-    | order(publishedAt desc)[0..5]{
+    | order(publishedAt desc)[0..11]{
       title,
       slug,
       mainImage,
@@ -159,26 +159,53 @@ export default async function Home() {
       : null,
   }));
 
+  // Deterministic editorial curation prevents the same story from filling
+  // multiple major homepage slots on the same render.
+  const usedSlugs = new Set<string>();
+
+  const takeFresh = (items: any[] = [], count: number) => {
+    const selected: any[] = [];
+    for (const item of items) {
+      const slug = item?.slug?.current;
+      if (!slug || usedSlugs.has(slug)) continue;
+      usedSlugs.add(slug);
+      selected.push(item);
+      if (selected.length === count) break;
+    }
+    return selected;
+  };
+
+  const hero = posts[0];
+  if (hero?.slug?.current) usedSlugs.add(hero.slug.current);
+
+  const latestSecondary = takeFresh(posts.slice(1), 3);
+  const latestSidebar = takeFresh(posts.slice(4), 5);
+
   const trending = (data.trendingRaw || [])
+    .filter((p: any) => p?.slug?.current && !usedSlugs.has(p.slug.current))
     .map((p: any) => {
-      const hours =
-        (Date.now() - new Date(p.publishedAt).getTime()) / 3600000;
-
-      const recencyBoost = Math.max(0, 48 - hours);
-      const score = (p.views || 0) + recencyBoost * 5;
-
-      return { ...p, score };
+      const hours = Math.max(0, (Date.now() - new Date(p.publishedAt).getTime()) / 3600000);
+      const freshness = Math.max(0, 1 - Math.min(hours, 72) / 72);
+      const popularity = Math.log1p(Math.max(0, p.views || 0));
+      return { ...p, score: popularity * 10 + freshness * 14 };
     })
     .sort((a: any, b: any) => b.score - a.score)
     .slice(0, 5);
 
+  trending.forEach((p: any) => {
+    if (p?.slug?.current) usedSlugs.add(p.slug.current);
+  });
+
   const mainSections = [
-    { title: "India", data: data.india },
-    { title: "World", data: data.world },
-    { title: "Politics", data: data.politics },
-    { title: "Business", data: data.business },
-    { title: "Technology", data: data.technology },
+    { title: "India", data: takeFresh(data.india, 5) },
+    { title: "World", data: takeFresh(data.world, 5) },
+    { title: "Politics", data: takeFresh(data.politics, 5) },
+    { title: "Business", data: takeFresh(data.business, 5) },
+    { title: "Technology", data: takeFresh(data.technology, 5) },
   ];
+
+  const opinion = takeFresh(data.opinion || [], 4);
+  const explainers = takeFresh(data.explainers || [], 4);
 
   return (
     <main className="bg-black text-white min-h-screen">
@@ -250,7 +277,7 @@ export default async function Home() {
               </Link>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-6 md:mt-8">
-                {posts.slice(1, 4).map((post: any) => (
+                {latestSecondary.map((post: any) => (
                   <Link
                     key={post.slug.current}
                     href={`/article/${post.slug.current}`}
@@ -310,7 +337,7 @@ export default async function Home() {
               </span>
             </div>
 
-            {posts.slice(0, 5).map((post: any, i: number) => (
+            {latestSidebar.map((post: any, i: number) => (
               <Link
                 key={post.slug.current}
                 href={`/article/${post.slug.current}`}
@@ -573,10 +600,10 @@ export default async function Home() {
 
         </div>
 
-        {data.opinion?.length > 0 ? (
+        {opinion.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            {data.opinion.slice(0, 4).map((post: any) => (
+            {opinion.map((post: any) => (
               <Link
                 key={post.slug.current}
                 href={`/article/${post.slug.current}`}
@@ -653,10 +680,10 @@ export default async function Home() {
 
         </div>
 
-        {data.explainers?.length > 0 ? (
+        {explainers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            {data.explainers.slice(0, 4).map((post: any) => (
+            {explainers.map((post: any) => (
               <Link
                 key={post.slug.current}
                 href={`/article/${post.slug.current}`}
