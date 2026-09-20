@@ -49,7 +49,7 @@ export async function generateMetadata(
   const description =
     post.excerpt || "Read the latest reporting and analysis from Bombay Bureau.";
   const canonical = `/article/${slug}`;
-  const authorSlug = post.author?.slug?.current || "muhammed-ismail";
+  const authorSlug = post.author?.slug?.current || null;
 
   return {
     title: post.title,
@@ -62,7 +62,7 @@ export async function generateMetadata(
       description,
       publishedTime: post.publishedAt || undefined,
       modifiedTime: post._updatedAt || post.publishedAt || undefined,
-      authors: [`${siteUrl}/author/${authorSlug}`],
+      authors: authorSlug ? [`${siteUrl}/author/${authorSlug}`] : undefined,
       images: post.mainImage
         ? [{ url: urlFor(post.mainImage).width(1200).url(), alt: post.title }]
         : undefined,
@@ -116,9 +116,9 @@ export default async function ArticlePage(
   const readingTime = getReadingTime(post.body);
   const articleText = post.body?.map((block: any) => block.children?.map((c: any) => c.text).join("")).join(" ") || "";
   const articleUrl = `${siteUrl}/article/${slug}`;
-  const authorSlug = post.author?.slug?.current || "muhammed-ismail";
-  const authorName = post.author?.name || "Muhammed Ismail";
-  const authorUrl = `${siteUrl}/author/${authorSlug}`;
+  const authorSlug = post.author?.slug?.current || null;
+  const authorName = post.author?.name || "Bombay Bureau";
+  const authorUrl = authorSlug ? `${siteUrl}/author/${authorSlug}` : siteUrl;
   const categorySlug = post.category?.toLowerCase();
   const validCategorySlugs = ["india","world","politics","business","technology","explainers"];
   const categoryHref = validCategorySlugs.includes(categorySlug) ? `/${categorySlug}` : null;
@@ -136,7 +136,9 @@ export default async function ArticlePage(
     image: post.mainImage ? [urlFor(post.mainImage).width(1600).url()] : undefined,
     datePublished: post.publishedAt || undefined,
     dateModified: post._updatedAt || post.publishedAt || undefined,
-    author: {"@type": "Person", name: authorName, url: authorUrl},
+    author: post.author
+      ? {"@type": "Person", name: authorName, url: authorUrl}
+      : {"@type": "Organization", name: "BOMBAY BUREAU", url: siteUrl},
     publisher: {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
@@ -232,7 +234,11 @@ export default async function ArticlePage(
         )}
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs md:text-sm text-gray-400 mb-8 md:mb-10 border-y border-gray-800 py-4">
-          <Link href={`/author/${authorSlug}`} className="text-white hover:text-gray-300 transition-colors">By {authorName}</Link>
+          {authorSlug ? (
+            <Link href={`/author/${authorSlug}`} className="text-white hover:text-gray-300 transition-colors">By {authorName}</Link>
+          ) : (
+            <span className="text-white">By {authorName}</span>
+          )}
           <span aria-hidden="true">•</span>
           {post.publishedAt && <>
             <time dateTime={post.publishedAt}>
@@ -289,7 +295,11 @@ export default async function ArticlePage(
         <div className="mt-20 pt-10 border-t border-gray-800">
           <p className="text-xs uppercase tracking-widest text-gray-500 mb-4">Written by</p>
           <div>
-            <Link href={`/author/${authorSlug}`} className="text-xl font-serif hover:text-gray-300 transition-colors">{authorName}</Link>
+            {authorSlug ? (
+              <Link href={`/author/${authorSlug}`} className="text-xl font-serif hover:text-gray-300 transition-colors">{authorName}</Link>
+            ) : (
+              <p className="text-xl font-serif">{authorName}</p>
+            )}
             {post.author?.role && <p className="mt-1 text-sm text-gray-500">{post.author.role}{post.author.location ? ` · ${post.author.location}` : ""}</p>}
             {post.author?.bio && <div className="mt-4 max-w-2xl text-sm leading-relaxed text-gray-400 prose prose-invert"><PortableText value={post.author.bio} /></div>}
           </div>

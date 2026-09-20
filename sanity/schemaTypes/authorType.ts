@@ -18,7 +18,7 @@ export const authorType = defineType({
       name: "role",
       title: "Role",
       type: "string",
-      description: "Example: Founder & Editor, Bombay Bureau",
+      description: "Example: Editor, Bombay Bureau",
     }),
     defineField({
       name: "location",

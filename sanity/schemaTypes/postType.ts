@@ -25,6 +25,8 @@ export const postType = defineType({
       name: "author",
       type: "reference",
       to: { type: "author" },
+      validation: (Rule) => Rule.required(),
+      description: "Select the author responsible for this article. Do not leave this blank.",
     }),
 
     defineField({
