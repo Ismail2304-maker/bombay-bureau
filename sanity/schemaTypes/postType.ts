@@ -184,6 +184,22 @@ export const postType = defineType({
     }),
 
     defineField({
+      name: 'publicationChangeType',
+      title: 'Next Publication Change',
+      type: 'string',
+      fieldset: 'transparency',
+      options: {
+        list: [
+          { title: 'Update', value: 'update' },
+          { title: 'Correction', value: 'correction' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'update',
+      description: 'Choose Correction when the next publication materially corrects a factual error. This resets to Update after publishing.',
+    }),
+
+    defineField({
       name: 'updateNote',
       title: 'Update Note',
       type: 'text',
