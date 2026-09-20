@@ -87,7 +87,7 @@ export default function VideoSection({ videos }: Props) {
                         }}
                         src={video.videoUrl}
                         playsInline
-                        preload="none"
+                        preload="metadata"
                         poster={video.posterUrl || undefined}
                         controls={playing === key}
                         className="absolute inset-0 w-full h-full object-cover"
