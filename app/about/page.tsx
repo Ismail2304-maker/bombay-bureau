@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Bombay Bureau is an independent, independent digital newsroom covering India and the world through an Indian perspective.",
+  description: "Bombay Bureau is an independent digital newsroom covering India and the world through an Indian perspective.",
   alternates: { canonical: "/about" },
 };
 
@@ -25,7 +25,7 @@ export default function AboutPage() {
             Indian perspective.
           </h1>
           <p className="mt-8 max-w-2xl text-base md:text-lg leading-relaxed text-gray-400">
-            Bombay Bureau is an independent, founder-led digital newsroom covering
+            Bombay Bureau is an independent digital newsroom covering
             the events, ideas, and developments shaping India&apos;s place in the world.
           </p>
         </section>
@@ -75,9 +75,9 @@ export default function AboutPage() {
                 </div>
               </div>
               <p className="mt-8 text-gray-400 leading-relaxed">
-                Bombay Bureau currently operates as a founder-led newsroom. Editorial
-                responsibility rests with the editor and publisher, including review
-                of AI-assisted work before publication.
+                Bombay Bureau is editorially led by Rayan Khan. Editorial responsibility
+                rests with the editor and publisher, including review of AI-assisted
+                work before publication.
               </p>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function AboutPage() {
             </div>
             <div className="max-w-3xl">
               <p className="font-serif text-2xl md:text-3xl leading-[1.35] text-gray-100">
-                A one-person newsroom, with one clear editorial responsibility.
+                Clear editorial leadership, with one clear editorial responsibility.
               </p>
               <p className="mt-7 text-gray-400 leading-relaxed">
                 Bombay Bureau is led editorially by Rayan Khan, who serves as editor.
