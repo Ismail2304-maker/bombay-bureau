@@ -122,6 +122,25 @@ export const postType = defineType({
       type: 'datetime',
       fieldset: 'publication',
       validation: (Rule) => Rule.required(),
+      description: 'The editorial publication timestamp shown to readers. Keep this aligned with the original publication time.',
+    }),
+
+    defineField({
+      name: 'firstPublishedAt',
+      title: 'First Published At',
+      type: 'datetime',
+      fieldset: 'publication',
+      readOnly: true,
+      description: 'Set automatically on first publication. This preserves the original publication timestamp.',
+    }),
+
+    defineField({
+      name: 'lastPublishedAt',
+      title: 'Last Published At',
+      type: 'datetime',
+      fieldset: 'publication',
+      readOnly: true,
+      description: 'Set automatically whenever a published revision is published.',
     }),
 
     defineField({
@@ -180,6 +199,51 @@ export const postType = defineType({
       rows: 3,
       fieldset: 'transparency',
       description: 'Use for a material factual correction. Keep the note specific and transparent.',
+    }),
+
+    defineField({
+      name: 'publicationHistory',
+      title: 'Publication History',
+      type: 'array',
+      fieldset: 'transparency',
+      readOnly: true,
+      description: 'Automatically recorded publication events. This is a publication log, not the full Sanity revision history.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({ name: 'publishedAt', title: 'Published At', type: 'datetime' }),
+            defineField({
+              name: 'type',
+              title: 'Event Type',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Initial publication', value: 'initial' },
+                  { title: 'Update', value: 'update' },
+                  { title: 'Correction', value: 'correction' },
+                ],
+              },
+            }),
+            defineField({ name: 'note', title: 'Note', type: 'text', rows: 2 }),
+          ],
+          preview: {
+            select: { title: 'type', subtitle: 'publishedAt', note: 'note' },
+            prepare(selection) {
+              const labels: Record<string, string> = {
+                initial: 'Initial publication',
+                update: 'Update',
+                correction: 'Correction',
+              };
+              return {
+                title: labels[selection.title] || 'Publication event',
+                subtitle: selection.subtitle,
+                description: selection.note,
+              };
+            },
+          },
+        }),
+      ],
     }),
 
     defineField({
