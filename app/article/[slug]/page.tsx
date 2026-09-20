@@ -271,7 +271,7 @@ export default async function ArticlePage(
             {post.category || "News"}
           </span>
           <span className="h-px w-10 bg-gray-700" />
-          <span className="text-[9px] uppercase tracking-[0.18em] text-gray-600">Report</span>
+          <span className="text-[9px] uppercase tracking-[0.18em] text-gray-600">{contentTypeLabel}</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif leading-[0.98] md:leading-[1.02] tracking-[-0.025em] mb-6 md:mb-7">
