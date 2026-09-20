@@ -4,13 +4,19 @@ import { cache } from "react";
 import { notFound } from "next/navigation";
 import { PortableText } from "@portabletext/react";
 import { client } from "@/lib/sanity";
+import imageUrlBuilder from "@sanity/image-url";
+
+const builder = imageUrlBuilder(client);
+function urlFor(source: any) {
+  return builder.image(source);
+}
 
 const siteUrl = "https://bombay-bureau.vercel.app";
 export const revalidate = 60;
 
 const getAuthor = cache(async (slug:string)=>{
   return await client.fetch(`*[_type=="author" && slug.current==$slug][0]{
-    name, role, location, bio, _updatedAt,
+    name, role, location, bio, image, _updatedAt,
     "articles": *[_type=="post" && references(^._id) && defined(slug.current)]
       | order(publishedAt desc)[0..19]{title,slug,publishedAt,"category":categories[0]->title}
   }`,{slug});
@@ -47,6 +53,7 @@ export default async function AuthorPage(props:{params:Promise<{slug:string}>}){
       description:author.bio?.[0]?.children?.map((c:any)=>c.text).join(" ")||undefined,
       jobTitle:author.role||undefined,
       url:authorUrl,
+      image: author.image ? urlFor(author.image).width(800).url() : undefined,
     },
     hasPart:(author.articles||[]).map((article:any)=>({
       "@type":"Article",
@@ -70,7 +77,14 @@ export default async function AuthorPage(props:{params:Promise<{slug:string}>}){
     </header>
     <section className="max-w-4xl mx-auto px-6 py-16 md:py-24">
       <p className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-5">Author</p>
-      <h1 className="text-4xl md:text-6xl font-serif tracking-tight">{author.name}</h1>
+      {author.image ? (
+        <img
+          src={urlFor(author.image).width(240).height(240).fit("crop").url()}
+          alt={author.name + " — BOMBAY BUREAU author portrait"}
+          className="mt-6 h-28 w-28 rounded-full object-cover border border-gray-800"
+        />
+      ) : null}
+      <h1 className="mt-6 text-4xl md:text-6xl font-serif tracking-tight">{author.name}</h1>
       {author.role&&<p className="mt-4 text-base md:text-lg text-gray-400">{author.role}{author.location?` · ${author.location}`:""}</p>}
       <div className="mt-10 max-w-3xl text-gray-300 prose prose-invert prose-lg leading-relaxed">{author.bio?<PortableText value={author.bio}/>:null}</div>
     </section>
