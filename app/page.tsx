@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 import Link from "next/link";
 import Image from "next/image";
-import MarketSnapshot from "@/components/MarketSnapshot";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import { cache } from "react";
@@ -398,10 +397,6 @@ export default async function Home() {
         </aside>
       </section>
 
-      {/* =========================================================
-          MARKET SNAPSHOT
-      ========================================================= */}
-      <MarketSnapshot />
 
       {/* =========================================================
           INDIA / WORLD / POLITICS / BUSINESS / TECHNOLOGY
@@ -749,7 +744,6 @@ export default async function Home() {
             <Link href="/#politics">Politics</Link>
             <Link href="/#business">Business</Link>
             <Link href="/#technology">Technology</Link>
-            <Link href="/#markets">Markets</Link>
             <Link href="/#opinion">Opinion</Link>
             <Link href="/#explainers">Explainers</Link>
             <Link href="/#video">Video</Link>

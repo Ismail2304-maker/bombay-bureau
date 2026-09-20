@@ -120,7 +120,7 @@ export default async function ArticlePage(
   const authorName = post.author?.name || "Muhammed Ismail";
   const authorUrl = `${siteUrl}/author/${authorSlug}`;
   const categorySlug = post.category?.toLowerCase();
-  const validCategorySlugs = ["india","world","politics","business","technology","markets","explainers"];
+  const validCategorySlugs = ["india","world","politics","business","technology","explainers"];
   const categoryHref = validCategorySlugs.includes(categorySlug) ? `/${categorySlug}` : null;
   const hasMeaningfulUpdate =
     post._updatedAt && post.publishedAt &&
