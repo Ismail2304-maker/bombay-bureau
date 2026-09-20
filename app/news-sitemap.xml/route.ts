@@ -15,7 +15,7 @@ export async function GET() {
   const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
 
   const posts = await client.fetch(
-    `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt >= $cutoff && contentType == "news" && coalesce(workflowStatus, "published") == "published"] | order(publishedAt desc)[0..999]{
+    `*[_type == "post" && defined(slug.current) && defined(publishedAt) && coalesce(firstPublishedAt, publishedAt) >= $cutoff && contentType == "news" && coalesce(workflowStatus, "published") == "published"] | order(publishedAt desc)[0..999]{
       title,
       slug,
       "publicationDate": coalesce(firstPublishedAt, publishedAt)
