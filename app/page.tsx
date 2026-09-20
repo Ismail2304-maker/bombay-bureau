@@ -669,7 +669,7 @@ export default async function Home() {
                 <article className="group cursor-pointer">
 
                   {post.mainImage && (
-                    <div className="overflow-hidden rounded-md aspect-[4/3]">
+                    <div className="relative overflow-hidden rounded-md aspect-[4/3]">
                       <Image
                         src={urlFor(post.mainImage).width(700).url()}
                         alt={post.title}
