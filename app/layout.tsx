@@ -21,6 +21,17 @@ const publisherJsonLd={
   name:"BOMBAY BUREAU",url:siteUrl,logo:`${siteUrl}/icon.png`,
   description:"An independent digital news platform covering India and the world through an Indian perspective.",
   founder:{"@type":"Person",name:"Muhammed Ismail",url:`${siteUrl}/author/muhammed-ismail`},
+  contactPoint:{
+    "@type":"ContactPoint",
+    contactType:"editorial",
+    email:"editor@bombaybureau.com",
+    url:`${siteUrl}/contact`,
+  },
+  publishingPrinciples:[
+    `${siteUrl}/editorial-standards`,
+    `${siteUrl}/corrections`,
+    `${siteUrl}/ai-policy`,
+  ],
 };
 
 const websiteJsonLd={
