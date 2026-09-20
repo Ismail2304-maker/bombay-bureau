@@ -62,7 +62,7 @@ export async function generateMetadata(
       description,
       publishedTime: post.publishedAt || undefined,
       modifiedTime: post._updatedAt || post.publishedAt || undefined,
-      authors: [`${siteUrl}/author/${authorSlug}`],
+      authors: authorSlug ? [`${siteUrl}/author/${authorSlug}`] : undefined,
       images: post.mainImage
         ? [{ url: urlFor(post.mainImage).width(1200).url(), alt: post.title }]
         : undefined,
