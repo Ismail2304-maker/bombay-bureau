@@ -84,7 +84,7 @@ export default function Header() {
             </div>
 
             {/* ================= PRIMARY NAVIGATION ================= */}
-            <nav className="relative z-0 border-t border-gray-700 bg-black">
+            <nav aria-label="Primary navigation" className="relative z-0 border-t border-gray-700 bg-black">
               <div
                 className="
                   flex items-center
