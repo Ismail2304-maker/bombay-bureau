@@ -44,7 +44,7 @@ export default function NewsroomPage(){
         <section className="border-t border-gray-800 pt-6">
           <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Editorial leadership</p>
           <h2 className="text-2xl font-serif">Rayan Khan</h2>
-          <p className="mt-2 text-gray-400">Founder &amp; Editor</p>
+          <p className="mt-2 text-gray-400">Editor</p>
           <p className="mt-5 text-gray-400 leading-relaxed">
             Editorial responsibility for published journalism rests with the editor, including review, corrections and the final decision to publish.
           </p>
