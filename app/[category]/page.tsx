@@ -11,14 +11,13 @@ const builder=imageUrlBuilder(client);
 const urlFor=(src:any)=>builder.image(src);
 export const revalidate=60;
 
-const validCategorySlugs=["india","world","politics","business","technology","markets","explainers"];
+const validCategorySlugs=["india","world","politics","business","technology","explainers"];
 const categoryDescriptions:Record<string,string>={
   india:"The latest reporting and developments across India.",
   world:"International affairs, geopolitics and major developments around the world.",
   politics:"Political developments, public policy and government from an Indian perspective.",
   business:"Companies, the economy, industry and business developments.",
   technology:"Technology, artificial intelligence, digital policy and innovation.",
-  markets:"Market movements, companies, financial developments and the forces shaping investors.",
   explainers:"Clear, contextual explainers focused on what happened, why it matters and what comes next.",
 };
 
@@ -32,7 +31,7 @@ export async function generateMetadata(props:{params:Promise<{category:string}>}
 
 async function getPosts(category:string){
   return await client.fetch(`*[_type=="post" && $category in categories[]->title] | order(publishedAt desc)[0..39]{
-    title,slug,mainImage,publishedAt,"excerpt":pt::text(body)[0..180],"category":categories[0]->title
+    title,slug,mainImage,publishedAt,views,"excerpt":pt::text(body)[0..180],"category":categories[0]->title
   }`,{category});
 }
 
@@ -43,8 +42,18 @@ export default async function CategoryPage(props:any){
   const categoryName=categorySlug.charAt(0).toUpperCase()+categorySlug.slice(1);
   const description=categoryDescriptions[categorySlug];
   const posts=await getPosts(categoryName);
-  const lead=posts[0];
-  const rest=posts.slice(1);
+  const now = Date.now();
+  const leadCandidates = posts.slice(0, 8);
+  const lead = [...leadCandidates].sort((a:any, b:any) => {
+    const score = (post:any) => {
+      const hours = Math.max(0, (now - new Date(post.publishedAt).getTime()) / 3600000);
+      const freshness = Math.max(0, 1 - Math.min(hours, 72) / 72);
+      const reach = Math.log1p(Math.max(0, post.views || 0));
+      return freshness * 18 + reach * 2;
+    };
+    return score(b) - score(a);
+  })[0] || posts[0];
+  const rest = posts.filter((post:any) => post?.slug?.current !== lead?.slug?.current);
   const breadcrumbJsonLd={"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
     {"@type":"ListItem",position:1,name:"Home",item:"https://bombay-bureau.vercel.app"},
     {"@type":"ListItem",position:2,name:categoryName,item:`https://bombay-bureau.vercel.app/${categorySlug}`}
@@ -90,7 +99,7 @@ export default async function CategoryPage(props:any){
         <aside className="space-y-10 md:ml-6">
           <div>
             <h3 className="text-lg font-bold mb-4 border-b border-gray-800 pb-2">Latest in {categoryName}</h3>
-            {posts.slice(0,6).map((post:any)=><Link key={post.slug.current} href={`/article/${post.slug.current}`}>
+            {rest.slice(0,6).map((post:any)=><Link key={post.slug.current} href={`/article/${post.slug.current}`}>
               <div className="py-3 border-b border-gray-800 hover:translate-x-1 transition cursor-pointer text-sm leading-relaxed">{post.title}</div>
             </Link>)}
           </div>
