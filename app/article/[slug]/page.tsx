@@ -31,7 +31,10 @@ const getArticle = cache(async (slug: string) => {
       mainImage,
       body,
       publishedAt,
-      _updatedAt,
+      firstPublishedAt,
+      lastPublishedAt,
+      publicationChangeType,
+      publicationHistory[]{publishedAt,type,note},
       updateNote,
       correctionNote,
       sources[]{label,url},
@@ -66,7 +69,7 @@ export async function generateMetadata(
       title: post.title,
       description,
       publishedTime: post.publishedAt || undefined,
-      modifiedTime: post._updatedAt || post.publishedAt || undefined,
+      modifiedTime: post.lastPublishedAt || post.firstPublishedAt || post.publishedAt || undefined,
       authors: authorSlug ? [`${siteUrl}/author/${authorSlug}`] : undefined,
       images: post.mainImage
         ? [{ url: urlFor(post.mainImage).width(1200).url(), alt: post.title }]
@@ -165,9 +168,12 @@ export default async function ArticlePage(
   const categorySlug = post.category?.toLowerCase();
   const validCategorySlugs = ["india","world","politics","business","technology","explainers"];
   const categoryHref = validCategorySlugs.includes(categorySlug) ? `/${categorySlug}` : null;
+  const originalPublishedAt = post.firstPublishedAt || post.publishedAt;
+  const lastPublishedAt = post.lastPublishedAt || originalPublishedAt;
   const hasMeaningfulUpdate =
-    post._updatedAt && post.publishedAt &&
-    new Date(post._updatedAt).getTime() > new Date(post.publishedAt).getTime() + 60000;
+    originalPublishedAt &&
+    lastPublishedAt &&
+    new Date(lastPublishedAt).getTime() > new Date(originalPublishedAt).getTime() + 60000;
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -177,8 +183,8 @@ export default async function ArticlePage(
     headline: post.title,
     description: post.excerpt || undefined,
     image: post.mainImage ? [urlFor(post.mainImage).width(1600).url()] : undefined,
-    datePublished: post.publishedAt || undefined,
-    dateModified: post._updatedAt || post.publishedAt || undefined,
+    datePublished: originalPublishedAt || undefined,
+    dateModified: lastPublishedAt || originalPublishedAt || undefined,
     author: post.author
       ? {"@type": "Person", name: authorName, url: authorUrl}
       : {"@type": "Organization", name: "BOMBAY BUREAU", url: siteUrl},
@@ -302,13 +308,13 @@ export default async function ArticlePage(
             <span className="text-white">By {authorName}</span>
           )}
           <span aria-hidden="true">•</span>
-          {post.publishedAt && <>
-            <time dateTime={post.publishedAt}>
-              Published {formatArticleDate(post.publishedAt)} at {formatArticleTime(post.publishedAt)} IST
+          {originalPublishedAt && <>
+            <time dateTime={originalPublishedAt}>
+              Published {formatArticleDate(originalPublishedAt)} at {formatArticleTime(originalPublishedAt)} IST
             </time>
             {hasMeaningfulUpdate && <>
               <span aria-hidden="true">•</span>
-              <time dateTime={post._updatedAt}>Updated {formatArticleDate(post._updatedAt)} at {formatArticleTime(post._updatedAt)} IST</time>
+              <time dateTime={lastPublishedAt}>Updated {formatArticleDate(lastPublishedAt)} at {formatArticleTime(lastPublishedAt)} IST</time>
             </>}
             <span aria-hidden="true">•</span>
           </>}
@@ -353,6 +359,31 @@ export default async function ArticlePage(
             }}
           />
         </div>
+
+        {post.publicationHistory?.length > 1 && (
+          <section className="mt-16 pt-8 border-t border-gray-800">
+            <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-5">Publication history</h2>
+            <ol className="space-y-5">
+              {[...post.publicationHistory].reverse().map((event: any, index: number) => {
+                const label =
+                  event.type === "correction"
+                    ? "Correction"
+                    : event.type === "update"
+                      ? "Update"
+                      : "Initial publication";
+                return (
+                  <li key={event._key || `${event.publishedAt}-${index}`} className="border-l border-gray-700 pl-4">
+                    <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-gray-500">
+                      <span>{label}</span>
+                      {event.publishedAt && <time dateTime={event.publishedAt}>{formatArticleDate(event.publishedAt)} at {formatArticleTime(event.publishedAt)} IST</time>}
+                    </div>
+                    {event.note && <p className="mt-2 text-sm leading-relaxed text-gray-400">{event.note}</p>}
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        )}
 
         {post.sources?.length > 0 && (
           <section className="mt-16 pt-8 border-t border-gray-800">
