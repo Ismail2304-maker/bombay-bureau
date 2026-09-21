@@ -68,7 +68,7 @@ export async function generateMetadata(
       url: canonical,
       title: post.title,
       description,
-      publishedTime: post.publishedAt || undefined,
+      publishedTime: originalPublishedAt || undefined,
       modifiedTime: post.lastPublishedAt || post.firstPublishedAt || post.publishedAt || undefined,
       authors: authorSlug ? [`${siteUrl}/author/${authorSlug}`] : undefined,
       images: post.mainImage
@@ -181,12 +181,22 @@ export default async function ArticlePage(
     "@id": `${articleUrl}#article`,
     mainEntityOfPage: {"@type": "WebPage", "@id": articleUrl},
     headline: post.title,
-    description: post.excerpt || undefined,
+    description: articleExcerpt || undefined,
     image: post.mainImage ? [urlFor(post.mainImage).width(1600).url()] : undefined,
+    url: articleUrl,
+    articleSection: post.category || undefined,
+    inLanguage: "en",
     datePublished: originalPublishedAt || undefined,
     dateModified: lastPublishedAt || originalPublishedAt || undefined,
     author: post.author
-      ? {"@type": "Person", name: authorName, url: authorUrl, image: post.author?.image ? urlFor(post.author.image).width(800).url() : undefined}
+      ? {
+          "@type": "Person",
+          name: authorName,
+          url: authorUrl,
+          jobTitle: post.author?.role || undefined,
+          image: post.author?.image ? urlFor(post.author.image).width(800).url() : undefined,
+          worksFor: {"@id": `${siteUrl}/#organization`},
+        }
       : {"@type": "Organization", name: "BOMBAY BUREAU", url: siteUrl},
     publisher: {
       "@type": "Organization",
