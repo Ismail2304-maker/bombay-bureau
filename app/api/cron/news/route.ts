@@ -26,6 +26,15 @@ if (!rssArticle.title) {
 }
 
     const rssTitle = rssArticle.title.trim();
+    const categoryTitle = {
+      india: "India",
+      world: "World",
+      politics: "Politics",
+      business: "Business",
+      technology: "Technology",
+      sports: "Sports",
+      culture: "Culture",
+    }[rssArticle.category] || "World";
 
     // Prevent duplicates
     const existing = await sanity.fetch(
@@ -100,16 +109,49 @@ if (!rssArticle.title) {
     ],
   }));
 
+    const category = await sanity.fetch(
+      `*[_type=="category" && title==$title][0]{_id}`,
+      {title: categoryTitle}
+    );
+
+    if (!category?._id) {
+      return NextResponse.json({
+        success: false,
+        error: `Missing Sanity category: ${categoryTitle}`,
+      });
+    }
+
+    const baseSlug = parsedTitle
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 88);
+
+    const slugCount = await sanity.fetch(
+      `count(*[_type=="post" && slug.current==$slug])`,
+      {slug: baseSlug}
+    );
+
+    const slug = slugCount
+      ? `${baseSlug}-${crypto.createHash("sha1").update(rssArticle.title).digest("hex").slice(0, 6)}`
+      : baseSlug;
+
     await sanity.create({
       _type: "post",
       title: parsedTitle,
       slug: {
         _type: "slug",
-        current: parsedTitle
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .slice(0, 96),
+        current: slug,
       },
+      contentType: "news",
+      workflowStatus: "published",
+      categories: [
+        {
+          _type: "reference",
+          _ref: category._id,
+          _key: crypto.randomUUID(),
+        },
+      ],
       publishedAt: new Date().toISOString(),
       body: portableBody,
       views: 0,
