@@ -10,6 +10,7 @@ export const categoryType = defineType({
     defineField({
       name: 'title',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
@@ -21,6 +22,7 @@ export const categoryType = defineType({
     defineField({
       name: 'description',
       type: 'text',
+      description: 'Editorial description for this section. Keep category meaning distinct and avoid overlapping sections.',
     }),
   ],
 })
