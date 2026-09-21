@@ -33,7 +33,7 @@ function displayTitle(title:string,slug:string){
     : "Untitled story";
 }
 
-const validCategorySlugs=["india","world","politics","business","technology","sports","culture","explainers"];
+const validCategorySlugs=["india","world","politics","business","technology","sports","culture","opinion","explainers"];
 const categoryDescriptions:Record<string,string>={
   india:"The latest reporting and developments across India.",
   world:"International affairs, geopolitics and major developments around the world.",
@@ -42,6 +42,7 @@ const categoryDescriptions:Record<string,string>={
   technology:"Technology, artificial intelligence, digital policy and innovation.",
   sports:"Sports news, results, tournaments, teams and the people shaping the world of sport.",
   culture:"Film, television, music, books, arts and the wider culture shaping public life.",
+  opinion:"Commentary and argument from Bombay Bureau and its contributors.",
   explainers:"Clear, contextual explainers focused on what happened, why it matters and what comes next.",
 };
 
