@@ -16,7 +16,7 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   `);
   const staticPaths=[
     "","/about","/newsroom","/contact","/privacy","/terms","/editorial-standards",
-    "/ai-policy","/corrections","/author/muhammed-ismail","/india","/world","/politics",
+    "/ai-policy","/corrections","/cookies","/author/muhammed-ismail","/india","/world","/politics",
     "/business","/technology","/explainers",
   ];
   const staticUrls=staticPaths.map(path=>({url:`${baseUrl}${path}`}));
