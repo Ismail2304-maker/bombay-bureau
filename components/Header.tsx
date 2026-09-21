@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SearchButton from "@/components/SearchButton";
 import UserMenuLoader from "@/components/UserMenuLoader";
+import MobileNav from "@/components/MobileNav";
 
 export default function Header() {
   const mainNav = [
@@ -14,6 +15,7 @@ export default function Header() {
     "Culture",
     "Opinion",
     "Explainers",
+    "Archive",
     "About",
   ];
 
@@ -84,8 +86,10 @@ export default function Header() {
               </div>
             </div>
 
+            <MobileNav />
+
             {/* ================= PRIMARY NAVIGATION ================= */}
-            <nav aria-label="Primary navigation" className="relative z-0 border-t border-gray-700 bg-black">
+            <nav aria-label="Primary navigation" className="relative z-0 hidden md:block border-t border-gray-700 bg-black">
               <div
                 className="
                   flex items-center
