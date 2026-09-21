@@ -13,11 +13,21 @@ export const metadata:Metadata={
   alternates:{canonical:siteUrl},
   openGraph:{type:"website",url:siteUrl,siteName:"BOMBAY BUREAU",title:"BOMBAY BUREAU",description:"Global affairs, Indian perspective."},
   twitter:{card:"summary_large_image",title:"BOMBAY BUREAU",description:"Global affairs, Indian perspective."},
-  robots:{index:true,follow:true},
+  robots:{
+    index:true,
+    follow:true,
+    googleBot:{
+      index:true,
+      follow:true,
+      "max-image-preview":"large",
+      "max-snippet":-1,
+      "max-video-preview":-1,
+    },
+  },
 };
 
 const publisherJsonLd={
-  "@context":"https://schema.org","@type":"Organization","@id":`${siteUrl}/#organization`,
+  "@context":"https://schema.org","@type":"NewsMediaOrganization","@id":`${siteUrl}/#organization`,
   name:"BOMBAY BUREAU",url:siteUrl,logo:`${siteUrl}/icon.png`,
   description:"An independent digital news platform covering India and the world through an Indian perspective.",
   founder:{"@type":"Person",name:"Muhammed Ismail",url:`${siteUrl}/author/muhammed-ismail`},
@@ -32,6 +42,17 @@ const publisherJsonLd={
     `${siteUrl}/corrections`,
     `${siteUrl}/ai-policy`,
   ],
+  masthead:`${siteUrl}/newsroom`,
+  correctionsPolicy:`${siteUrl}/corrections`,
+  ethicsPolicy:`${siteUrl}/editorial-standards`,
+  ownershipFundingInfo:`${siteUrl}/about`,
+  actionableFeedbackPolicy:`${siteUrl}/contact`,
+  missionCoveragePrioritiesPolicy:`${siteUrl}/about`,
+  employee:{
+    "@type":"Person",
+    name:"Rayan Khan",
+    jobTitle:"Editor",
+  },
 };
 
 const websiteJsonLd={

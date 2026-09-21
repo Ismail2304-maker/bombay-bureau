@@ -115,9 +115,11 @@ export const postType = defineType({
 
     defineField({
       name: 'mainImage',
+      title: 'Lead Image',
       type: 'image',
       fieldset: 'editorial',
       options: { hotspot: true },
+      description: 'Use a relevant, high-quality landscape image. For Google Discover readiness, prefer images at least 1200px wide and suitable for a 16:9 presentation; avoid logos or text-heavy graphics.',
       fields: [
         defineField({
           name: 'alt',
