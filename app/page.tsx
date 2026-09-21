@@ -656,7 +656,7 @@ export default async function Home() {
               className="text-[9px] uppercase tracking-[0.18em] text-gray-500 hover:text-white transition"
             >
               Explore More
-            </a>
+            </Link>
 
           </div>
 
