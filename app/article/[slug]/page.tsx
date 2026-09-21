@@ -282,11 +282,6 @@ export default async function ArticlePage(
           <p className="text-lg md:text-2xl leading-relaxed text-gray-300 max-w-4xl mb-8 border-l-2 border-gray-700 pl-4 md:pl-6">{articleExcerpt}</p>
         )}
 
-        <div className="mb-8 flex flex-wrap items-center gap-3 text-[9px] uppercase tracking-[0.2em] text-gray-500">
-          <span>{contentTypeLabel}</span>
-          {post.category && <><span className="text-gray-700">·</span><span>{post.category}</span></>}
-        </div>
-
         {post.correctionNote && (
           <aside className="mb-8 border border-gray-700 bg-gray-950 px-5 py-4">
             <p className="text-[9px] uppercase tracking-[0.2em] text-gray-400">Correction</p>
