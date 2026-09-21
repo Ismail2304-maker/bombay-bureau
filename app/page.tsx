@@ -107,6 +107,26 @@ const getPosts = cache(async () => {
       publishedAt
     },
 
+    "sports": *[_type=="post" && defined(slug.current) && "Sports" in categories[]->title]
+    | order(publishedAt desc)[0..11]{
+      title,
+      slug,
+      mainImage,
+      "excerpt": pt::text(body)[0..140],
+      "caption": mainImage.alt,
+      publishedAt
+    },
+
+    "culture": *[_type=="post" && defined(slug.current) && "Culture" in categories[]->title]
+    | order(publishedAt desc)[0..11]{
+      title,
+      slug,
+      mainImage,
+      "excerpt": pt::text(body)[0..140],
+      "caption": mainImage.alt,
+      publishedAt
+    },
+
     "opinion": *[_type=="post" && defined(slug.current) && "Opinion" in categories[]->title]
     | order(publishedAt desc)[0..7]{
       title,
@@ -202,6 +222,8 @@ export default async function Home() {
     { title: "Politics", data: takeFresh(data.politics, 5) },
     { title: "Business", data: takeFresh(data.business, 5) },
     { title: "Technology", data: takeFresh(data.technology, 5) },
+    { title: "Sports", data: takeFresh(data.sports, 5) },
+    { title: "Culture", data: takeFresh(data.culture, 5) },
   ];
 
   const opinion = takeFresh(data.opinion || [], 4);
@@ -411,9 +433,6 @@ export default async function Home() {
                       {post.title}
                     </p>
 
-                    <p className="text-[10px] uppercase tracking-[0.12em] text-gray-600 mt-2">
-                      {post.views || 0} views
-                    </p>
                   </div>
 
                 </div>
@@ -766,13 +785,15 @@ export default async function Home() {
           <div className="flex flex-wrap gap-6 text-sm mb-10">
 
             <Link href="/">Home</Link>
-            <Link href="/#india">India</Link>
-            <Link href="/#world">World</Link>
-            <Link href="/#politics">Politics</Link>
-            <Link href="/#business">Business</Link>
-            <Link href="/#technology">Technology</Link>
-            <Link href="/#opinion">Opinion</Link>
-            <Link href="/#explainers">Explainers</Link>
+            <Link href="/india">India</Link>
+            <Link href="/world">World</Link>
+            <Link href="/politics">Politics</Link>
+            <Link href="/business">Business</Link>
+            <Link href="/technology">Technology</Link>
+            <Link href="/sports">Sports</Link>
+            <Link href="/culture">Culture</Link>
+            <Link href="/opinion">Opinion</Link>
+            <Link href="/explainers">Explainers</Link>
             <Link href="/#video">Video</Link>
 
             <Link href="/about">About</Link>
@@ -783,47 +804,8 @@ export default async function Home() {
           </div>
 
           {/* SOCIAL */}
-          <div className="flex items-center gap-6 mb-10">
-
-            <span className="text-sm text-gray-400 mr-4">
-              Follow Bombay Bureau on:
-            </span>
-
-            {/* X */}
-            <a href="#" aria-label="Bombay Bureau on X" className="hover:opacity-70 transition">
-              <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24">
-                <path d="M18.244 2H21.5l-7.31 8.35L22.8 22h-6.73l-5.27-6.9L4.8 22H1.5l7.82-8.94L1 2h6.86l4.78 6.26L18.244 2Zm-2.36 18h1.88L7.1 3.9H5.08l10.8 16.1Z"/>
-              </svg>
-            </a>
-
-            {/* INSTAGRAM */}
-            <a href="#" aria-label="Bombay Bureau on Instagram" className="hover:opacity-70 transition">
-              <svg
-                className="w-5 h-5 stroke-white"
-                fill="none"
-                strokeWidth="1.8"
-                viewBox="0 0 24 24"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="5"/>
-                <circle cx="12" cy="12" r="3.5"/>
-                <circle cx="17.5" cy="6.5" r="1"/>
-              </svg>
-            </a>
-
-            {/* FACEBOOK */}
-            <a href="#" aria-label="Bombay Bureau on Facebook" className="hover:opacity-70 transition">
-              <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24">
-                <path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.4V12h2.4V9.8c0-2.4 1.4-3.7 3.6-3.7 1 0 2 .2 2 .2v2.3h-1.2c-1.2 0-1.6.75-1.6 1.5V12h2.7l-.43 2.9h-2.27v7A10 10 0 0 0 22 12Z"/>
-              </svg>
-            </a>
-
-            {/* LINKEDIN */}
-            <a href="#" aria-label="Bombay Bureau on LinkedIn" className="hover:opacity-70 transition">
-              <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24">
-                <path d="M6.94 6.5A1.94 1.94 0 1 1 6.94 2.6a1.94 1.94 0 0 1 0 3.88ZM4.5 8.5h4.9V22H4.5V8.5ZM13 8.5h4.7v1.85h.07c.65-1.2 2.23-2.45 4.6-2.45 4.9 0 5.8 3.22 5.8 7.4V22h-4.9v-5.9c0-1.4-.02-3.2-2-3.2-2 0-2.3 1.5-2.3 3.1V22H13V8.5Z"/>
-              </svg>
-            </a>
-
+          <div className="mb-10 border-y border-gray-800 py-5">
+            <p className="text-sm text-gray-400">Official social channels will be linked here once they are established and verified.</p>
           </div>
 
           {/* LEGAL LINKS */}
