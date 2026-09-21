@@ -11,6 +11,28 @@ const builder=imageUrlBuilder(client);
 const urlFor=(src:any)=>builder.image(src);
 export const revalidate=60;
 
+function articleHref(slug:string){
+  const clean=String(slug||"")
+    .trim()
+    .replace(/^https?:\/\/[^/]+\//i,"")
+    .replace(/^\/+/, "")
+    .replace(/^article\//i,"");
+  return clean ? `/article/${clean}` : "#";
+}
+
+function displayTitle(title:string,slug:string){
+  const value=String(title||"").trim();
+  if(value && !/^https?:\/\//i.test(value) && !/^\/?article\//i.test(value)) return value;
+  const clean=String(slug||"")
+    .replace(/^https?:\/\/[^/]+\//i,"")
+    .replace(/^\/+/, "")
+    .replace(/^article\//i,"")
+    .replace(/-\d{4,}$/,"");
+  return clean
+    ? decodeURIComponent(clean).replace(/[-_]+/g," ").replace(/\b\w/g,(m)=>m.toUpperCase())
+    : "Untitled story";
+}
+
 const validCategorySlugs=["india","world","politics","business","technology","sports","culture","explainers"];
 const categoryDescriptions:Record<string,string>={
   india:"The latest reporting and developments across India.",
@@ -74,12 +96,12 @@ export default async function CategoryPage(props:any){
         <h1 className="text-4xl md:text-6xl font-serif tracking-tight">{categoryName}</h1>
         <p className="mt-4 max-w-3xl text-gray-400 text-base md:text-lg leading-relaxed">{description}</p>
       </div>
-      {lead&&<Link href={`/article/${lead.slug.current}`} className="group block">
+      {lead?.slug?.current&&<Link href={articleHref(lead.slug.current)} className="group block">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-14 md:mb-16">
-          {lead.mainImage&&<Image src={urlFor(lead.mainImage).width(1200).url()} alt={lead.title} width={1200} height={700} priority className="rounded-lg w-full h-auto transition-transform duration-700 group-hover:scale-[1.01]" sizes="(max-width: 767px) 100vw, 50vw" />}
+          {lead.mainImage&&<Image src={urlFor(lead.mainImage).width(1200).url()} alt={displayTitle(lead.title,lead.slug.current)} width={1200} height={700} priority className="rounded-lg w-full h-auto transition-transform duration-700 group-hover:scale-[1.01]" sizes="(max-width: 767px) 100vw, 50vw" />}
           <div className="flex flex-col justify-center">
             <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-4">Lead story</p>
-            <h2 className="text-3xl md:text-5xl font-serif leading-tight group-hover:text-gray-300 transition">{lead.title}</h2>
+            <h2 className="text-3xl md:text-5xl font-serif leading-tight group-hover:text-gray-300 transition">{displayTitle(lead.title,lead.slug.current)}</h2>
             <p className="text-gray-400 mt-5 text-base md:text-lg leading-relaxed">{lead.excerpt}</p>
             {lead.publishedAt&&<time dateTime={lead.publishedAt} className="mt-6 text-xs uppercase tracking-[0.15em] text-gray-600">{new Date(lead.publishedAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</time>}
           </div>
@@ -87,23 +109,33 @@ export default async function CategoryPage(props:any){
       </Link>}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 pb-20">
         <div className="md:col-span-2 space-y-8 md:space-y-10">
-          {rest.map((post:any)=><Link key={post.slug.current} href={`/article/${post.slug.current}`}>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 border-b border-gray-800 pb-8 group cursor-pointer">
-              <div>{post.mainImage&&<Image src={urlFor(post.mainImage).width(500).url()} alt={post.title} width={500} height={320} className="rounded-md w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" sizes="(max-width: 767px) 100vw, 33vw" />}</div>
-              <div className="sm:col-span-2">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-gray-600 mb-2">{post.category||categoryName}</p>
-                <h3 className="font-serif text-xl md:text-2xl leading-snug group-hover:text-gray-300">{post.title}</h3>
-                <p className="text-gray-400 text-sm md:text-base mt-3 leading-relaxed">{post.excerpt}</p>
-              </div>
-            </div>
-          </Link>)}
+          {rest.map((post:any)=>{
+            const slug=post?.slug?.current;
+            if(!slug) return null;
+            const title=displayTitle(post.title,slug);
+            const href=articleHref(slug);
+            return <article key={slug} className="border-b border-gray-800 pb-8">
+              <Link href={href} className="grid grid-cols-1 sm:grid-cols-3 gap-5 group">
+                <div>{post.mainImage&&<Image src={urlFor(post.mainImage).width(500).url()} alt={title} width={500} height={320} className="rounded-md w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" sizes="(max-width: 767px) 100vw, 33vw" />}</div>
+                <div className="sm:col-span-2">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-gray-600 mb-2">{post.category||categoryName}</p>
+                  <h3 className="font-serif text-xl md:text-2xl leading-snug group-hover:text-gray-300">{title}</h3>
+                  {post.excerpt&&<p className="text-gray-400 text-sm md:text-base mt-3 leading-relaxed">{post.excerpt}</p>}
+                </div>
+              </Link>
+            </article>;
+          })}
         </div>
         <aside className="space-y-10 md:ml-6">
           <div>
             <h3 className="text-lg font-bold mb-4 border-b border-gray-800 pb-2">Latest in {categoryName}</h3>
-            {rest.slice(0,6).map((post:any)=><Link key={post.slug.current} href={`/article/${post.slug.current}`}>
-              <div className="py-3 border-b border-gray-800 hover:translate-x-1 transition cursor-pointer text-sm leading-relaxed">{post.title}</div>
-            </Link>)}
+            {rest.slice(0,6).map((post:any)=>{
+              const slug=post?.slug?.current;
+              if(!slug) return null;
+              return <Link key={slug} href={articleHref(slug)} className="block">
+                <div className="py-3 border-b border-gray-800 hover:translate-x-1 transition text-sm leading-relaxed">{displayTitle(post.title,slug)}</div>
+              </Link>;
+            })}
           </div>
         </aside>
       </div>
