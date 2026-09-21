@@ -58,6 +58,7 @@ export async function generateMetadata(
     post.excerpt || post.fallbackExcerpt || "Read the latest reporting and analysis from Bombay Bureau.";
   const canonical = `/article/${slug}`;
   const authorSlug = post.author?.slug?.current || null;
+  const originalPublishedAt = post.firstPublishedAt || post.publishedAt;
 
   return {
     title: post.title,
