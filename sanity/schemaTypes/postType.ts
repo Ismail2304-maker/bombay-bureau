@@ -127,6 +127,18 @@ export const postType = defineType({
           title: 'Alternative text',
           validation: (Rule) => Rule.required(),
         }),
+        defineField({
+          name: 'caption',
+          type: 'string',
+          title: 'Caption',
+          description: 'Optional reader-facing caption for the lead image.',
+        }),
+        defineField({
+          name: 'credit',
+          type: 'string',
+          title: 'Image Credit',
+          description: 'Optional photographer, agency, archive, or source credit.',
+        }),
       ],
     }),
 
