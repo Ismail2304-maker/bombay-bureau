@@ -1,6 +1,7 @@
 import UserMenu from "@/components/UserMenu";
 import ListenButton from "@/components/ListenButton";
 import ShareBar from "@/components/ShareBar";
+import SaveArticleButton from "@/components/SaveArticleButton";
 import TrackView from "@/components/TrackView";
 import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
@@ -28,6 +29,7 @@ const getArticle = cache(async (slug: string) => {
       excerpt,
       "fallbackExcerpt": pt::text(body)[0..240],
       contentType,
+      reportingType,
       mainImage,
       body,
       publishedAt,
@@ -161,6 +163,18 @@ export default async function ArticlePage(
         : post.contentType === "video"
           ? "Video"
           : "News";
+  const reportingTypeLabel =
+    post.reportingType === "original_reporting"
+      ? "Original reporting"
+      : post.reportingType === "original_analysis"
+        ? "Original analysis"
+        : post.reportingType === "explainer_context"
+          ? "Explainer / context"
+          : post.reportingType === "attributed_reporting"
+            ? "Attributed reporting"
+            : post.reportingType === "republished_licensed"
+              ? "Republished / licensed"
+              : null;
   const articleText = post.body?.map((block: any) => block.children?.map((c: any) => c.text).join("")).join(" ") || "";
   const articleUrl = `${siteUrl}/article/${slug}`;
   const authorSlug = post.author?.slug?.current || null;
@@ -325,7 +339,14 @@ export default async function ArticlePage(
             <span aria-hidden="true">•</span>
           </>}
           <span>{readingTime} min read</span>
+          {reportingTypeLabel && (
+            <>
+              <span aria-hidden="true">•</span>
+              <span>{reportingTypeLabel}</span>
+            </>
+          )}
           <ListenButton text={articleText} />
+          <SaveArticleButton slug={slug} title={post.title} />
         </div>
 
         {post.mainImage && (
@@ -339,7 +360,16 @@ export default async function ArticlePage(
               sizes="(max-width: 767px) 100vw, 820px"
               className="rounded-lg md:rounded-xl w-full h-auto"
             />
-            {post.mainImage?.alt && <figcaption className="text-xs text-gray-500 mt-3 leading-relaxed">{post.mainImage.alt}</figcaption>}
+            {post.mainImage?.caption && (
+              <figcaption className="text-xs text-gray-500 mt-3 leading-relaxed">
+                {post.mainImage.caption}
+              </figcaption>
+            )}
+            {post.mainImage?.credit && (
+              <p className="text-[10px] uppercase tracking-[0.16em] text-gray-600 mt-2">
+                Credit: {post.mainImage.credit}
+              </p>
+            )}
           </figure>
         )}
 
