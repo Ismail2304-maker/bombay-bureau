@@ -41,7 +41,7 @@ export default function NewsroomPage(){
         BOMBAY BUREAU is an independent digital news platform focused on India and the world through an Indian perspective.
       </p>
       <div className="grid md:grid-cols-2 gap-8 mt-16">
-        <section className="border-t border-gray-800 pt-6">
+        <section id="editorial-leadership" className="border-t border-gray-800 pt-6">
           <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Editorial leadership</p>
           <h2 className="text-2xl font-serif">Rayan Khan</h2>
           <p className="mt-2 text-gray-400">Editor</p>
