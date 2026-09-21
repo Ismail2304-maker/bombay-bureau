@@ -82,6 +82,16 @@ export default function AboutPage() {
               </p>
               <div className="grid sm:grid-cols-2 gap-4 mt-8">
                 <div className="border border-gray-800 rounded-xl p-5">
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Ownership &amp; publishing</p>
+                  <p className="mt-2 font-serif text-xl text-white">Muhammed Ismail</p>
+                  <p className="mt-1 text-sm text-gray-500">Owner &amp; Publisher</p>
+                  <p className="mt-4 text-sm text-gray-400 leading-relaxed">
+                    Oversees ownership and publishing functions, separate from day-to-day editorial responsibility.
+                  </p>
+                  <Link href="/author/muhammed-ismail" className="inline-block mt-4 text-xs text-white underline underline-offset-4">
+                    Author profile →
+                  </Link>
+                <div className="border border-gray-800 rounded-xl p-5">
                   <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Editorial leadership</p>
                   <p className="mt-2 font-serif text-xl text-white">Rayan Khan</p>
                   <p className="mt-1 text-sm text-gray-500">Editor</p>
@@ -92,16 +102,6 @@ export default function AboutPage() {
                     Editorial profile →
                   </Link>
                 </div>
-                <div className="border border-gray-800 rounded-xl p-5">
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Ownership &amp; publishing</p>
-                  <p className="mt-2 font-serif text-xl text-white">Muhammed Ismail</p>
-                  <p className="mt-1 text-sm text-gray-500">Owner &amp; Publisher</p>
-                  <p className="mt-4 text-sm text-gray-400 leading-relaxed">
-                    Oversees ownership and publishing functions, separate from day-to-day editorial responsibility.
-                  </p>
-                  <Link href="/author/muhammed-ismail" className="inline-block mt-4 text-xs text-white underline underline-offset-4">
-                    Author profile →
-                  </Link>
                 </div>
               </div>
             </div>
