@@ -216,14 +216,33 @@ export default async function Home() {
     if (p?.slug?.current) usedSlugs.add(p.slug.current);
   });
 
+  // Each major section gets up to five of its own stories.
+  // We prefer stories not already used elsewhere, but fall back to the
+  // category's own stories so a section never disappears or becomes sparse
+  // merely because a post has multiple category tags.
+  const takeSectionStories = (items: any[] = [], count: number) => {
+    const fresh = takeFresh(items, count);
+    if (fresh.length >= count) return fresh;
+
+    const selectedSlugs = new Set(fresh.map((item: any) => item?.slug?.current));
+    for (const item of items) {
+      const slug = item?.slug?.current;
+      if (!slug || selectedSlugs.has(slug)) continue;
+      selectedSlugs.add(slug);
+      fresh.push(item);
+      if (fresh.length === count) break;
+    }
+    return fresh;
+  };
+
   const mainSections = [
-    { title: "India", data: takeFresh(data.india, 5) },
-    { title: "World", data: takeFresh(data.world, 5) },
-    { title: "Politics", data: takeFresh(data.politics, 5) },
-    { title: "Business", data: takeFresh(data.business, 5) },
-    { title: "Technology", data: takeFresh(data.technology, 5) },
-    { title: "Sports", data: takeFresh(data.sports, 5) },
-    { title: "Culture", data: takeFresh(data.culture, 5) },
+    { title: "India", data: takeSectionStories(data.india, 5) },
+    { title: "World", data: takeSectionStories(data.world, 5) },
+    { title: "Politics", data: takeSectionStories(data.politics, 5) },
+    { title: "Business", data: takeSectionStories(data.business, 5) },
+    { title: "Technology", data: takeSectionStories(data.technology, 5) },
+    { title: "Sports", data: takeSectionStories(data.sports, 5) },
+    { title: "Culture", data: takeSectionStories(data.culture, 5) },
   ];
 
   const opinion = takeFresh(data.opinion || [], 4);
