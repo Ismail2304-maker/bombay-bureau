@@ -181,7 +181,7 @@ export default async function ArticlePage(
   const authorName = post.author?.name || "Bombay Bureau";
   const authorUrl = authorSlug ? `${siteUrl}/author/${authorSlug}` : siteUrl;
   const categorySlug = post.category?.toLowerCase();
-  const validCategorySlugs = ["india","world","politics","business","technology","sports","culture","explainers"];
+  const validCategorySlugs = ["india","world","politics","business","technology","sports","culture","opinion","explainers"];
   const categoryHref = validCategorySlugs.includes(categorySlug) ? `/${categorySlug}` : null;
   const originalPublishedAt = post.firstPublishedAt || post.publishedAt;
   const lastPublishedAt = post.lastPublishedAt || originalPublishedAt;
