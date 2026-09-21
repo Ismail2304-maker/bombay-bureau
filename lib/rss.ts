@@ -23,6 +23,14 @@ const RSS_FEEDS = [
   // 💻 TECHNOLOGY
   { url: "https://www.thehindu.com/sci-tech/technology/feeder/default.rss", category: "technology" },
   { url: "https://feeds.feedburner.com/gadgets360-latest", category: "technology" },
+
+  // 🏟 SPORTS
+  { url: "https://www.espn.com/espn/rss/news", category: "sports" },
+  { url: "https://feeds.bbci.co.uk/sport/rss.xml", category: "sports" },
+
+  // 🎬 CULTURE
+  { url: "https://www.theguardian.com/culture/rss", category: "culture" },
+  { url: "https://www.theguardian.com/tv-and-radio/rss", category: "culture" },
 ];
 
 export async function getRandomArticleFromRSS() {
