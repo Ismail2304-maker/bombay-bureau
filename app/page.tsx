@@ -20,6 +20,16 @@ function formatDate(date: string) {
   });
 }
 
+function formatToday() {
+  return new Intl.DateTimeFormat("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Kolkata",
+  }).format(new Date());
+}
+
 function formatFreshness(date: string) {
   const published = new Date(date).getTime();
   const now = Date.now();
@@ -253,6 +263,20 @@ export default async function Home() {
 
       <Header />
 
+      <section className="border-b border-gray-800 bg-black">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p className="font-serif text-lg md:text-xl text-white">India, explained with clarity.</p>
+            <p className="mt-1 text-[9px] uppercase tracking-[0.18em] text-gray-600">
+              Independent digital journalism · Global affairs, Indian perspective
+            </p>
+          </div>
+          <time className="text-[9px] md:text-[10px] uppercase tracking-[0.18em] text-gray-600">
+            {formatToday()}
+          </time>
+        </div>
+      </section>
+
       {/* =========================================================
           HERO + SIDEBAR
       ========================================================= */}
@@ -309,9 +333,9 @@ export default async function Home() {
                   </p>
 
                   <div className="mt-4 flex items-center gap-3 text-[10px] uppercase tracking-[0.16em] text-gray-600">
-                    <span>Bombay Bureau</span>
+                    <span>Lead story</span>
                     <span className="w-1 h-1 rounded-full bg-gray-700"></span>
-                    <span>News</span>
+                    <span>Published {formatFreshness(posts[0].publishedAt)}</span>
                   </div>
 
                 </div>
@@ -621,14 +645,14 @@ export default async function Home() {
 
           <div className="flex items-center justify-between">
 
-            <a href="/#opinion" className="group">
+            <Link href="/opinion" className="group">
               <h2 className="text-lg md:text-xl font-bold tracking-tight group-hover:text-gray-400 transition">
                 Opinion
               </h2>
-            </a>
+            </Link>
 
-            <a
-              href="/#opinion"
+            <Link
+              href="/opinion"
               className="text-[9px] uppercase tracking-[0.18em] text-gray-500 hover:text-white transition"
             >
               Explore More
@@ -814,9 +838,13 @@ export default async function Home() {
             <Link href="/opinion">Opinion</Link>
             <Link href="/explainers">Explainers</Link>
             <Link href="/#video">Video</Link>
+            <Link href="/archive">Archive</Link>
+            <Link href="/rss.xml">RSS</Link>
+            <Link href="/saved">Saved</Link>
 
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
+            <Link href="/newsroom">Newsroom</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/privacy">Privacy</Link>
 
@@ -836,6 +864,9 @@ export default async function Home() {
             <a href="mailto:editor@bombaybureau.com">Advertise</a>
             <a href="mailto:editor@bombaybureau.com">Careers</a>
             <Link href="/contact">Contact</Link>
+            <Link href="/newsroom">Newsroom</Link>
+            <Link href="/archive">Archive</Link>
+            <a href="/rss.xml">RSS</a>
             <a href="/sitemap.xml">Sitemap</a>
 
           </div>
