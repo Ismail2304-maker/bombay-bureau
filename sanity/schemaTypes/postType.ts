@@ -24,7 +24,7 @@ export const postType = defineType({
     defineField({
       name: 'slug',
       type: 'slug',
-      options: { source: 'title' },
+      options: { source: 'title', maxLength: 96 },
       validation: (Rule) => Rule.required(),
     }),
 
@@ -132,8 +132,10 @@ export const postType = defineType({
 
     defineField({
       name: 'categories',
+      title: 'Section(s)',
       type: 'array',
       fieldset: 'editorial',
+      description: 'Use the most specific newsroom section. Sports stories belong in Sports; film, television, music, books and arts belong in Culture. Avoid Technology for entertainment coverage.',
       of: [defineArrayMember({ type: 'reference', to: { type: 'category' } })],
     }),
 
