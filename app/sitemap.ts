@@ -6,10 +6,10 @@ const baseUrl="https://bombay-bureau.vercel.app";
 export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   const data=await client.fetch(`
     {
-      "posts": *[_type=="post" && defined(slug.current)]{
+      "posts": *[_type=="post" && !(_id in path("drafts.**")) && coalesce(workflowStatus,"published")=="published" && defined(slug.current)]{
         "slug":slug.current,publishedAt,firstPublishedAt,lastPublishedAt
       },
-      "authors": *[_type=="author" && defined(slug.current)]{
+      "authors": *[_type=="author" && !(_id in path("drafts.**")) && defined(slug.current)]{
         "slug":slug.current,_updatedAt
       }
     }
