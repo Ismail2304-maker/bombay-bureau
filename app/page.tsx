@@ -860,7 +860,7 @@ export default async function Home() {
 
             <Link href="/terms">Terms of Use</Link>
             <Link href="/privacy">Privacy Policy</Link>
-            <span>Cookies</span>
+            <Link href="/cookies">Cookies</Link>
             <a href="mailto:editor@bombaybureau.com">Advertise</a>
             <a href="mailto:editor@bombaybureau.com">Careers</a>
             <Link href="/contact">Contact</Link>
