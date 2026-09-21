@@ -10,6 +10,8 @@ export default function Header() {
     "Politics",
     "Business",
     "Technology",
+    "Sports",
+    "Culture",
     "Opinion",
     "Explainers",
     "About",
@@ -102,16 +104,11 @@ export default function Header() {
                 {mainNav.map((item) => {
                   const lower = item.toLowerCase();
 
-                  let href = `/#${lower}`;
+                  let href = "/";
 
-                  if (item === "Latest") {
-                    href = "/#latest";
-                  }
-
-
-                  if (item === "About") {
-                    href = "/about";
-                  }
+                  if (item === "Latest") href = "/#latest";
+                  if (item !== "Latest" && item !== "About") href = `/${lower}`;
+                  if (item === "About") href = "/about";
 
                   return (
                     <Link

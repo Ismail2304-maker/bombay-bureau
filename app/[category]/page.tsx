@@ -11,13 +11,15 @@ const builder=imageUrlBuilder(client);
 const urlFor=(src:any)=>builder.image(src);
 export const revalidate=60;
 
-const validCategorySlugs=["india","world","politics","business","technology","explainers"];
+const validCategorySlugs=["india","world","politics","business","technology","sports","culture","explainers"];
 const categoryDescriptions:Record<string,string>={
   india:"The latest reporting and developments across India.",
   world:"International affairs, geopolitics and major developments around the world.",
   politics:"Political developments, public policy and government from an Indian perspective.",
   business:"Companies, the economy, industry and business developments.",
   technology:"Technology, artificial intelligence, digital policy and innovation.",
+  sports:"Sports news, results, tournaments, teams and the people shaping the world of sport.",
+  culture:"Film, television, music, books, arts and the wider culture shaping public life.",
   explainers:"Clear, contextual explainers focused on what happened, why it matters and what comes next.",
 };
 
