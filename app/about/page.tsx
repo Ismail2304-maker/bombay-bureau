@@ -91,6 +91,7 @@ export default function AboutPage() {
                   <Link href="/author/muhammed-ismail" className="inline-block mt-4 text-xs text-white underline underline-offset-4">
                     Author profile →
                   </Link>
+                </div>
                 <div className="border border-gray-800 rounded-xl p-5">
                   <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Editorial leadership</p>
                   <p className="mt-2 font-serif text-xl text-white">Rayan Khan</p>
@@ -101,7 +102,6 @@ export default function AboutPage() {
                   <Link href="/newsroom#editorial-leadership" className="inline-block mt-4 text-xs text-white underline underline-offset-4">
                     Editorial profile →
                   </Link>
-                </div>
                 </div>
               </div>
             </div>
