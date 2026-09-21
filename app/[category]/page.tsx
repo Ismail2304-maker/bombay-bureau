@@ -27,9 +27,9 @@ function displayTitle(title:string,slug:string){
     .replace(/^https?:\/\/[^/]+\//i,"")
     .replace(/^\/+/, "")
     .replace(/^article\//i,"")
-    .replace(/-\\d{4,}$/,"");
+    .replace(/-\d{4,}$/,"");
   return clean
-    ? decodeURIComponent(clean).replace(/[-_]+/g," ").replace(/\\b\\w/g,(m)=>m.toUpperCase())
+    ? decodeURIComponent(clean).replace(/[-_]+/g," ").replace(/\b\w/g,(m)=>m.toUpperCase())
     : "Untitled story";
 }
 
@@ -96,12 +96,12 @@ export default async function CategoryPage(props:any){
         <h1 className="text-4xl md:text-6xl font-serif tracking-tight">{categoryName}</h1>
         <p className="mt-4 max-w-3xl text-gray-400 text-base md:text-lg leading-relaxed">{description}</p>
       </div>
-      {lead&&<Link href={`/article/${lead.slug.current}`} className="group block">
+      {lead?.slug?.current&&<Link href={articleHref(lead.slug.current)} className="group block">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-14 md:mb-16">
-          {lead.mainImage&&<Image src={urlFor(lead.mainImage).width(1200).url()} alt={lead.title} width={1200} height={700} priority className="rounded-lg w-full h-auto transition-transform duration-700 group-hover:scale-[1.01]" sizes="(max-width: 767px) 100vw, 50vw" />}
+          {lead.mainImage&&<Image src={urlFor(lead.mainImage).width(1200).url()} alt={displayTitle(lead.title,lead.slug.current)} width={1200} height={700} priority className="rounded-lg w-full h-auto transition-transform duration-700 group-hover:scale-[1.01]" sizes="(max-width: 767px) 100vw, 50vw" />}
           <div className="flex flex-col justify-center">
             <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-4">Lead story</p>
-            <h2 className="text-3xl md:text-5xl font-serif leading-tight group-hover:text-gray-300 transition">{lead.title}</h2>
+            <h2 className="text-3xl md:text-5xl font-serif leading-tight group-hover:text-gray-300 transition">{displayTitle(lead.title,lead.slug.current)}</h2>
             <p className="text-gray-400 mt-5 text-base md:text-lg leading-relaxed">{lead.excerpt}</p>
             {lead.publishedAt&&<time dateTime={lead.publishedAt} className="mt-6 text-xs uppercase tracking-[0.15em] text-gray-600">{new Date(lead.publishedAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</time>}
           </div>
