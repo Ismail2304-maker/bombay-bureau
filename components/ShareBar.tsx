@@ -27,6 +27,8 @@ export default function ShareBar() {
         <a
           href={`https://wa.me/?text=${url}`}
           target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Share on WhatsApp"
           className="hover:text-white transition"
         >
           <FaWhatsapp />
@@ -36,6 +38,8 @@ export default function ShareBar() {
         <a
           href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
           target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Share on Facebook"
           className="hover:text-white transition"
         >
           <FaFacebookF />
@@ -45,6 +49,8 @@ export default function ShareBar() {
         <a
           href={`https://twitter.com/intent/tweet?url=${url}`}
           target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Share on X"
           className="hover:text-white transition"
         >
           <FaXTwitter />
