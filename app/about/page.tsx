@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About",
@@ -79,6 +80,30 @@ export default function AboutPage() {
                 the publication as owner and publisher, while editorial decisions and
                 review of published journalism are led by the editor.
               </p>
+              <div className="grid sm:grid-cols-2 gap-4 mt-8">
+                <div className="border border-gray-800 rounded-xl p-5">
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Editorial leadership</p>
+                  <p className="mt-2 font-serif text-xl text-white">Rayan Khan</p>
+                  <p className="mt-1 text-sm text-gray-500">Editor</p>
+                  <p className="mt-4 text-sm text-gray-400 leading-relaxed">
+                    Responsible for editorial review, corrections, and publication decisions.
+                  </p>
+                  <Link href="/newsroom#editorial-leadership" className="inline-block mt-4 text-xs text-white underline underline-offset-4">
+                    Editorial profile →
+                  </Link>
+                </div>
+                <div className="border border-gray-800 rounded-xl p-5">
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Ownership &amp; publishing</p>
+                  <p className="mt-2 font-serif text-xl text-white">Muhammed Ismail</p>
+                  <p className="mt-1 text-sm text-gray-500">Owner &amp; Publisher</p>
+                  <p className="mt-4 text-sm text-gray-400 leading-relaxed">
+                    Oversees ownership and publishing functions, separate from day-to-day editorial responsibility.
+                  </p>
+                  <Link href="/author/muhammed-ismail" className="inline-block mt-4 text-xs text-white underline underline-offset-4">
+                    Author profile →
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -86,20 +111,26 @@ export default function AboutPage() {
         <section className="py-14 md:py-20 border-b border-gray-800">
           <div className="grid md:grid-cols-[220px_1fr] gap-8 md:gap-16">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.28em] text-gray-500">Editorial Standards</p>
+              <p className="text-[10px] uppercase tracking-[0.28em] text-gray-500">Independence</p>
             </div>
             <div className="max-w-3xl">
               <p className="font-serif text-2xl md:text-3xl leading-[1.35] text-gray-100">
-                Accuracy, attribution, transparency, and accountability come before speed.
+                Editorial judgment is kept separate from ownership and publishing functions.
+              </p>
+              <p className="mt-7 text-gray-400 leading-relaxed">
+                Bombay Bureau describes itself as an independent digital newsroom. Ownership
+                and publishing are disclosed openly, while editorial responsibility rests with
+                the editor. Readers can contact the newsroom directly with corrections,
+                concerns, or questions about published work.
               </p>
               <p className="mt-7 text-gray-400 leading-relaxed">
                 News reporting is kept distinct from opinion and explanatory content.
                 Material claims are reviewed before publication, sources are attributed
                 where appropriate, and significant errors are corrected transparently.
               </p>
-              <a href="/editorial-standards" className="inline-block mt-7 text-sm text-white underline underline-offset-4">
+              <Link href="/editorial-standards" className="inline-block mt-7 text-sm text-white underline underline-offset-4">
                 Read our Editorial Standards →
-              </a>
+              </Link>
             </div>
           </div>
         </section>
