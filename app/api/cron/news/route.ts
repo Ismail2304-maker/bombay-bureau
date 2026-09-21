@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@sanity/client";
 import { getRandomArticleFromRSS } from "@/lib/rss";
+import { createHash } from "node:crypto";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -133,7 +134,7 @@ if (!rssArticle.title) {
     );
 
     const slug = slugCount
-      ? `${baseSlug}-${crypto.createHash("sha1").update(rssArticle.title).digest("hex").slice(0, 6)}`
+      ? `${baseSlug}-${createHash("sha1").update(rssArticle.title).digest("hex").slice(0, 6)}`
       : baseSlug;
 
     await sanity.create({
