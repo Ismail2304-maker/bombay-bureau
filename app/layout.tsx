@@ -72,6 +72,7 @@ export default function RootLayout({children}:{children:React.ReactNode}){
       gtag('js',new Date());
       gtag('config','G-9MLBXV4XSH');
     `}</Script>
+    <link rel="alternate" type="application/rss+xml" title="BOMBAY BUREAU RSS" href={`${siteUrl}/rss.xml`} />
   </head><body className={`${geistSans.variable} antialiased`}>
     <div id="pageFade" className="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 z-[999]" />
     {children}
