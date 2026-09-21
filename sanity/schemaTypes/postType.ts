@@ -48,6 +48,24 @@ export const postType = defineType({
     }),
 
     defineField({
+      name: 'reportingType',
+      title: 'Reporting Type',
+      type: 'string',
+      fieldset: 'editorial',
+      options: {
+        list: [
+          { title: 'Original Reporting', value: 'original_reporting' },
+          { title: 'Original Analysis', value: 'original_analysis' },
+          { title: 'Explainer / Context', value: 'explainer_context' },
+          { title: 'Attributed Reporting', value: 'attributed_reporting' },
+          { title: 'Republished / Licensed', value: 'republished_licensed' },
+        ],
+        layout: 'radio',
+      },
+      description: 'Internal editorial classification. Select only when the newsroom can substantiate the reporting origin. This is not a public originality claim.',
+    }),
+
+    defineField({
       name: 'excerpt',
       title: 'Standfirst / Excerpt',
       type: 'text',
