@@ -23,6 +23,18 @@ export default function VideoSection({ videos }: Props) {
   const [playing, setPlaying] = useState<string | null>(null);
 
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollVideos = (direction: "left" | "right") => {
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const amount = Math.max(container.clientWidth * 0.8, 260);
+    container.scrollBy({
+      left: direction === "right" ? amount : -amount,
+      behavior: "smooth",
+    });
+  };
 
  
   const playVideo = async (key: string) => {
@@ -62,8 +74,34 @@ export default function VideoSection({ videos }: Props) {
           </span>
         </div>
 
-        {/* VIDEO ROW */}
-        <div className="flex gap-4 md:gap-5 overflow-x-auto pb-5 snap-x snap-mandatory scrollbar-hide">
+        {/* VIDEO CAROUSEL */}
+        <div className="relative">
+          {videos.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() => scrollVideos("left")}
+                aria-label="Previous videos"
+                className="absolute left-2 top-1/2 z-10 -translate-y-1/2 w-9 h-9 rounded-full border border-white/30 bg-black/75 text-white backdrop-blur-sm flex items-center justify-center transition hover:bg-white hover:text-black"
+              >
+                <span aria-hidden="true" className="text-lg leading-none">‹</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => scrollVideos("right")}
+                aria-label="Next videos"
+                className="absolute right-2 top-1/2 z-10 -translate-y-1/2 w-9 h-9 rounded-full border border-white/30 bg-black/75 text-white backdrop-blur-sm flex items-center justify-center transition hover:bg-white hover:text-black"
+              >
+                <span aria-hidden="true" className="text-lg leading-none">›</span>
+              </button>
+            </>
+          )}
+
+          <div
+            ref={carouselRef}
+            className="flex gap-4 md:gap-5 overflow-x-auto pb-5 snap-x snap-mandatory scrollbar-hide scroll-smooth"
+          >
 
           {videos.slice(0, 10).map((video, index) => {
             const key =
@@ -172,12 +210,7 @@ export default function VideoSection({ videos }: Props) {
             );
           })}
 
-        </div>
-
-        {/* PAGINATION */}
-        <div className="flex justify-center gap-2 mt-3">
-          <span className="w-2 h-2 rounded-full bg-white" />
-          <span className="w-2 h-2 rounded-full bg-gray-700" />
+          </div>
         </div>
 
       </div>
