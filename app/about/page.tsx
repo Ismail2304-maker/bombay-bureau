@@ -112,7 +112,7 @@ export default function AboutPage() {
                     Editorial profile →
                   </Link>
                 </div>
-              </div>>
+              </div>
         </section>
 
         <section className="py-14 md:py-20 border-b border-gray-800">
