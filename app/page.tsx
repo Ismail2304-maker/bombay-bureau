@@ -872,6 +872,7 @@ export default async function Home() {
           </div>
 
           {/* COPYRIGHT */}
+          {/* Deployment trigger: keep production build aligned with main. */}
           <p className="text-xs text-gray-500">
             © {new Date().getFullYear()} Bombay Bureau. All rights reserved.
             Bombay Bureau is not responsible for the content of external sites.
