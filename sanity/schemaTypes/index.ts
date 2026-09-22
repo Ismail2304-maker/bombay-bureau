@@ -1,4 +1,5 @@
 import { homepageSettingsType } from './homepageSettingsType'
+import { homepageSettingsType } from './homepageSettingsType'
 import { postType } from "./postType"
 import { authorType } from "./authorType"
 import { categoryType } from "./categoryType"
@@ -9,6 +10,7 @@ import { newsletterIssueType } from "./newsletterIssueType"
 import { topicType } from "./topicType"
 
 export const schemaTypes = [
+  homepageSettingsType,
   homepageSettingsType,
   postType,
   authorType,
