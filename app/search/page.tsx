@@ -36,7 +36,7 @@ export default async function SearchPage({
   }
 
   const posts = await client.fetch(
-    \`*[
+    `*[
       _type == "post" &&
       !(_id in path("drafts.**")) &&
       coalesce(workflowStatus, "published") == "published" &&
@@ -72,7 +72,7 @@ export default async function SearchPage({
       contentType,
       reportingType,
       _score
-    }\`,
+    }`,
     {
       q,
       category,
