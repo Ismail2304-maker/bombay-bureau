@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import NewsletterPreferences from "@/components/NewsletterPreferences";
 
 export const metadata: Metadata = {
   title: "The Bombay Brief",
