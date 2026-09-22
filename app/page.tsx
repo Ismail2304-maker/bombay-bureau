@@ -49,6 +49,23 @@ function formatFreshness(date: string) {
 const getPosts = cache(async () => {
   return await client.fetch(`
   {
+    "homepageSettings": *[_type == "homepageSettings"][0]{
+      mode,
+      breakingLabel,
+      breakingSummary,
+      "breakingStory": breakingStory->{
+        title,
+        slug,
+        publishedAt
+      },
+      deepDiveTitle,
+      deepDiveSummary,
+      "deepDiveTopic": deepDiveTopic->{
+        title,
+        slug
+      }
+    },
+
     "all": *[
   _type == "post" &&
   defined(slug.current) &&
@@ -186,6 +203,7 @@ const getPosts = cache(async () => {
 export default async function Home() {
   const data = await getPosts();
   const posts = data.all;
+  const homepageSettings = data.homepageSettings || { mode: "normal" };
   const videos = (data.video || []).map((video: any) => ({
     ...video,
     posterUrl: hasImageAsset(video.mainImage)
@@ -281,9 +299,66 @@ export default async function Home() {
         </div>
       </section>
 
+      {homepageSettings.mode === "breaking" && (
+        <section className="border-b border-red-900/60 bg-red-950/20">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-red-400 font-semibold">
+              {homepageSettings.breakingLabel || "BREAKING"}
+            </span>
+            {homepageSettings.breakingStory?.slug?.current ? (
+              <Link
+                href={`/article/${homepageSettings.breakingStory.slug.current}`}
+                className="font-serif text-base md:text-lg hover:text-gray-300"
+              >
+                {homepageSettings.breakingStory.title}
+              </Link>
+            ) : (
+              <span className="font-serif text-base md:text-lg text-gray-300">
+                Breaking homepage mode is active.
+              </span>
+            )}
+            {homepageSettings.breakingSummary && (
+              <span className="text-xs text-gray-500 hidden md:inline">
+                {homepageSettings.breakingSummary}
+              </span>
+            )}
+          </div>
+        </section>
+      )}
+
+      {homepageSettings.mode === "deep_dive" && (
+        <section className="border-b border-gray-800 bg-white/[0.02]">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600 mb-1">
+              Deep Dive
+            </p>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+              <div>
+                <h2 className="font-serif text-xl md:text-2xl">
+                  {homepageSettings.deepDiveTitle || homepageSettings.deepDiveTopic?.title || "Deep Dive"}
+                </h2>
+                {homepageSettings.deepDiveSummary && (
+                  <p className="text-sm text-gray-500 mt-1 max-w-3xl">
+                    {homepageSettings.deepDiveSummary}
+                  </p>
+                )}
+              </div>
+              {homepageSettings.deepDiveTopic?.slug?.current && (
+                <Link
+                  href={`/topic/${homepageSettings.deepDiveTopic.slug.current}`}
+                  className="text-[10px] uppercase tracking-[0.16em] text-gray-500 hover:text-white whitespace-nowrap"
+                >
+                  View coverage →
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* =========================================================
           HERO + SIDEBAR
-      ========================================================= */}
+          ========================================================= */}
       <section
         id="latest"
         className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6 md:gap-10 px-4 md:px-6 mt-6 md:mt-10 mb-6 md:mb-10 scroll-mt-[210px] md:scroll-mt-[250px]"
