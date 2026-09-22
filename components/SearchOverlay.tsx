@@ -19,7 +19,7 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
   const submit = (e: any) => {
     e.preventDefault();
     if (!query.trim()) return;
-    router.push(`/search?q=${query}`);
+    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     onClose();
   };
 
