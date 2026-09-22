@@ -50,7 +50,7 @@ const scorePost = (post: SearchPost, query: string) => {
   if (author.includes(q)) score += 15;
   if (categories.includes(q)) score += 12;
 
-  for (const term of q.split(/\\s+/).filter(Boolean)) {
+  for (const term of q.split(/\s+/).filter(Boolean)) {
     if (title.includes(term)) score += 12;
     if (excerpt.includes(term)) score += 4;
     if (author.includes(term)) score += 3;
