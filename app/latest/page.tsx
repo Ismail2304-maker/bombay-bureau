@@ -124,8 +124,6 @@ export default async function LatestPage({
               })}
             </div>
           </div>
-
-         </div>
         </div>
 
         <div className="flex items-center justify-between py-5 text-[9px] uppercase tracking-[0.18em] text-gray-600">
@@ -162,7 +160,7 @@ export default async function LatestPage({
                     )}
 
                     <div className="flex flex-wrap items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-gray-600 mb-2">
-                      <span>{post.category || "News"}</span>
+                      {post.category && <span>{post.category}</span>}
                       {post.reportingType === "original_reporting" && (
                         <>
                           <span className="h-1 w-1 rounded-full bg-gray-700" />
@@ -208,7 +206,7 @@ export default async function LatestPage({
           <nav aria-label="Latest stories pagination" className="flex items-center justify-between border-t border-gray-800 py-8 mb-8">
             {safePage > 1 ? (
               <Link
-                href={makeUrl(safePage - 1, category, type)}
+                href={makeUrl(safePage - 1, category)}
                 className="text-xs uppercase tracking-[0.16em] text-gray-400 hover:text-white transition-colors"
               >
                 ← Newer stories
@@ -223,7 +221,7 @@ export default async function LatestPage({
 
             {safePage < totalPages ? (
               <Link
-                href={makeUrl(safePage + 1, category, type)}
+                href={makeUrl(safePage + 1, category)}
                 className="text-xs uppercase tracking-[0.16em] text-gray-400 hover:text-white transition-colors"
               >
                 Older stories →
