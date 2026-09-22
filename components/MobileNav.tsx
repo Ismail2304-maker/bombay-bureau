@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 const links = [
-  ["Latest", "/#latest"],
+  ["Latest", "/latest"],
   ["India", "/india"],
   ["World", "/world"],
   ["Politics", "/politics"],
