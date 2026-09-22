@@ -81,7 +81,15 @@ export default function UserMenu() {
               </>
             )}
 
-            {/* 🔥 NEW PREMIUM LOGOUT */}
+            <Link href="/account" className="text-left hover:text-white">
+              Reader account
+            </Link>
+
+            <Link href="/saved" className="text-left hover:text-white">
+              Saved stories
+            </Link>
+
+            {/* 🔥 NEW PREMIUM LOGOUT */
             <button
               onClick={async () => {
                 const fade = document.getElementById("pageFade");

@@ -1,29 +1,58 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
+import {onAuthStateChanged, User} from "firebase/auth";
+import {collection, deleteDoc, doc, getDocs} from "firebase/firestore";
+import {auth, db} from "@/lib/firebase";
 
-type SavedArticle = {
-  slug: string;
-  title: string;
-  savedAt: string;
-};
-
+type SavedArticle = {slug: string; title: string; savedAt: string};
 const STORAGE_KEY = "bb_saved_articles";
+
+function readLocal(): SavedArticle[] {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; }
+}
 
 export default function SavedPage() {
   const [articles, setArticles] = useState<SavedArticle[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      setArticles(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
-    } catch {
-      setArticles([]);
-    }
+    return onAuthStateChanged(auth, async (current) => {
+      setUser(current);
+      try {
+        if (!current) {
+          setArticles(readLocal());
+        } else {
+          const snapshot = await getDocs(collection(db, "savedArticles", current.uid, "items"));
+          const remote = snapshot.docs.map((item) => item.data() as SavedArticle);
+          setArticles(remote.sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime()));
+        }
+      } catch {
+        setArticles(readLocal());
+      } finally {
+        setLoading(false);
+      }
+    });
   }, []);
 
-  function clearSaved() {
-    localStorage.removeItem(STORAGE_KEY);
+  async function remove(slug: string) {
+    if (user) {
+      await deleteDoc(doc(db, "savedArticles", user.uid, "items", slug));
+    } else {
+      const next = readLocal().filter((item) => item.slug !== slug);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    }
+    setArticles((current) => current.filter((item) => item.slug !== slug));
+  }
+
+  async function clearSaved() {
+    if (user) {
+      await Promise.all(articles.map((article) => deleteDoc(doc(db, "savedArticles", user.uid, "items", article.slug))));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
     setArticles([]);
   }
 
@@ -41,37 +70,29 @@ export default function SavedPage() {
           <div>
             <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500">Reader tools</p>
             <h1 className="mt-3 text-4xl md:text-6xl font-serif">Saved stories</h1>
+            <p className="mt-3 text-sm text-gray-600">{user ? "Synced to your reader account." : "Saved on this device. Sign in to sync across devices."}</p>
           </div>
           {articles.length > 0 && (
-            <button
-              type="button"
-              onClick={clearSaved}
-              className="text-[9px] uppercase tracking-[0.18em] text-gray-500 hover:text-white"
-            >
+            <button type="button" onClick={clearSaved} className="text-[9px] uppercase tracking-[0.18em] text-gray-500 hover:text-white">
               Clear all
             </button>
           )}
         </div>
 
-        {articles.length ? (
+        {loading ? (
+          <div className="mt-10 text-gray-500">Loading your reading list…</div>
+        ) : articles.length ? (
           <div className="mt-8 border-t border-gray-900">
             {articles.map((article) => (
-              <Link
-                key={article.slug}
-                href={`/article/${article.slug}`}
-                className="block border-b border-gray-900 py-6 group"
-              >
-                <h2 className="font-serif text-xl md:text-2xl group-hover:text-gray-300 transition-colors">
-                  {article.title}
-                </h2>
-                <p className="mt-2 text-[9px] uppercase tracking-[0.16em] text-gray-600">
-                  Saved {new Date(article.savedAt).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
-              </Link>
+              <div key={article.slug} className="border-b border-gray-900 py-6 flex items-start gap-5">
+                <Link href={`/article/${article.slug}`} className="group flex-1">
+                  <h2 className="font-serif text-xl md:text-2xl group-hover:text-gray-300 transition-colors">{article.title}</h2>
+                  <p className="mt-2 text-[9px] uppercase tracking-[0.16em] text-gray-600">
+                    Saved {new Date(article.savedAt).toLocaleDateString("en-IN", {day: "numeric", month: "short", year: "numeric"})}
+                  </p>
+                </Link>
+                <button type="button" onClick={() => remove(article.slug)} className="text-[9px] uppercase tracking-[0.16em] text-gray-600 hover:text-white">Remove</button>
+              </div>
             ))}
           </div>
         ) : (
