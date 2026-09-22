@@ -17,24 +17,6 @@ export default async function DiscoverPage() {
     {
       "topics": *[_type=="topic" && defined(slug.current)] | order(title asc)[0..29]{
         title, slug, description
-      },
-      "latest": *[
-        _type=="post" &&
-        !(_id in path("drafts.**")) &&
-        coalesce(workflowStatus,"published")=="published" &&
-        defined(slug.current) &&
-        defined(publishedAt)
-      ] | order(publishedAt desc)[0..7]{
-        title, slug, publishedAt, "category": categories[0]->title
-      },
-      "popular": *[
-        _type=="post" &&
-        !(_id in path("drafts.**")) &&
-        coalesce(workflowStatus,"published")=="published" &&
-        defined(slug.current) &&
-        defined(publishedAt)
-      ] | order(views desc, publishedAt desc)[0..5]{
-        title, slug, publishedAt, "category": categories[0]->title
       }
     }
   `);
@@ -50,7 +32,7 @@ export default async function DiscoverPage() {
         <p className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-4">BOMBAY BUREAU</p>
         <h1 className="text-4xl md:text-6xl font-serif tracking-tight">Discover</h1>
         <p className="mt-4 max-w-3xl text-gray-400 text-base md:text-lg leading-relaxed">
-          Find the latest reporting, continuing coverage, subjects and the newsroom archive.
+          Find a way into BOMBAY BUREAU beyond the front page — follow subjects, understand stories, explore viewpoints and return to the archive.
         </p>
         <form action="/search" className="mt-7 max-w-3xl flex gap-2">
           <label htmlFor="discover-search" className="sr-only">Search BOMBAY BUREAU</label>
@@ -60,38 +42,68 @@ export default async function DiscoverPage() {
       </header>
 
       <section className="py-10 border-b border-gray-800">
-        <div className="flex items-end justify-between gap-4 mb-5">
-          <div><p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Explore by section</p><h2 className="mt-2 text-2xl md:text-3xl font-serif">Newsroom sections</h2></div>
-          <Link href="/latest" className="text-[10px] uppercase tracking-[0.16em] text-gray-500 hover:text-white">Latest →</Link>
+        <div className="flex items-end justify-between gap-4 mb-6">
+          <div>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Choose your route</p>
+            <h2 className="mt-2 text-2xl md:text-3xl font-serif">Explore the Bureau</h2>
+          </div>
+          <span className="hidden sm:block text-[9px] uppercase tracking-[0.18em] text-gray-700">Beyond the homepage</span>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {sections.map((section) => <Link key={section} href={`/${section.toLowerCase()}`} className="rounded-full border border-gray-800 px-4 py-2 text-[10px] uppercase tracking-[0.14em] text-gray-400 hover:border-gray-500 hover:text-white">{section}</Link>)}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-800 border border-gray-800">
+          {[
+            {
+              eyebrow: "Follow a subject",
+              title: "Continuing coverage",
+              text: "Stay with a story as it develops across multiple reports.",
+              href: "/topics",
+              label: "Browse topics",
+            },
+            {
+              eyebrow: "Understand the story",
+              title: "Explainers",
+              text: "Context, background and clear breakdowns for complicated subjects.",
+              href: "/explainers",
+              label: "Read explainers",
+            },
+            {
+              eyebrow: "Read viewpoints",
+              title: "Opinion",
+              text: "Arguments and analysis presented separately from news reporting.",
+              href: "/opinion",
+              label: "Explore opinion",
+            },
+            {
+              eyebrow: "See the reporting",
+              title: "Watch",
+              text: "Video journalism and visual reporting from the Bureau.",
+              href: "/#video",
+              label: "Watch video",
+            },
+            {
+              eyebrow: "Go back in time",
+              title: "The archive",
+              text: "Trace the publication's reporting across its history.",
+              href: "/archive",
+              label: "Open archive",
+            },
+            {
+              eyebrow: "Keep for later",
+              title: "Saved stories",
+              text: "Collect articles you want to return to when you have time.",
+              href: "/saved",
+              label: "Open saved",
+            },
+          ].map((item) => (
+            <Link key={item.title} href={item.href} className="bg-black p-6 md:p-7 group hover:bg-white/[0.03] transition-colors">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-gray-600">{item.eyebrow}</p>
+              <h3 className="mt-3 font-serif text-xl md:text-2xl group-hover:text-gray-300">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-gray-500 max-w-sm">{item.text}</p>
+              <p className="mt-5 text-[9px] uppercase tracking-[0.16em] text-gray-500 group-hover:text-white">{item.label} →</p>
+            </Link>
+          ))}
         </div>
       </section>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14 py-10">
-        <section className="lg:col-span-2">
-          <div className="flex items-end justify-between gap-4 mb-6"><div><p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Fresh reporting</p><h2 className="mt-2 text-2xl md:text-3xl font-serif">Latest stories</h2></div><Link href="/latest" className="text-[10px] uppercase tracking-[0.16em] text-gray-500 hover:text-white">View all →</Link></div>
-          <div className="border-t border-gray-800">
-            {(data.latest || []).map((post:any) => <Link key={post.slug.current} href={`/article/${post.slug.current}`} className="block border-b border-gray-900 py-5 group">
-              <p className="text-[9px] uppercase tracking-[0.16em] text-gray-600 mb-2">{post.category || "News"} · {new Date(post.publishedAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</p>
-              <h3 className="font-serif text-lg md:text-xl leading-snug group-hover:text-gray-300">{post.title}</h3>
-            </Link>)}
-          </div>
-        </section>
-
-        <aside>
-          <div className="mb-10">
-            <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Reader interest</p>
-            <h2 className="mt-2 text-2xl font-serif mb-5">Popular stories</h2>
-            <div className="border-t border-gray-800">
-              {(data.popular || []).map((post:any,index:number) => <Link key={post.slug.current} href={`/article/${post.slug.current}`} className="block border-b border-gray-900 py-4 group">
-                <div className="flex gap-3"><span className="text-xs text-gray-700">{String(index+1).padStart(2,"0")}</span><div><p className="text-[9px] uppercase tracking-[0.14em] text-gray-600 mb-1">{post.category || "News"}</p><h3 className="font-serif leading-snug group-hover:text-gray-300">{post.title}</h3></div></div>
-              </Link>)}
-            </div>
-          </div>
-        </aside>
-      </div>
 
       <section className="border-t border-gray-800 pt-10">
         <div className="flex items-end justify-between gap-4 mb-6"><div><p className="text-[9px] uppercase tracking-[0.2em] text-gray-600">Continuing coverage</p><h2 className="mt-2 text-2xl md:text-3xl font-serif">Topics</h2></div><Link href="/topics" className="text-[10px] uppercase tracking-[0.16em] text-gray-500 hover:text-white">All topics →</Link></div>
