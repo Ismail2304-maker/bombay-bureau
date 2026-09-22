@@ -6,6 +6,7 @@ const baseUrl="https://bombay-bureau.vercel.app";
 export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   const data=await client.fetch(`
     {
+      "topics": *[_type=="topic" && defined(slug.current)]{"slug":slug.current,_updatedAt},
       "posts": *[_type=="post" && !(_id in path("drafts.**")) && coalesce(workflowStatus,"published")=="published" && defined(slug.current)]{
         "slug":slug.current,publishedAt,firstPublishedAt,lastPublishedAt
       },
@@ -20,6 +21,7 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
     "/business","/technology","/explainers","/newsletter","/tips",
   ];
   const staticUrls=staticPaths.map(path=>({url:`${baseUrl}${path}`}));
+  const topicUrls=(data.topics||[]).map((topic:any)=>({url:baseUrl+"/topic/"+topic.slug,lastModified:topic._updatedAt||undefined}));
   const authorUrls=(data.authors||[]).map((author:any)=>({
     url:`${baseUrl}/author/${author.slug}`,
     lastModified:author._updatedAt||undefined,
@@ -28,5 +30,5 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
     url:`${baseUrl}/article/${post.slug}`,
     lastModified:post.lastPublishedAt||post.firstPublishedAt||post.publishedAt||undefined,
   }));
-  return [...staticUrls,...authorUrls,...postUrls];
+  return [...staticUrls,...topicUrls,...authorUrls,...postUrls];
 }
