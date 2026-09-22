@@ -5,6 +5,7 @@ import { client } from "@/lib/sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import { cache } from "react";
 import VideoSection from "@/components/VideoSection";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 const builder = imageUrlBuilder(client);
 const urlFor = (source: any) =>
@@ -792,6 +793,11 @@ export default async function Home() {
       </section>
 
       {/* =========================================================
+          NEWSLETTER
+      ========================================================= */}
+      <NewsletterSignup />
+
+      {/* =========================================================
     VIDEO / WATCH
 ========================================================= */}
 <VideoSection
@@ -841,6 +847,8 @@ export default async function Home() {
             <Link href="/archive">Archive</Link>
             <Link href="/rss.xml">RSS</Link>
             <Link href="/saved">Saved</Link>
+            <Link href="/newsletter">Newsletter</Link>
+            <Link href="/tips">Send a Tip</Link>
 
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
