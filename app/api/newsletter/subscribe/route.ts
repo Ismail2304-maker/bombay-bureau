@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { client } from "@/lib/sanity";
-import { resend, resendSegmentId } from "@/lib/resend";
+import { getNewsletterSegmentId, resend } from "@/lib/resend";
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -36,21 +36,62 @@ export async function POST(request: Request) {
         source: "website",
         subscribedAt: new Date().toISOString(),
       });
+    } else {
+      await client
+        .patch(
+          (await client.fetch(
+            `*[_type == "newsletterSubscriber" && email == $email][0]._id`,
+            { email }
+          ))
+        )
+        .set({ status: "active" })
+        .commit();
     }
 
-    // Resend now uses global Contacts. The old audienceId parameter is
-    // deprecated. A contact can optionally be added to one or more Segments.
-    // Sanity remains the newsroom-facing mirror.
     if (resend) {
-      const { error } = await resend.contacts.create({
+      const segmentId = await getNewsletterSegmentId();
+
+      if (!segmentId) {
+        return NextResponse.json(
+          { error: "We saved your signup, but the email delivery service is not ready yet." },
+          { status: 503 }
+        );
+      }
+
+      const existingContact = await resend.contacts.get(email);
+
+      if (existingContact.error) {
+        const { error } = await resend.contacts.create({
+          email,
+          unsubscribed: false,
+        });
+
+        if (error) {
+          return NextResponse.json(
+            { error: "We saved your signup, but the email delivery service is not ready yet." },
+            { status: 503 }
+          );
+        }
+      } else {
+        const { error } = await resend.contacts.update({
+          email,
+          unsubscribed: false,
+        });
+
+        if (error) {
+          return NextResponse.json(
+            { error: "We saved your signup, but the email delivery service is not ready yet." },
+            { status: 503 }
+          );
+        }
+      }
+
+      const { error: segmentError } = await resend.contacts.segments.add({
         email,
-        unsubscribed: false,
-        ...(resendSegmentId
-          ? { segments: [{ id: resendSegmentId }] }
-          : {}),
+        segmentId,
       });
 
-      if (error) {
+      if (segmentError) {
         return NextResponse.json(
           { error: "We saved your signup, but the email delivery service is not ready yet." },
           { status: 503 }
@@ -62,7 +103,6 @@ export async function POST(request: Request) {
       ok: true,
       message: "You're on the list.",
       deliveryReady: Boolean(resend),
-      segmented: Boolean(resend && resendSegmentId),
     });
   } catch {
     return NextResponse.json({ error: "Unable to process your signup right now." }, { status: 500 });
