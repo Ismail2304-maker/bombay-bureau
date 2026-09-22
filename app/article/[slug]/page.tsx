@@ -45,6 +45,7 @@ const getArticle = cache(async (slug: string) => {
       correctionNote,
       sources[]{label,url},
       "category": categories[0]->title,
+      "topics": topics[]->{title,slug},
       "categories": categories[]->title,
       author->{name,slug,role,location,bio,image}
     }`,
@@ -443,6 +444,19 @@ export default async function ArticlePage(
               ))}
             </ul>
           </section>
+        )}
+
+        {post.topics?.length > 0 && (
+          <div className="mt-10">
+            <p className="text-xs uppercase tracking-widest text-gray-500 mb-4">Continuing coverage</p>
+            <div className="flex flex-wrap gap-2">
+              {post.topics.map((topic: any) => (
+                <Link key={topic.slug.current} href={`/topic/${topic.slug.current}`} className="rounded-full border border-gray-800 px-3 py-1.5 text-[9px] uppercase tracking-[0.14em] text-gray-500 hover:border-gray-600 hover:text-white transition-colors">
+                  {topic.title}
+                </Link>
+              ))}
+            </div>
+          </div>
         )}
 
         <div className="mt-20 pt-10 border-t border-gray-800">
