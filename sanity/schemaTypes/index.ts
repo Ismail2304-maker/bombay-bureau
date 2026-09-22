@@ -4,6 +4,7 @@ import { categoryType } from "./categoryType"
 import { blockContentType } from "./blockContentType"
 import { newsletterSubscriberType } from "./newsletterSubscriberType"
 import { tipSubmissionType } from "./tipSubmissionType"
+import { newsletterIssueType } from "./newsletterIssueType"
 
 export const schemaTypes = [
   postType,
@@ -12,4 +13,5 @@ export const schemaTypes = [
   blockContentType,
   newsletterSubscriberType,
   tipSubmissionType,
+  newsletterIssueType,
 ]
