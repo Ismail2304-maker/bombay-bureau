@@ -6,6 +6,7 @@ import MobileNav from "@/components/MobileNav";
 export default function Header() {
   const mainNav = [
     "Latest",
+    "Discover",
     "India",
     "World",
     "Politics",
@@ -111,6 +112,7 @@ export default function Header() {
                   let href = "/";
 
                   if (item === "Latest") href = "/latest";
+                  if (item === "Discover") href = "/discover";
                   if (item !== "Latest" && item !== "About") href = `/${lower}`;
                   if (item === "About") href = "/about";
 
