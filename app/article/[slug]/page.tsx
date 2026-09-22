@@ -17,6 +17,10 @@ function urlFor(source: any) {
   return builder.image(source);
 }
 
+function hasImageAsset(source: any) {
+  return Boolean(source?.asset?._ref || source?.asset?._id);
+}
+
 const siteUrl = "https://bombay-bureau.vercel.app";
 
 export const revalidate = 60;
@@ -74,7 +78,7 @@ export async function generateMetadata(
       publishedTime: originalPublishedAt || undefined,
       modifiedTime: post.lastPublishedAt || post.firstPublishedAt || post.publishedAt || undefined,
       authors: authorSlug ? [`${siteUrl}/author/${authorSlug}`] : undefined,
-      images: post.mainImage
+      images: hasImageAsset(post.mainImage)
         ? [{ url: urlFor(post.mainImage).width(1200).url(), alt: post.title }]
         : undefined,
     },
@@ -82,7 +86,7 @@ export async function generateMetadata(
       card: "summary_large_image",
       title: post.title,
       description,
-      images: post.mainImage
+      images: hasImageAsset(post.mainImage)
         ? [urlFor(post.mainImage).width(1200).url()]
         : undefined,
     },
@@ -197,7 +201,7 @@ export default async function ArticlePage(
     mainEntityOfPage: {"@type": "WebPage", "@id": articleUrl},
     headline: post.title,
     description: articleExcerpt || undefined,
-    image: post.mainImage ? [urlFor(post.mainImage).width(1600).url()] : undefined,
+    image: hasImageAsset(post.mainImage) ? [urlFor(post.mainImage).width(1600).url()] : undefined,
     url: articleUrl,
     articleSection: post.category || undefined,
     inLanguage: "en",
@@ -349,7 +353,7 @@ export default async function ArticlePage(
           <SaveArticleButton slug={slug} title={post.title} />
         </div>
 
-        {post.mainImage && (
+        {hasImageAsset(post.mainImage) && (
           <figure className="mb-12 md:mb-14">
             <Image
               src={urlFor(post.mainImage).width(1800).url()}
@@ -469,7 +473,7 @@ export default async function ArticlePage(
           {more.map((m:any)=>(
             <Link key={m.slug?.current || m.title} href={m.slug?.current ? `/article/${m.slug.current}` : "#"} className="group">
               <div className="cursor-pointer hover:-translate-y-1 transition-all duration-300">
-                {m.mainImage && <Image src={urlFor(m.mainImage).width(400).url()} alt={m.title} loading="lazy" width={400} height={250} sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 25vw" className="w-full h-[230px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]" />}
+                {hasImageAsset(m.mainImage) && <Image src={urlFor(m.mainImage).width(400).url()} alt={m.title} loading="lazy" width={400} height={250} sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 25vw" className="w-full h-[230px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]" />}
                 {m.category && <p className="text-[10px] uppercase tracking-[0.18em] text-gray-500 mb-2">{m.category}</p>}
                 <h3 className="font-serif leading-snug group-hover:text-gray-300 transition-colors">{m.title}</h3>
               </div>
