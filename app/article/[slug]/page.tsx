@@ -100,39 +100,44 @@ function getReadingTime(body: any[]) {
   return Math.max(1, Math.ceil(text.split(/\s+/).filter(Boolean).length / 200));
 }
 
-const getMoreArticles = cache(async (slug: string, categories: string[] = []) => {
+const getMoreArticles = cache(async (slug: string, categories: string[] = [], topicSlugs: string[] = []) => {
   const candidates = await client.fetch(
     `*[
       _type=="post" &&
       slug.current != $slug &&
       defined(slug.current) &&
+      !(_id in path("drafts.**")) &&
+      coalesce(workflowStatus, "published") == "published" &&
+      defined(publishedAt) &&
       !("Video" in categories[]->title) &&
-      count(categories[]->title[@ in $categories]) > 0
-    ] | order(publishedAt desc)[0..19]{
+      (count(topics[]->slug.current[@ in $topicSlugs]) > 0 || count(categories[]->title[@ in $categories]) > 0)
+    ] | order(publishedAt desc)[0..39]{
       title,
       slug,
       mainImage,
       publishedAt,
+      excerpt,
       "category": categories[0]->title,
-      "categories": categories[]->title
+      "categories": categories[]->title,
+      "topics": topics[]->{title,slug}
     }`,
-    { slug, categories }
+    { slug, categories, topicSlugs }
   );
 
   const now = Date.now();
   return (candidates || [])
     .map((article: any) => {
-      const sharedCategories = (article.categories || []).filter((c: string) =>
-        categories.includes(c)
+      const sharedTopics = (article.topics || []).filter((topic: any) =>
+        topicSlugs.includes(topic.slug?.current)
       ).length;
-      const hours = Math.max(
-        0,
-        (now - new Date(article.publishedAt).getTime()) / 3600000
-      );
+      const sharedCategories = (article.categories || []).filter((category: string) =>
+        categories.includes(category)
+      ).length;
+      const hours = Math.max(0, (now - new Date(article.publishedAt).getTime()) / 3600000);
       const freshness = Math.max(0, 1 - Math.min(hours, 168) / 168);
       return {
         ...article,
-        relatedScore: sharedCategories * 20 + freshness * 8,
+        relatedScore: sharedTopics * 40 + sharedCategories * 12 + freshness * 8,
       };
     })
     .sort((a: any, b: any) => b.relatedScore - a.relatedScore)
@@ -246,7 +251,7 @@ export default async function ArticlePage(
     item:articleUrl,
   });
 
-  const more = await getMoreArticles(slug, post.categories || []);
+  const more = await getMoreArticles(slug, post.categories || [], (post.topics || []).map((topic: any) => topic.slug?.current).filter(Boolean));
 
   return (
     <main className="bg-black text-white min-h-screen">
@@ -481,7 +486,7 @@ export default async function ArticlePage(
 
       <section className="max-w-6xl mx-auto px-4 md:px-6 pb-16 md:pb-24">
         <h2 className="text-2xl md:text-3xl font-serif mb-8 md:mb-10 border-t border-gray-800 pt-10 md:pt-12">
-          Related stories
+          {post.topics?.length > 0 ? "Related coverage" : "Related stories"}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {more.map((m:any)=>(
