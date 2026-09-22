@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { client } from "@/lib/sanity";
-import { resend, resendAudienceId } from "@/lib/resend";
+import { resend, resendSegmentId } from "@/lib/resend";
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -38,14 +38,16 @@ export async function POST(request: Request) {
       });
     }
 
-    // Resend is the delivery system. Sanity remains the newsroom-facing mirror.
-    // If Resend has not been configured yet, keep the signup in Sanity so no
-    // reader is silently lost while the provider is being connected.
-    if (resend && resendAudienceId) {
-      const {error} = await resend.contacts.create({
+    // Resend now uses global Contacts. The old audienceId parameter is
+    // deprecated. A contact can optionally be added to one or more Segments.
+    // Sanity remains the newsroom-facing mirror.
+    if (resend) {
+      const { error } = await resend.contacts.create({
         email,
         unsubscribed: false,
-        audienceId: resendAudienceId,
+        ...(resendSegmentId
+          ? { segments: [{ id: resendSegmentId }] }
+          : {}),
       });
 
       if (error) {
@@ -59,7 +61,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       message: "You're on the list.",
-      deliveryReady: Boolean(resend && resendAudienceId),
+      deliveryReady: Boolean(resend),
+      segmented: Boolean(resend && resendSegmentId),
     });
   } catch {
     return NextResponse.json({ error: "Unable to process your signup right now." }, { status: 500 });
