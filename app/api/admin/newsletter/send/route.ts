@@ -43,6 +43,7 @@ export async function POST(request: Request) {
         intro,
         body,
         status,
+        resendBroadcastId,
         featuredPosts[]->{
           title,
           slug,
