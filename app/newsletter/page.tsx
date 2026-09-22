@@ -27,7 +27,7 @@ export default function NewsletterPage() {
         <p className="mt-7 text-lg md:text-xl text-gray-400 leading-relaxed">India and the world, explained clearly. Get the most important stories, context, and original reporting from BOMBAY BUREAU.</p>
         <NewsletterSignup />
         <NewsletterPreferences />
-        <p className="mt-8 text-xs text-gray-600 leading-relaxed">We are building the newsletter list now. Email delivery will be connected to a dedicated newsletter service before regular editions begin.</p>
+        <p className="mt-8 text-xs text-gray-600 leading-relaxed">Newsletter delivery is handled through our email delivery provider. You can manage your reading preferences from your signed-in reader account.</p>
       </section>
     </main>
   );
