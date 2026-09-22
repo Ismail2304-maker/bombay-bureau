@@ -36,18 +36,45 @@ export default async function SearchPage({
   }
 
   const posts = await client.fetch(
-    `*[_type=="post"
-      && title match $q
-      && (!defined($category) || $category == "" || $category in categories[]->title)
-    ] | order(publishedAt desc){
+    \`*[
+      _type == "post" &&
+      !(_id in path("drafts.**")) &&
+      coalesce(workflowStatus, "published") == "published" &&
+      defined(slug.current) &&
+      (
+        title match text::query($q) ||
+        excerpt match text::query($q) ||
+        pt::text(body) match text::query($q) ||
+        author->name match text::query($q) ||
+        categories[]->title match text::query($q)
+      ) &&
+      (!defined($category) || $category == "" || $category in categories[]->title)
+    ]
+    | score(
+        boost(title match text::query($q), 5),
+        boost(excerpt match text::query($q), 2),
+        boost(pt::text(body) match text::query($q), 1),
+        boost(author->name match text::query($q), 3),
+        boost(categories[]->title match text::query($q), 2),
+        boost(publishedAt > now() - 60*60*24*30, 0.5)
+      )
+    | order(_score desc, publishedAt desc)
+    [0...40]{
       title,
       slug,
       mainImage,
-      "excerpt": pt::text(body)[0..140],
-      "category": categories[0]->title
-    }`,
+      excerpt,
+      "fallbackExcerpt": pt::text(body)[0..220],
+      publishedAt,
+      "category": categories[0]->title,
+      "categories": categories[]->title,
+      "author": author->name,
+      contentType,
+      reportingType,
+      _score
+    }\`,
     {
-      q: `${q}*`,
+      q,
       category,
     }
   );
@@ -82,10 +109,10 @@ export default async function SearchPage({
 
       {/* FILTER BAR */}
       <div className="flex gap-4 md:gap-6 overflow-x-auto md:overflow-visible whitespace-nowrap border-b border-gray-800 pb-4 mb-8 md:mb-10 text-xs md:text-sm">
-        {["All","India","World","Opinion","Politics","Business","Technology"].map(c=>(
+        {["All","India","World","Politics","Business","Technology","Sports","Culture","Opinion","Explainers"].map(c=>(
           <Link
             key={c}
-            href={`/search?q=${q}${c !== "All" ? `&category=${c}` : ""}`}
+            href={c === "All" ? `/search?q=${encodeURIComponent(q)}` : `/search?q=${encodeURIComponent(q)}&category=${encodeURIComponent(c)}`}
             className={`hover:text-white ${
               category===c || (!category && c==="All")
                 ? "text-white font-semibold"
