@@ -32,17 +32,19 @@ export async function POST(request: Request) {
       const email = String(event.data?.email || "").trim().toLowerCase();
 
       if (email) {
-        await client
-          .patch(
-            await client.fetch(
-              `*[_type == "newsletterSubscriber" && email == $email][0]._id`,
-              { email }
-            )
-          )
-          .set({
-            status: event.data?.unsubscribed ? "unsubscribed" : "active",
-          })
-          .commit();
+        const subscriberId = await client.fetch(
+          `*[_type == "newsletterSubscriber" && email == $email][0]._id`,
+          { email }
+        );
+
+        if (subscriberId) {
+          await client
+            .patch(subscriberId)
+            .set({
+              status: event.data?.unsubscribed ? "unsubscribed" : "active",
+            })
+            .commit();
+        }
       }
     }
 
