@@ -23,7 +23,7 @@ export default function NewsletterSignup() {
       if (!response.ok) throw new Error(data.error || "Something went wrong.");
 
       setStatus("success");
-      setMessage("You're on the list. We'll be in touch when The Bombay Brief launches.");
+      setMessage("You're on the list. You'll receive the next edition of The Bombay Brief in your inbox.");
       setEmail("");
       setWebsite("");
     } catch (error) {
@@ -75,7 +75,7 @@ export default function NewsletterSignup() {
               {status === "loading" ? "Joining..." : "Join the Brief"}
             </button>
             <p aria-live="polite" className={`text-xs leading-relaxed ${status === "error" ? "text-red-400" : "text-gray-500"}`}>
-              {message || "No spam. You can unsubscribe when email delivery is enabled."}
+              {message || "No spam. Unsubscribe anytime from a Bombay Brief email."}
             </p>
           </form>
         </div>
