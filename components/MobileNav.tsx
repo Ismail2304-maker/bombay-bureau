@@ -5,6 +5,7 @@ import { useState } from "react";
 
 const links = [
   ["Latest", "/latest"],
+  ["Discover", "/discover"],
   ["India", "/india"],
   ["World", "/world"],
   ["Politics", "/politics"],
