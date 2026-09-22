@@ -45,6 +45,7 @@ const getArticle = cache(async (slug: string) => {
       correctionNote,
       sources[]{label,url},
       "category": categories[0]->title,
+      "topics": topics[]->{title,slug},
       "categories": categories[]->title,
       author->{name,slug,role,location,bio,image}
     }`,
