@@ -144,6 +144,62 @@ const getMoreArticles = cache(async (slug: string, categories: string[] = [], to
     .slice(0, 3);
 });
 
+const getRecommendedArticles = cache(async (slug: string, categories: string[] = [], topicSlugs: string[] = [], contentType: string | null = null, authorSlug: string | null = null) => {
+  const candidates = await client.fetch(
+    `*[
+      _type=="post" &&
+      slug.current != $slug &&
+      defined(slug.current) &&
+      !(_id in path("drafts.**")) &&
+      coalesce(workflowStatus, "published") == "published" &&
+      defined(publishedAt) &&
+      !("Video" in categories[]->title)
+    ] | order(publishedAt desc)[0..59]{
+      title,
+      slug,
+      mainImage,
+      publishedAt,
+      excerpt,
+      contentType,
+      "category": categories[0]->title,
+      "categories": categories[]->title,
+      "topics": topics[]->{title,slug},
+      "authorSlug": author->slug.current
+    }`,
+    { slug }
+  );
+
+  const now = Date.now();
+  const categorySet = new Set(categories);
+  const topicSet = new Set(topicSlugs);
+
+  return (candidates || [])
+    .map((article: any) => {
+      const sharedTopics = (article.topics || []).filter((topic: any) =>
+        topicSet.has(topic.slug?.current)
+      ).length;
+      const sharedCategories = (article.categories || []).filter((category: string) =>
+        categorySet.has(category)
+      ).length;
+      const sameType = contentType && article.contentType === contentType ? 1 : 0;
+      const sameAuthor = authorSlug && article.authorSlug === authorSlug ? 1 : 0;
+      const hours = Math.max(0, (now - new Date(article.publishedAt).getTime()) / 3600000);
+      const freshness = Math.max(0, 1 - Math.min(hours, 336) / 336);
+
+      return {
+        ...article,
+        recommendationScore:
+          sharedTopics * 28 +
+          sharedCategories * 10 +
+          sameType * 5 +
+          sameAuthor * 3 +
+          freshness * 6,
+      };
+    })
+    .sort((a: any, b: any) => b.recommendationScore - a.recommendationScore)
+    .slice(0, 4);
+});
+
 function formatArticleDate(date: string) {
   return new Date(date).toLocaleDateString("en-IN", {
     day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Kolkata",
@@ -251,7 +307,15 @@ export default async function ArticlePage(
     item:articleUrl,
   });
 
-  const more = await getMoreArticles(slug, post.categories || [], (post.topics || []).map((topic: any) => topic.slug?.current).filter(Boolean));
+  const topicSlugs = (post.topics || []).map((topic: any) => topic.slug?.current).filter(Boolean);
+  const more = await getMoreArticles(slug, post.categories || [], topicSlugs);
+  const recommendations = await getRecommendedArticles(
+    slug,
+    post.categories || [],
+    topicSlugs,
+    post.contentType || null,
+    post.author?.slug?.current || null
+  );
 
   return (
     <main className="bg-black text-white min-h-screen">
@@ -495,6 +559,24 @@ export default async function ArticlePage(
                 {hasImageAsset(m.mainImage) && <Image src={urlFor(m.mainImage).width(400).url()} alt={m.title} loading="lazy" width={400} height={250} sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 25vw" className="w-full h-[230px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.05]" />}
                 {m.category && <p className="text-[10px] uppercase tracking-[0.18em] text-gray-500 mb-2">{m.category}</p>}
                 <h3 className="font-serif leading-snug group-hover:text-gray-300 transition-colors">{m.title}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 md:px-6 pb-16 md:pb-24">
+        <div className="border-t border-gray-800 pt-10 md:pt-12">
+          <p className="text-[9px] uppercase tracking-[0.22em] text-gray-600 mb-3">Recommended reading</p>
+          <h2 className="text-2xl md:text-3xl font-serif mb-8 md:mb-10">More from the newsroom</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          {recommendations.map((m:any)=>(
+            <Link key={m.slug?.current || m.title} href={m.slug?.current ? `/article/${m.slug.current}` : "#"} className="group">
+              <div className="cursor-pointer hover:-translate-y-1 transition-all duration-300">
+                {hasImageAsset(m.mainImage) && <Image src={urlFor(m.mainImage).width(500).url()} alt={m.title} loading="lazy" width={500} height={300} sizes="(max-width: 767px) 100vw, 25vw" className="w-full h-[190px] object-cover rounded-lg mb-4 transition-transform duration-700 group-hover:scale-[1.04]" />}
+                <p className="text-[9px] uppercase tracking-[0.18em] text-gray-600 mb-2">{m.category || "News"}</p>
+                <h3 className="font-serif text-lg leading-snug group-hover:text-gray-300 transition-colors">{m.title}</h3>
               </div>
             </Link>
           ))}
