@@ -62,7 +62,7 @@ export default async function LatestPage({
       coalesce(workflowStatus, "published") == "published" &&
       defined(slug.current) &&
       defined(publishedAt) &&
-      (!defined($category) || $category == "" || $category in categories[]->title) &&
+      (!defined($category) || $category == "" || $category in categories[]->title)
     ] | order(publishedAt desc)[0...200]{
       title,
       slug,
