@@ -152,6 +152,16 @@ export const postType = defineType({
     }),
 
     defineField({
+      name: 'topics',
+      title: 'Topics / Continuing Coverage',
+      type: 'array',
+      fieldset: 'editorial',
+      of: [defineArrayMember({ type: 'reference', to: { type: 'topic' } })],
+      validation: (Rule) => Rule.unique(),
+      description: 'Link this story to one or more continuing coverage topics. Use topics for subjects that span multiple stories; use sections for the newsroom category.',
+    }),
+
+    defineField({
       name: 'publishedAt',
       type: 'datetime',
       fieldset: 'publication',
