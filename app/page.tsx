@@ -867,7 +867,6 @@ export default async function Home() {
             <Link href="/newsroom">Newsroom</Link>
             <Link href="/archive">Archive</Link>
             <a href="/rss.xml">RSS</a>
-            <a href="/sitemap.xml">Sitemap</a>
 
           </div>
 
