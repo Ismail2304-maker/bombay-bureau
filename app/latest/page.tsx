@@ -30,20 +30,12 @@ const categories = [
   "Explainers",
 ];
 
-const types = [
-  { label: "All", value: "" },
-  { label: "News", value: "news" },
-  { label: "Opinion", value: "opinion" },
-  { label: "Explainer", value: "explainer" },
-];
-
 const PAGE_SIZE = 18;
 
-function makeUrl(page: number, category: string, type: string) {
+function makeUrl(page: number, category: string) {
   const params = new URLSearchParams();
   if (page > 1) params.set("page", String(page));
   if (category) params.set("category", category);
-  if (type) params.set("type", type);
   const query = params.toString();
   return query ? `/latest?${query}` : "/latest";
 }
@@ -51,7 +43,7 @@ function makeUrl(page: number, category: string, type: string) {
 export default async function LatestPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string; type?: string }>;
+  searchParams: Promise<{ page?: string; category?: string }>;
 }) {
   const params = await searchParams;
 
@@ -63,8 +55,6 @@ export default async function LatestPage({
       ? params.category
       : "";
 
-  const type = types.some((item) => item.value === params.type) ? params.type || "" : "";
-
   const posts = await client.fetch(
     `*[
       _type == "post" &&
@@ -73,7 +63,6 @@ export default async function LatestPage({
       defined(slug.current) &&
       defined(publishedAt) &&
       (!defined($category) || $category == "" || $category in categories[]->title) &&
-      (!defined($type) || $type == "" || contentType == $type)
     ] | order(publishedAt desc)[0...200]{
       title,
       slug,
@@ -82,11 +71,10 @@ export default async function LatestPage({
       "fallbackExcerpt": pt::text(body)[0..220],
       publishedAt,
       "category": categories[0]->title,
-      contentType,
       reportingType,
       author->{name, slug}
     }`,
-    { category, type }
+    { category }
   );
 
   const total = posts.length;
@@ -109,7 +97,7 @@ export default async function LatestPage({
           <p className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-4">BOMBAY BUREAU</p>
           <h1 className="text-4xl md:text-6xl font-serif tracking-tight">Latest</h1>
           <p className="mt-4 max-w-3xl text-gray-400 text-base md:text-lg leading-relaxed">
-            A chronological view of the newsroom, with filters for subject and story type.
+            A chronological record of published journalism, organized by newsroom section.
           </p>
         </div>
 
@@ -123,7 +111,7 @@ export default async function LatestPage({
                 return (
                   <Link
                     key={item}
-                    href={makeUrl(1, value, type)}
+                    href={makeUrl(1, value)}
                     className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-[0.12em] transition-colors ${
                       active
                         ? "border-white text-white"
@@ -131,28 +119,6 @@ export default async function LatestPage({
                     }`}
                   >
                     {item}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-gray-600 mb-3">Story type</p>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {types.map((item) => {
-                const active = type === item.value;
-                return (
-                  <Link
-                    key={item.label}
-                    href={makeUrl(1, category, item.value)}
-                    className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-[0.12em] transition-colors ${
-                      active
-                        ? "border-white text-white"
-                        : "border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300"
-                    }`}
-                  >
-                    {item.label}
                   </Link>
                 );
               })}
@@ -176,13 +142,6 @@ export default async function LatestPage({
               if (!slug) return null;
 
               const excerpt = post.excerpt || post.fallbackExcerpt;
-              const typeLabel =
-                post.contentType === "opinion"
-                  ? "Opinion"
-                  : post.contentType === "explainer"
-                    ? "Explainer"
-                    : "News";
-
               return (
                 <article key={slug} className="group border-b border-gray-900 pb-8">
                   <Link href={`/article/${slug}`} className="block">
@@ -201,9 +160,7 @@ export default async function LatestPage({
                     )}
 
                     <div className="flex flex-wrap items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-gray-600 mb-2">
-                      <span>{post.category || "News"}</span>
-                      <span className="h-1 w-1 rounded-full bg-gray-700" />
-                      <span>{typeLabel}</span>
+                      {post.category && <span>{post.category}</span>}
                       {post.reportingType === "original_reporting" && (
                         <>
                           <span className="h-1 w-1 rounded-full bg-gray-700" />
@@ -241,7 +198,7 @@ export default async function LatestPage({
         ) : (
           <div className="py-20 border-b border-gray-800">
             <h2 className="text-2xl font-serif">No published stories match these filters.</h2>
-            <p className="mt-3 text-gray-500">Try another section or story type.</p>
+            <p className="mt-3 text-gray-500">Try another newsroom section.</p>
           </div>
         )}
 
@@ -249,7 +206,7 @@ export default async function LatestPage({
           <nav aria-label="Latest stories pagination" className="flex items-center justify-between border-t border-gray-800 py-8 mb-8">
             {safePage > 1 ? (
               <Link
-                href={makeUrl(safePage - 1, category, type)}
+                href={makeUrl(safePage - 1, category)}
                 className="text-xs uppercase tracking-[0.16em] text-gray-400 hover:text-white transition-colors"
               >
                 ← Newer stories
@@ -264,7 +221,7 @@ export default async function LatestPage({
 
             {safePage < totalPages ? (
               <Link
-                href={makeUrl(safePage + 1, category, type)}
+                href={makeUrl(safePage + 1, category)}
                 className="text-xs uppercase tracking-[0.16em] text-gray-400 hover:text-white transition-colors"
               >
                 Older stories →

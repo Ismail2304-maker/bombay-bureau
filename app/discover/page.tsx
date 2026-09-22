@@ -50,11 +50,11 @@ export default async function DiscoverPage() {
       label: "Open saved stories",
     },
     {
-      eyebrow: "Open file",
-      title: "Search the newsroom",
-      text: "Look across subjects, authors and published reporting when you already know what you are looking for.",
-      href: "/search",
-      label: "Search BOMBAY BUREAU",
+      eyebrow: "Behind the reporting",
+      title: "See how the Bureau works",
+      text: "Go behind the headlines and see the standards, accountability and editorial practices that shape what BOMBAY BUREAU publishes.",
+      href: "/newsroom",
+      label: "Enter the newsroom",
     },
     {
       eyebrow: "Open line",
