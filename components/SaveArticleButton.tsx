@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
+import {onAuthStateChanged, User} from "firebase/auth";
+import {collection, deleteDoc, doc, getDocs, setDoc} from "firebase/firestore";
+import {auth, db} from "@/lib/firebase";
 
 type SavedArticle = {
   slug: string;
@@ -10,36 +13,75 @@ type SavedArticle = {
 
 const STORAGE_KEY = "bb_saved_articles";
 
-export default function SaveArticleButton({
-  slug,
-  title,
-}: {
-  slug: string;
-  title: string;
-}) {
+function readLocal(): SavedArticle[] {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function writeLocal(items: SavedArticle[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, 100)));
+}
+
+export default function SaveArticleButton({slug, title}: {slug: string; title: string}) {
   const [saved, setSaved] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    try {
-      const items: SavedArticle[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      setSaved(items.some((item) => item.slug === slug));
-    } catch {
-      setSaved(false);
-    }
+    return onAuthStateChanged(auth, async (current) => {
+      setUser(current);
+
+      if (!current) {
+        setSaved(readLocal().some((item) => item.slug === slug));
+        return;
+      }
+
+      try {
+        const snapshot = await getDocs(collection(db, "savedArticles", current.uid, "items"));
+        const remote = snapshot.docs.map((item) => item.data() as SavedArticle);
+        const local = readLocal();
+
+        // One-time migration from the old browser-only list into the account.
+        const merged = [...remote];
+        for (const item of local) {
+          if (!merged.some((existing) => existing.slug === item.slug)) {
+            merged.push(item);
+            await setDoc(doc(db, "savedArticles", current.uid, "items", item.slug), item);
+          }
+        }
+
+        if (local.length) localStorage.removeItem(STORAGE_KEY);
+        setSaved(merged.some((item) => item.slug === slug));
+      } catch {
+        setSaved(readLocal().some((item) => item.slug === slug));
+      }
+    });
   }, [slug]);
 
-  function toggleSaved() {
-    try {
-      const items: SavedArticle[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      const exists = items.some((item) => item.slug === slug);
-      const next = exists
-        ? items.filter((item) => item.slug !== slug)
-        : [{ slug, title, savedAt: new Date().toISOString() }, ...items].slice(0, 100);
+  async function toggleSaved() {
+    const nextSaved = !saved;
+    setSaved(nextSaved);
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      setSaved(!exists);
+    try {
+      if (user) {
+        const reference = doc(db, "savedArticles", user.uid, "items", slug);
+        if (nextSaved) {
+          await setDoc(reference, {slug, title, savedAt: new Date().toISOString()});
+        } else {
+          await deleteDoc(reference);
+        }
+        return;
+      }
+
+      const items = readLocal();
+      const next = nextSaved
+        ? [{slug, title, savedAt: new Date().toISOString()}, ...items].slice(0, 100)
+        : items.filter((item) => item.slug !== slug);
+      writeLocal(next);
     } catch {
-      // Keep the button usable even if browser storage is unavailable.
+      setSaved(saved);
     }
   }
 
