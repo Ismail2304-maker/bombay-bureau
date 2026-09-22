@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 
 const builder=imageUrlBuilder(client);
 const urlFor=(src:any)=>builder.image(src);
+const hasImageAsset=(src:any)=>Boolean(src?.asset?._ref||src?.asset?._id);
 export const revalidate=60;
 
 function articleHref(slug:string){
@@ -99,7 +100,7 @@ export default async function CategoryPage(props:any){
       </div>
       {lead?.slug?.current&&<Link href={articleHref(lead.slug.current)} className="group block">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-14 md:mb-16">
-          {lead.mainImage&&<Image src={urlFor(lead.mainImage).width(1200).url()} alt={displayTitle(lead.title,lead.slug.current)} width={1200} height={700} priority className="rounded-lg w-full h-auto transition-transform duration-700 group-hover:scale-[1.01]" sizes="(max-width: 767px) 100vw, 50vw" />}
+          {hasImageAsset(lead.mainImage)&&<Image src={urlFor(lead.mainImage).width(1200).url()} alt={displayTitle(lead.title,lead.slug.current)} width={1200} height={700} priority className="rounded-lg w-full h-auto transition-transform duration-700 group-hover:scale-[1.01]" sizes="(max-width: 767px) 100vw, 50vw" />}
           <div className="flex flex-col justify-center">
             <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-4">Lead story</p>
             <h2 className="text-3xl md:text-5xl font-serif leading-tight group-hover:text-gray-300 transition">{displayTitle(lead.title,lead.slug.current)}</h2>
@@ -117,7 +118,7 @@ export default async function CategoryPage(props:any){
             const href=articleHref(slug);
             return <article key={slug} className="border-b border-gray-800 pb-8">
               <Link href={href} className="grid grid-cols-1 sm:grid-cols-3 gap-5 group">
-                <div>{post.mainImage&&<Image src={urlFor(post.mainImage).width(500).url()} alt={title} width={500} height={320} className="rounded-md w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" sizes="(max-width: 767px) 100vw, 33vw" />}</div>
+                <div>{hasImageAsset(post.mainImage)&&<Image src={urlFor(post.mainImage).width(500).url()} alt={title} width={500} height={320} className="rounded-md w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" sizes="(max-width: 767px) 100vw, 33vw" />}</div>
                 <div className="sm:col-span-2">
                   <p className="text-[10px] uppercase tracking-[0.18em] text-gray-600 mb-2">{post.category||categoryName}</p>
                   <h3 className="font-serif text-xl md:text-2xl leading-snug group-hover:text-gray-300">{title}</h3>

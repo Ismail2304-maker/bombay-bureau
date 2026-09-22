@@ -11,6 +11,9 @@ const builder = imageUrlBuilder(client);
 const urlFor = (source: any) =>
   builder.image(source).auto("format").quality(75);
 
+const hasImageAsset = (source: any) =>
+  Boolean(source?.asset?._ref || source?.asset?._id);
+
 export const revalidate = 60;
 
 function formatDate(date: string) {
@@ -185,7 +188,7 @@ export default async function Home() {
   const posts = data.all;
   const videos = (data.video || []).map((video: any) => ({
     ...video,
-    posterUrl: video.mainImage
+    posterUrl: hasImageAsset(video.mainImage)
       ? urlFor(video.mainImage).width(600).url()
       : null,
   }));
@@ -300,7 +303,7 @@ export default async function Home() {
                 <div className="group cursor-pointer">
 
                   <div className="overflow-hidden rounded-lg">
-                    {posts[0]?.mainImage && (
+                    {hasImageAsset(posts[0]?.mainImage) && (
                       <Image
                         src={urlFor(posts[0].mainImage).width(1600).url()}
                         alt={posts[0].title}
@@ -350,7 +353,7 @@ export default async function Home() {
                   >
                     <div className="group cursor-pointer border-t border-gray-800 pt-4 hover:-translate-y-1 transition-all duration-300">
 
-                      {post.mainImage && (
+                      {hasImageAsset(post.mainImage) && (
                         <div className="overflow-hidden rounded-lg mb-3">
                           <Image
                             src={urlFor(post.mainImage).width(600).url()}
@@ -410,7 +413,7 @@ export default async function Home() {
               >
                 <div className="group flex gap-3 py-4 border-b border-gray-800 hover:translate-x-1 transition cursor-pointer">
 
-                  {post?.mainImage && (
+                  {hasImageAsset(post?.mainImage) && (
                     <Image
                       src={urlFor(post.mainImage).width(80).url()}
                       loading="lazy"
@@ -541,7 +544,7 @@ export default async function Home() {
                   <Link href={`/article/${main.slug.current}`}>
                     <div className="group cursor-pointer">
 
-                      {main?.mainImage && (
+                      {hasImageAsset(main?.mainImage) && (
                         <div className="overflow-hidden rounded-lg">
                           <Image
                             src={urlFor(main.mainImage).width(1600).url()}

@@ -5,6 +5,7 @@ import imageUrlBuilder from "@sanity/image-url";
 
 const builder = imageUrlBuilder(client);
 const urlFor = (src: any) => builder.image(src);
+const hasImageAsset = (src: any) => Boolean(src?.asset?._ref || src?.asset?._id);
 
 export const metadata: Metadata = {
   title: "Search",
@@ -134,7 +135,7 @@ export default async function SearchPage({
           <Link key={post.slug.current} href={`/article/${post.slug.current}`}>
             <div className="flex flex-col sm:flex-row gap-4 md:gap-6 border-b border-gray-900 pb-6 md:pb-8 group">
 
-              {post.mainImage && (
+              {hasImageAsset(post.mainImage) && (
   <img
     src={urlFor(post.mainImage).width(400).url()}
     alt={post.title}

@@ -7,6 +7,7 @@ import { client } from "@/lib/sanity";
 
 const builder = imageUrlBuilder(client);
 const urlFor = (src: any) => builder.image(src);
+const hasImageAsset = (src: any) => Boolean(src?.asset?._ref || src?.asset?._id);
 
 export const metadata: Metadata = {
   title: "Latest",
@@ -185,7 +186,7 @@ export default async function LatestPage({
               return (
                 <article key={slug} className="group border-b border-gray-900 pb-8">
                   <Link href={`/article/${slug}`} className="block">
-                    {post.mainImage && (
+                    {hasImageAsset(post.mainImage) && (
                       <div className="overflow-hidden rounded-lg mb-4">
                         <Image
                           src={urlFor(post.mainImage).width(900).url()}
